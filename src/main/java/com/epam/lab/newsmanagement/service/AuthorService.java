@@ -13,7 +13,7 @@ public class AuthorService implements IntService<Author> {
     private AuthorDao dao;
 
     @Override
-    public Author add(Author author) throws ServiceException {
+    public Author create(Author author) throws ServiceException {
         String name = author.getName();
         String surname = author.getSurname();
         if (name == null || name.equals("")) {
@@ -23,7 +23,18 @@ public class AuthorService implements IntService<Author> {
             throw new ServiceException("Author's surname has invalid value. It's \"" + name + "\".");
         }
         try {
-            dao.add(author);
+            dao.create(author);
+        } catch (DaoException e) {
+            throw new ServiceException(e);
+        }
+        return author;
+    }
+
+    @Override
+    public Author read(long id) throws ServiceException {
+        Author author;
+        try {
+            author = dao.read(id);
         } catch (DaoException e) {
             throw new ServiceException(e);
         }

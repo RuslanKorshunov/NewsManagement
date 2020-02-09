@@ -15,23 +15,42 @@ import java.util.Optional;
 public class AuthorDao implements Dao<Author> {
     private static final String INSERT_QUERY;
     private static final String SELECT_MAX_INDEX_QUERY;
+    private static final String SELECT_BY_ID_QUERY;
 
     static {
         INSERT_QUERY = "INSERT INTO \"author\" VALUES (?, ?, ?)";
         SELECT_MAX_INDEX_QUERY = "SELECT MAX(\"id\") FROM \"author\"";
+        SELECT_BY_ID_QUERY = "SELECT * FROM \"author\" WHERE \"id\"=?";
     }
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    public Author add(Author author) throws DaoException {
+    public Author create(Author author) throws DaoException {
         String name = author.getName();
         String surname = author.getSurname();
         try {
             long id = getMaxId() + 1;
             jdbcTemplate.update(INSERT_QUERY, id, name, surname);
             author.setId(id);
+        } catch (DataAccessException e) {
+            throw new DaoException(e);
+        }
+        return author;
+    }
+
+    @Override
+    public Author read(long id) throws DaoException {
+        Author author;
+        try {
+            author = jdbcTemplate.
+                    queryForObject(SELECT_BY_ID_QUERY, new Object[]{id},
+                            (rs, rowNum) -> {
+                                String name = rs.getString("name");
+                                String surname = rs.getString("surname");
+                                return new Author(id, name, surname);
+                            });
         } catch (DataAccessException e) {
             throw new DaoException(e);
         }

@@ -8,10 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class AuthorController implements Controller<Author> {
@@ -32,10 +29,29 @@ public class AuthorController implements Controller<Author> {
     public ResponseEntity<Author> create(@RequestBody Author author) {
         HttpStatus status = HttpStatus.CREATED;
         try {
-            authorService.add(author);
+            authorService.create(author);
         } catch (ServiceException e) {
             logger.error(e);
             status = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        return new ResponseEntity<>(author, status);
+    }
+
+    @Override
+    @RequestMapping(value = "/author/{id}/",
+            produces = "application/json",
+            consumes = "application/json",
+            method = RequestMethod.GET)
+    public ResponseEntity<Author> read(@PathVariable("id") long id) {
+        logger.info("read() begins.");
+        HttpStatus status = HttpStatus.OK;
+        Author author = new Author();
+        author.setId(id);
+        try {
+            author = authorService.read(id);
+        } catch (ServiceException e) {
+            logger.error(e);
+            status = HttpStatus.NO_CONTENT;//TODO проверить статус
         }
         return new ResponseEntity<>(author, status);
     }
