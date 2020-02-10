@@ -30,7 +30,7 @@ public class TagController implements Controller<Tag> {
     public ResponseEntity<Tag> create(@RequestBody Tag tag) {
         HttpStatus status = HttpStatus.CREATED;
         try {
-            service.create(tag);
+            tag = service.create(tag);
         } catch (ServiceException e) {
             logger.error(e);
             status = HttpStatus.INTERNAL_SERVER_ERROR;

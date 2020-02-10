@@ -16,12 +16,10 @@ import java.util.function.Supplier;
 @Qualifier("tagDao")
 public class TagDao implements Dao<Tag> {
     private static final String INSERT_QUERY;
-    private static final String SELECT_MAX_INDEX_QUERY;
     public static final String SELECT_BY_NAME_QUERY;
 
     static {
-        INSERT_QUERY = "INSERT INTO \"tag\" VALUES (?, ?)";
-        SELECT_MAX_INDEX_QUERY = "SELECT MAX(\"id\") FROM \"tag\"";
+        INSERT_QUERY = "INSERT INTO \"tag\"(\"name\") VALUES (?)";
         SELECT_BY_NAME_QUERY = "SELECT * FROM \"tag\" WHERE \"name\"=?";
     }
 
@@ -49,10 +47,8 @@ public class TagDao implements Dao<Tag> {
         Tag innerTag = supplier.get();
         if (innerTag == null) {
             try {
-                long id = getMaxId(jdbcTemplate, SELECT_MAX_INDEX_QUERY) + 1;
-                jdbcTemplate.update(INSERT_QUERY, id, name);
-                innerTag = tag;
-                innerTag.setId(id);
+                jdbcTemplate.update(INSERT_QUERY, name);
+                innerTag = supplier.get();
             } catch (DataAccessException e) {
                 throw new DaoException(e);
             }

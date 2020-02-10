@@ -7,20 +7,24 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.function.Supplier;
 
 @Repository
 @Qualifier("authorDao")
 public class AuthorDao implements Dao<Author> {
     private static final String INSERT_QUERY;
-    private static final String SELECT_MAX_INDEX_QUERY;
     private static final String SELECT_BY_ID_QUERY;
     private static final String UPDATE_QUERY;
     private static final String DELETE_QUERY;
+    private static final String SELECT_BY_NAME_AND_SURNAME_QUERY;
 
     static {
-        INSERT_QUERY = "INSERT INTO \"author\" VALUES (?, ?, ?)";
-        SELECT_MAX_INDEX_QUERY = "SELECT MAX(\"id\") FROM \"author\"";
+        INSERT_QUERY = "INSERT INTO \"author\" (\"name\", \"surname\") VALUES (?, ?)";
         SELECT_BY_ID_QUERY = "SELECT * FROM \"author\" WHERE \"id\"=?";
+        SELECT_BY_NAME_AND_SURNAME_QUERY = "SELECT * FROM \"author\" WHERE \"name\"=? AND \"surname\"=?";
         UPDATE_QUERY = "UPDATE \"author\" SET \"name\"=?, \"surname\"=? WHERE \"id\"=?";
         DELETE_QUERY = "DELETE FROM \"author\" WHERE \"id\"=?";
     }
@@ -29,17 +33,35 @@ public class AuthorDao implements Dao<Author> {
     private JdbcTemplate jdbcTemplate;
 
     @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public Author create(Author author) throws DaoException {
         String name = author.getName();
         String surname = author.getSurname();
-        try {
-            long id = getMaxId(jdbcTemplate, SELECT_MAX_INDEX_QUERY) + 1;
-            jdbcTemplate.update(INSERT_QUERY, id, name, surname);
-            author.setId(id);
-        } catch (DataAccessException e) {
-            throw new DaoException(e);
+        Supplier<Author> supplier = () -> {
+            Author a;
+            try {
+                a = jdbcTemplate.queryForObject(SELECT_BY_NAME_AND_SURNAME_QUERY, new Object[]{name, surname},
+                        (rs, rowNum) -> {
+                            long idAuthor = rs.getLong("id");
+                            String nameAuthor = rs.getString("name");
+                            String surnameAuthor = rs.getString("surname");
+                            return new Author(idAuthor, nameAuthor, surnameAuthor);
+                        });
+            } catch (DataAccessException e) {
+                a = null;
+            }
+            return a;
+        };
+        Author innerAuthor = supplier.get();
+        if (innerAuthor == null) {
+            try {
+                jdbcTemplate.update(INSERT_QUERY, name, surname);
+                innerAuthor = supplier.get();
+            } catch (DataAccessException e) {
+                throw new DaoException(e);
+            }
         }
-        return author;
+        return innerAuthor;
     }
 
     @Override
@@ -60,6 +82,7 @@ public class AuthorDao implements Dao<Author> {
     }
 
     @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public Author update(Author author) throws DaoException {
         long id = author.getId();
         String name = author.getName();
@@ -73,6 +96,7 @@ public class AuthorDao implements Dao<Author> {
     }
 
     @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public Author delete(long id) throws DaoException {
         Author author = read(id);
         try {

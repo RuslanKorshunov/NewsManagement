@@ -28,7 +28,7 @@ public class AuthorController implements Controller<Author> {
     public ResponseEntity<Author> create(@RequestBody Author author) {
         HttpStatus status = HttpStatus.CREATED;
         try {
-            service.create(author);
+            author = service.create(author);
         } catch (ServiceException e) {
             logger.error(e);
             status = HttpStatus.INTERNAL_SERVER_ERROR;
