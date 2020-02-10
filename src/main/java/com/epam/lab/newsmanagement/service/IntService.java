@@ -8,4 +8,6 @@ public interface IntService<T> {
     T read(long id) throws ServiceException;
 
     T update(T t) throws ServiceException;
+
+    T delete(long id) throws ServiceException;
 }

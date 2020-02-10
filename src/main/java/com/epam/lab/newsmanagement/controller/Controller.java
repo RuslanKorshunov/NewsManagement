@@ -9,4 +9,6 @@ public interface Controller<T> {
     ResponseEntity<T> read(long id);
 
     ResponseEntity<T> update(long id, T t);
+
+    ResponseEntity<T> delete(long id);
 }

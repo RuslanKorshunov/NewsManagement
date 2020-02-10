@@ -17,12 +17,14 @@ public class AuthorDao implements Dao<Author> {
     private static final String SELECT_MAX_INDEX_QUERY;
     private static final String SELECT_BY_ID_QUERY;
     private static final String UPDATE_QUERY;
+    private static final String DELETE_QUERY;
 
     static {
         INSERT_QUERY = "INSERT INTO \"author\" VALUES (?, ?, ?)";
         SELECT_MAX_INDEX_QUERY = "SELECT MAX(\"id\") FROM \"author\"";
         SELECT_BY_ID_QUERY = "SELECT * FROM \"author\" WHERE \"id\"=?";
         UPDATE_QUERY = "UPDATE \"author\" SET \"name\"=?, \"surname\"=? WHERE \"id\"=?";
+        DELETE_QUERY = "DELETE FROM \"author\" WHERE \"id\"=?";
     }
 
     @Autowired
@@ -66,6 +68,17 @@ public class AuthorDao implements Dao<Author> {
         String surname = author.getSurname();
         try {
             jdbcTemplate.update(UPDATE_QUERY, name, surname, id);
+        } catch (DataAccessException e) {
+            throw new DaoException(e);
+        }
+        return author;
+    }
+
+    @Override
+    public Author delete(long id) throws DaoException {
+        Author author = read(id);
+        try {
+            jdbcTemplate.update(DELETE_QUERY, id);
         } catch (DataAccessException e) {
             throw new DaoException(e);
         }

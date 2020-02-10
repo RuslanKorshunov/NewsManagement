@@ -8,4 +8,6 @@ public interface Dao<T> {
     T read(long id) throws DaoException;
 
     T update(T t) throws DaoException;
+
+    T delete(long id) throws DaoException;
 }

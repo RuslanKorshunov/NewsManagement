@@ -42,13 +42,14 @@ public class AuthorController implements Controller<Author> {
             consumes = "application/json")
     public ResponseEntity<Author> read(@PathVariable("id") long id) {
         HttpStatus status = HttpStatus.OK;
-        Author author = new Author();
-        author.setId(id);
+        Author author;
         try {
             author = authorService.read(id);
         } catch (ServiceException e) {
             logger.error(e);
             status = HttpStatus.NOT_FOUND;//TODO проверить статус
+            author = new Author();
+            author.setId(id);
         }
         return new ResponseEntity<>(author, status);
     }
@@ -72,5 +73,21 @@ public class AuthorController implements Controller<Author> {
             status = currentAuthor == null ? HttpStatus.NOT_FOUND : HttpStatus.BAD_REQUEST;
         }
         return new ResponseEntity<>(currentAuthor, status);
+    }
+
+    @Override
+    @DeleteMapping(value = "/author/{id}/")
+    public ResponseEntity<Author> delete(@PathVariable("id") long id) {
+        HttpStatus status = HttpStatus.OK;
+        Author author;
+        try {
+            author = authorService.delete(id);
+        } catch (ServiceException e) {
+            logger.error(e);
+            status = HttpStatus.NOT_FOUND;
+            author = new Author();
+            author.setId(id);
+        }
+        return new ResponseEntity<>(author, status);
     }
 }

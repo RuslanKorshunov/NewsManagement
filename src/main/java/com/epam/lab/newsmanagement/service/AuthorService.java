@@ -46,6 +46,17 @@ public class AuthorService implements IntService<Author> {
         return author;
     }
 
+    @Override
+    public Author delete(long id) throws ServiceException {
+        Author author;
+        try {
+            author = dao.delete(id);
+        } catch (DaoException e) {
+            throw new ServiceException(e);
+        }
+        return author;
+    }
+
     private void validate(Author author) throws ServiceException {
         if (author == null) {
             throw new ServiceException("parameter \"author\" can't be null.");
