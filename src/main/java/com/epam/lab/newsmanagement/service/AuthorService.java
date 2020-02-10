@@ -4,6 +4,7 @@ import com.epam.lab.newsmanagement.dao.AuthorDao;
 import com.epam.lab.newsmanagement.entity.Author;
 import com.epam.lab.newsmanagement.exception.DaoException;
 import com.epam.lab.newsmanagement.exception.ServiceException;
+import com.epam.lab.newsmanagement.validator.NameValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,14 +15,7 @@ public class AuthorService implements IntService<Author> {
 
     @Override
     public Author create(Author author) throws ServiceException {
-        String name = author.getName();
-        String surname = author.getSurname();
-        if (name == null || name.equals("")) {
-            throw new ServiceException("Author's name has invalid value. It's \"" + name + "\".");
-        }
-        if (surname == null || surname.equals("")) {
-            throw new ServiceException("Author's surname has invalid value. It's \"" + name + "\".");
-        }
+        validate(author);
         try {
             dao.create(author);
         } catch (DaoException e) {
@@ -43,19 +37,26 @@ public class AuthorService implements IntService<Author> {
 
     @Override
     public Author update(Author author) throws ServiceException {
-        String name = author.getName();
-        String surname = author.getSurname();
-        if (name == null || name.equals("")) {
-            throw new ServiceException("Author's name has invalid value. It's \"" + name + "\".");
-        }
-        if (surname == null || surname.equals("")) {
-            throw new ServiceException("Author's surname has invalid value. It's \"" + name + "\".");
-        }
+        validate(author);
         try {
             dao.update(author);
         } catch (DaoException e) {
             throw new ServiceException(e);
         }
         return author;
+    }
+
+    private void validate(Author author) throws ServiceException {
+        if (author == null) {
+            throw new ServiceException("parameter \"author\" can't be null.");
+        }
+        String name = author.getName();
+        String surname = author.getSurname();
+        if (name == null || !NameValidator.validate(name)) {
+            throw new ServiceException("Author's name has invalid value \"" + name + "\".");
+        }
+        if (surname == null || !NameValidator.validate(surname)) {
+            throw new ServiceException("Author's surname has invalid value \"" + surname + "\".");
+        }
     }
 }
