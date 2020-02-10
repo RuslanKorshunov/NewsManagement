@@ -22,10 +22,9 @@ public class AuthorController implements Controller<Author> {
     private AuthorService authorService;
 
     @Override
-    @RequestMapping(value = "/author/",
+    @PostMapping(value = "/author/",
             produces = "application/json",
-            consumes = "application/json",
-            method = RequestMethod.POST)
+            consumes = "application/json")
     public ResponseEntity<Author> create(@RequestBody Author author) {
         HttpStatus status = HttpStatus.CREATED;
         try {
@@ -38,12 +37,10 @@ public class AuthorController implements Controller<Author> {
     }
 
     @Override
-    @RequestMapping(value = "/author/{id}/",
+    @GetMapping(value = "/author/{id}/",
             produces = "application/json",
-            consumes = "application/json",
-            method = RequestMethod.GET)
+            consumes = "application/json")
     public ResponseEntity<Author> read(@PathVariable("id") long id) {
-        logger.info("read() begins.");
         HttpStatus status = HttpStatus.OK;
         Author author = new Author();
         author.setId(id);
@@ -51,8 +48,29 @@ public class AuthorController implements Controller<Author> {
             author = authorService.read(id);
         } catch (ServiceException e) {
             logger.error(e);
-            status = HttpStatus.NO_CONTENT;//TODO проверить статус
+            status = HttpStatus.NOT_FOUND;//TODO проверить статус
         }
         return new ResponseEntity<>(author, status);
+    }
+
+    @Override
+    @PutMapping(value = "/author/{id}/",
+            produces = "application/json",
+            consumes = "application/json")
+    public ResponseEntity<Author> update(@PathVariable long id, @RequestBody Author author) {
+        HttpStatus status = HttpStatus.OK;
+        Author currentAuthor = null;
+        try {
+            currentAuthor = authorService.read(id);
+            String name = author.getName();
+            currentAuthor.setName(name);
+            String surname = author.getSurname();
+            currentAuthor.setSurname(surname);
+            authorService.update(currentAuthor);
+        } catch (ServiceException e) {
+            logger.error(e);
+            status = currentAuthor == null ? HttpStatus.NOT_FOUND : HttpStatus.BAD_REQUEST;
+        }
+        return new ResponseEntity<>(currentAuthor, status);
     }
 }

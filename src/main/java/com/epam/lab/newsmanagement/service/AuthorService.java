@@ -40,4 +40,22 @@ public class AuthorService implements IntService<Author> {
         }
         return author;
     }
+
+    @Override
+    public Author update(Author author) throws ServiceException {
+        String name = author.getName();
+        String surname = author.getSurname();
+        if (name == null || name.equals("")) {
+            throw new ServiceException("Author's name has invalid value. It's \"" + name + "\".");
+        }
+        if (surname == null || surname.equals("")) {
+            throw new ServiceException("Author's surname has invalid value. It's \"" + name + "\".");
+        }
+        try {
+            dao.update(author);
+        } catch (DaoException e) {
+            throw new ServiceException(e);
+        }
+        return author;
+    }
 }

@@ -6,4 +6,6 @@ public interface Dao<T> {
     T create(T t) throws DaoException;
 
     T read(long id) throws DaoException;
+
+    T update(T t) throws DaoException;
 }
