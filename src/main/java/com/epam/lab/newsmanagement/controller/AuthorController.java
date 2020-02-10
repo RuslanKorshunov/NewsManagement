@@ -19,7 +19,7 @@ public class AuthorController implements Controller<Author> {
     }
 
     @Autowired
-    private AuthorService authorService;
+    private AuthorService service;
 
     @Override
     @PostMapping(value = "/author/",
@@ -28,7 +28,7 @@ public class AuthorController implements Controller<Author> {
     public ResponseEntity<Author> create(@RequestBody Author author) {
         HttpStatus status = HttpStatus.CREATED;
         try {
-            authorService.create(author);
+            service.create(author);
         } catch (ServiceException e) {
             logger.error(e);
             status = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -44,7 +44,7 @@ public class AuthorController implements Controller<Author> {
         HttpStatus status = HttpStatus.OK;
         Author author;
         try {
-            author = authorService.read(id);
+            author = service.read(id);
         } catch (ServiceException e) {
             logger.error(e);
             status = HttpStatus.NOT_FOUND;//TODO проверить статус
@@ -62,12 +62,12 @@ public class AuthorController implements Controller<Author> {
         HttpStatus status = HttpStatus.OK;
         Author currentAuthor = null;
         try {
-            currentAuthor = authorService.read(id);
+            currentAuthor = service.read(id);
             String name = author.getName();
             currentAuthor.setName(name);
             String surname = author.getSurname();
             currentAuthor.setSurname(surname);
-            authorService.update(currentAuthor);
+            service.update(currentAuthor);
         } catch (ServiceException e) {
             logger.error(e);
             status = currentAuthor == null ? HttpStatus.NOT_FOUND : HttpStatus.BAD_REQUEST;
@@ -81,7 +81,7 @@ public class AuthorController implements Controller<Author> {
         HttpStatus status = HttpStatus.OK;
         Author author;
         try {
-            author = authorService.delete(id);
+            author = service.delete(id);
         } catch (ServiceException e) {
             logger.error(e);
             status = HttpStatus.NOT_FOUND;

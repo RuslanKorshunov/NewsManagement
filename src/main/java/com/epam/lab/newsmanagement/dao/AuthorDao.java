@@ -8,8 +8,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
 @Repository
 @Qualifier("authorDao")
 public class AuthorDao implements Dao<Author> {
@@ -35,7 +33,7 @@ public class AuthorDao implements Dao<Author> {
         String name = author.getName();
         String surname = author.getSurname();
         try {
-            long id = getMaxId() + 1;
+            long id = getMaxId(jdbcTemplate, SELECT_MAX_INDEX_QUERY) + 1;
             jdbcTemplate.update(INSERT_QUERY, id, name, surname);
             author.setId(id);
         } catch (DataAccessException e) {
@@ -83,21 +81,5 @@ public class AuthorDao implements Dao<Author> {
             throw new DaoException(e);
         }
         return author;
-    }
-
-    private long getMaxId() throws DaoException {
-        long id;
-        try {
-            Optional<Long> optionalLong = Optional.ofNullable(
-                    jdbcTemplate.queryForObject(SELECT_MAX_INDEX_QUERY, Long.class));
-            if (optionalLong.isPresent()) {
-                id = optionalLong.get();
-            } else {
-                throw new DaoException("AuthorDao can't get max id.");
-            }
-        } catch (DataAccessException e) {
-            throw new DaoException(e);
-        }
-        return id;
     }
 }
