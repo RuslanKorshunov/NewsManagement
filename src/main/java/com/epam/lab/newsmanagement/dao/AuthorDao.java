@@ -40,13 +40,7 @@ public class AuthorDao implements Dao<Author> {
         Supplier<Author> supplier = () -> {
             Author a;
             try {
-                a = jdbcTemplate.queryForObject(SELECT_BY_NAME_AND_SURNAME_QUERY, new Object[]{name, surname},
-                        (rs, rowNum) -> {
-                            long idAuthor = rs.getLong("id");
-                            String nameAuthor = rs.getString("name");
-                            String surnameAuthor = rs.getString("surname");
-                            return new Author(idAuthor, nameAuthor, surnameAuthor);
-                        });
+                a = queryForObject(SELECT_BY_NAME_AND_SURNAME_QUERY, name, surname);
             } catch (DataAccessException e) {
                 a = null;
             }
@@ -68,13 +62,7 @@ public class AuthorDao implements Dao<Author> {
     public Author read(long id) throws DaoException {
         Author author;
         try {
-            author = jdbcTemplate.
-                    queryForObject(SELECT_BY_ID_QUERY, new Object[]{id},
-                            (rs, rowNum) -> {
-                                String name = rs.getString("name");
-                                String surname = rs.getString("surname");
-                                return new Author(id, name, surname);
-                            });
+            author = queryForObject(SELECT_BY_ID_QUERY, id);
         } catch (DataAccessException e) {
             throw new DaoException(e);
         }
@@ -105,5 +93,15 @@ public class AuthorDao implements Dao<Author> {
             throw new DaoException(e);
         }
         return author;
+    }
+
+    private Author queryForObject(String query, Object... objects) throws DataAccessException {
+        return jdbcTemplate.queryForObject(query, objects,
+                (rs, rowNum) -> {
+                    long idAuthor = rs.getLong("id");
+                    String nameAuthor = rs.getString("name");
+                    String surnameAuthor = rs.getString("surname");
+                    return new Author(idAuthor, nameAuthor, surnameAuthor);
+                });
     }
 }

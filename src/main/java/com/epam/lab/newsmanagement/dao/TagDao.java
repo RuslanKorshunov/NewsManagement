@@ -17,12 +17,12 @@ import java.util.function.Supplier;
 public class TagDao implements Dao<Tag> {
     private static final String INSERT_QUERY;
     private static final String SELECT_BY_NAME_QUERY;
-    private static final String READ_BY_ID_QUERY;
+    private static final String SELECT_BY_ID_QUERY;
 
     static {
         INSERT_QUERY = "INSERT INTO \"tag\"(\"name\") VALUES (?)";
         SELECT_BY_NAME_QUERY = "SELECT * FROM \"tag\" WHERE \"name\"=?";
-        READ_BY_ID_QUERY = "SELECT * FROM \"tag\" WHERE \"id\"=?";
+        SELECT_BY_ID_QUERY = "SELECT * FROM \"tag\" WHERE \"id\"=?";
     }
 
     @Autowired
@@ -35,12 +35,7 @@ public class TagDao implements Dao<Tag> {
         Supplier<Tag> supplier = () -> {
             Tag t;
             try {
-                t = jdbcTemplate.queryForObject(SELECT_BY_NAME_QUERY, new Object[]{name},
-                        (rs, rowNum) -> {
-                            long idTag = rs.getLong("id");
-                            String nameTag = rs.getString("name");
-                            return new Tag(idTag, nameTag);
-                        });
+                t = queryForObject(SELECT_BY_NAME_QUERY, name);
             } catch (DataAccessException e) {
                 t = null;
             }
@@ -62,12 +57,7 @@ public class TagDao implements Dao<Tag> {
     public Tag read(long id) throws DaoException {
         Tag tag;
         try {
-            tag = jdbcTemplate.queryForObject(READ_BY_ID_QUERY, new Object[]{id},
-                    (rs, rowNum) -> {
-                        long idTag = rs.getLong("id");
-                        String nameTag = rs.getString("name");
-                        return new Tag(idTag, nameTag);
-                    });
+            tag = queryForObject(SELECT_BY_ID_QUERY, id);
         } catch (DataAccessException e) {
             throw new DaoException(e);
         }
@@ -82,5 +72,14 @@ public class TagDao implements Dao<Tag> {
     @Override
     public Tag delete(long id) throws DaoException {
         return null;
+    }
+
+    private Tag queryForObject(String query, Object... objects) throws DataAccessException {
+        return jdbcTemplate.queryForObject(query, objects,
+                (rs, rowNum) -> {
+                    long idTag = rs.getLong("id");
+                    String nameTag = rs.getString("name");
+                    return new Tag(idTag, nameTag);
+                });
     }
 }
