@@ -56,8 +56,23 @@ public class TagController implements Controller<Tag> {
     }
 
     @Override
-    public ResponseEntity<Tag> update(long id, Tag tag) {
-        return null;
+    @PutMapping(value = "/{id}/",
+            produces = PRODUCES,
+            consumes = CONSUMES)
+    public ResponseEntity<Tag> update(@PathVariable("id") long id, @RequestBody Tag tag) {
+        tag.setId(id);
+        HttpStatus status = HttpStatus.OK;
+        boolean isFound = false;
+        try {
+            if (service.read(id) != null) {
+                isFound = true;
+            }
+            service.update(tag);
+        } catch (ServiceException e) {
+            logger.error(e);
+            status = !isFound ? HttpStatus.NOT_FOUND : HttpStatus.BAD_REQUEST;
+        }
+        return new ResponseEntity<>(tag, status);
     }
 
     @Override

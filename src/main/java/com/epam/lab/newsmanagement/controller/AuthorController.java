@@ -60,20 +60,19 @@ public class AuthorController implements Controller<Author> {
             produces = PRODUCES,
             consumes = CONSUMES)
     public ResponseEntity<Author> update(@PathVariable long id, @RequestBody Author author) {
+        author.setId(id);
         HttpStatus status = HttpStatus.OK;
-        Author currentAuthor = null;
+        boolean isFound = false;
         try {
-            currentAuthor = service.read(id);
-            String name = author.getName();
-            currentAuthor.setName(name);
-            String surname = author.getSurname();
-            currentAuthor.setSurname(surname);
-            service.update(currentAuthor);
+            if (service.read(id) != null) {
+                isFound = true;
+            }
+            service.update(author);
         } catch (ServiceException e) {
             logger.error(e);
-            status = currentAuthor == null ? HttpStatus.NOT_FOUND : HttpStatus.BAD_REQUEST;
+            status = !isFound ? HttpStatus.NOT_FOUND : HttpStatus.BAD_REQUEST;
         }
-        return new ResponseEntity<>(currentAuthor, status);
+        return new ResponseEntity<>(author, status);
     }
 
     @Override

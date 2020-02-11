@@ -18,11 +18,13 @@ public class TagDao implements Dao<Tag> {
     private static final String INSERT_QUERY;
     private static final String SELECT_BY_NAME_QUERY;
     private static final String SELECT_BY_ID_QUERY;
+    private static final String UPDATE_QUERY;
 
     static {
         INSERT_QUERY = "INSERT INTO \"tag\"(\"name\") VALUES (?)";
         SELECT_BY_NAME_QUERY = "SELECT * FROM \"tag\" WHERE \"name\"=?";
         SELECT_BY_ID_QUERY = "SELECT * FROM \"tag\" WHERE \"id\"=?";
+        UPDATE_QUERY = "UPDATE \"tag\" SET \"name\"=? WHERE \"id\"=?";
     }
 
     @Autowired
@@ -65,8 +67,16 @@ public class TagDao implements Dao<Tag> {
     }
 
     @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public Tag update(Tag tag) throws DaoException {
-        return null;
+        long id = tag.getId();
+        String name = tag.getName();
+        try {
+            jdbcTemplate.update(UPDATE_QUERY, name, id);
+        } catch (DataAccessException e) {
+            throw new DaoException(e);
+        }
+        return tag;
     }
 
     @Override
@@ -74,6 +84,7 @@ public class TagDao implements Dao<Tag> {
         return null;
     }
 
+    //TODO придумать новое название
     private Tag queryForObject(String query, Object... objects) throws DataAccessException {
         return jdbcTemplate.queryForObject(query, objects,
                 (rs, rowNum) -> {

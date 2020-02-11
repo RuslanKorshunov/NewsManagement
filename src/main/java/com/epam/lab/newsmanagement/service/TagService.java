@@ -40,7 +40,13 @@ public class TagService implements IntService<Tag> {
 
     @Override
     public Tag update(Tag tag) throws ServiceException {
-        return null;
+        validate(tag);
+        try {
+            dao.update(tag);
+        } catch (DaoException e) {
+            throw new ServiceException(e);
+        }
+        return tag;
     }
 
     @Override
