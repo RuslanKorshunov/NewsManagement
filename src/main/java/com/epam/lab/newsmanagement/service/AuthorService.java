@@ -17,7 +17,7 @@ public class AuthorService implements IntService<Author> {
     public Author create(Author author) throws ServiceException {
         validate(author);
         try {
-            dao.create(author);
+            author = dao.create(author);
         } catch (DaoException e) {
             throw new ServiceException(e);
         }

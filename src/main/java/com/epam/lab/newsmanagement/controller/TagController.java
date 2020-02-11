@@ -1,8 +1,8 @@
 package com.epam.lab.newsmanagement.controller;
 
-import com.epam.lab.newsmanagement.entity.Author;
+import com.epam.lab.newsmanagement.entity.Tag;
 import com.epam.lab.newsmanagement.exception.ServiceException;
-import com.epam.lab.newsmanagement.service.AuthorService;
+import com.epam.lab.newsmanagement.service.TagService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,85 +11,85 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/author/")
-public class AuthorController implements Controller<Author> {
+@RequestMapping(value = "/tag/")
+public class TagController implements Controller<Tag> {
     private static final Logger logger;
 
     static {
-        logger = LogManager.getLogger(AuthorController.class);
+        logger = LogManager.getLogger(TagController.class);
     }
 
     @Autowired
-    private AuthorService service;
+    private TagService service;
 
     @Override
     @PostMapping(value = "/",
             produces = PRODUCES,
             consumes = CONSUMES)
-    public ResponseEntity<Author> create(@RequestBody Author author) {
+    public ResponseEntity<Tag> create(@RequestBody Tag tag) {
         HttpStatus status = HttpStatus.CREATED;
         try {
-            author = service.create(author);
+            tag = service.create(tag);
         } catch (ServiceException e) {
             logger.error(e);
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
-        return new ResponseEntity<>(author, status);
+        return new ResponseEntity<>(tag, status);
     }
 
     @Override
     @GetMapping(value = "/{id}/",
             produces = PRODUCES,
             consumes = CONSUMES)
-    public ResponseEntity<Author> read(@PathVariable("id") long id) {
+    public ResponseEntity<Tag> read(@PathVariable("id") long id) {
         HttpStatus status = HttpStatus.OK;
-        Author author;
+        Tag tag;
         try {
-            author = service.read(id);
+            tag = service.read(id);
         } catch (ServiceException e) {
             logger.error(e);
-            status = HttpStatus.NOT_FOUND;//TODO проверить статус
-            author = new Author();
-            author.setId(id);
+            status = HttpStatus.NOT_FOUND;
+            tag = new Tag();
+            tag.setId(id);
         }
-        return new ResponseEntity<>(author, status);
+        return new ResponseEntity<>(tag, status);
     }
 
     @Override
     @PutMapping(value = "/{id}/",
             produces = PRODUCES,
             consumes = CONSUMES)
-    public ResponseEntity<Author> update(@PathVariable long id, @RequestBody Author author) {
-        author.setId(id);
+    public ResponseEntity<Tag> update(@PathVariable("id") long id, @RequestBody Tag tag) {
+        tag.setId(id);
         HttpStatus status = HttpStatus.OK;
         boolean isFound = false;
         try {
             if (service.read(id) != null) {
                 isFound = true;
             }
-            service.update(author);
+            service.update(tag);
         } catch (ServiceException e) {
             logger.error(e);
             status = !isFound ? HttpStatus.NOT_FOUND : HttpStatus.BAD_REQUEST;
         }
-        return new ResponseEntity<>(author, status);
+        return new ResponseEntity<>(tag, status);
     }
 
     @Override
     @DeleteMapping(value = "/{id}/",
             produces = PRODUCES,
             consumes = CONSUMES)
-    public ResponseEntity<Author> delete(@PathVariable("id") long id) {
+    public ResponseEntity<Tag> delete(@PathVariable("id") long id) {
         HttpStatus status = HttpStatus.OK;
-        Author author;
+        Tag tag;
         try {
-            author = service.delete(id);
+            tag = service.delete(id);
         } catch (ServiceException e) {
             logger.error(e);
             status = HttpStatus.NOT_FOUND;
-            author = new Author();
-            author.setId(id);
+            tag = new Tag();
+            tag.setId(id);
         }
-        return new ResponseEntity<>(author, status);
+        return new ResponseEntity<>(tag, status);
     }
 }
