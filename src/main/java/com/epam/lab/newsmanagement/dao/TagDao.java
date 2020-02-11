@@ -19,12 +19,14 @@ public class TagDao implements Dao<Tag> {
     private static final String SELECT_BY_NAME_QUERY;
     private static final String SELECT_BY_ID_QUERY;
     private static final String UPDATE_QUERY;
+    private static final String DELETE_QUERY;
 
     static {
         INSERT_QUERY = "INSERT INTO \"tag\"(\"name\") VALUES (?)";
         SELECT_BY_NAME_QUERY = "SELECT * FROM \"tag\" WHERE \"name\"=?";
         SELECT_BY_ID_QUERY = "SELECT * FROM \"tag\" WHERE \"id\"=?";
         UPDATE_QUERY = "UPDATE \"tag\" SET \"name\"=? WHERE \"id\"=?";
+        DELETE_QUERY = "DELETE FROM \"tag\" WHERE \"id\"=?";
     }
 
     @Autowired
@@ -37,7 +39,7 @@ public class TagDao implements Dao<Tag> {
         Supplier<Tag> supplier = () -> {
             Tag t;
             try {
-                t = queryForObject(SELECT_BY_NAME_QUERY, name);
+                t = read(SELECT_BY_NAME_QUERY, name);
             } catch (DataAccessException e) {
                 t = null;
             }
@@ -59,7 +61,7 @@ public class TagDao implements Dao<Tag> {
     public Tag read(long id) throws DaoException {
         Tag tag;
         try {
-            tag = queryForObject(SELECT_BY_ID_QUERY, id);
+            tag = read(SELECT_BY_ID_QUERY, id);
         } catch (DataAccessException e) {
             throw new DaoException(e);
         }
@@ -81,11 +83,16 @@ public class TagDao implements Dao<Tag> {
 
     @Override
     public Tag delete(long id) throws DaoException {
-        return null;
+        Tag tag = read(id);
+        try {
+            jdbcTemplate.update(DELETE_QUERY, id);
+        } catch (DataAccessException e) {
+            throw new DaoException(e);
+        }
+        return tag;
     }
 
-    //TODO придумать новое название
-    private Tag queryForObject(String query, Object... objects) throws DataAccessException {
+    private Tag read(String query, Object... objects) throws DataAccessException {
         return jdbcTemplate.queryForObject(query, objects,
                 (rs, rowNum) -> {
                     long idTag = rs.getLong("id");

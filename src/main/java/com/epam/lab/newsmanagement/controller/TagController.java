@@ -76,7 +76,20 @@ public class TagController implements Controller<Tag> {
     }
 
     @Override
-    public ResponseEntity<Tag> delete(long id) {
-        return null;
+    @DeleteMapping(value = "/{id}/",
+            produces = PRODUCES,
+            consumes = CONSUMES)
+    public ResponseEntity<Tag> delete(@PathVariable("id") long id) {
+        HttpStatus status = HttpStatus.OK;
+        Tag tag;
+        try {
+            tag = service.delete(id);
+        } catch (ServiceException e) {
+            logger.error(e);
+            status = HttpStatus.NOT_FOUND;
+            tag = new Tag();
+            tag.setId(id);
+        }
+        return new ResponseEntity<>(tag, status);
     }
 }

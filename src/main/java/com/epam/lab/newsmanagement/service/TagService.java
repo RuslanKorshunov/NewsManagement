@@ -51,7 +51,13 @@ public class TagService implements IntService<Tag> {
 
     @Override
     public Tag delete(long id) throws ServiceException {
-        return null;
+        Tag tag;
+        try {
+            tag = dao.delete(id);
+        } catch (DaoException e) {
+            throw new ServiceException(e);
+        }
+        return tag;
     }
 
     //TODO убрать дублирование

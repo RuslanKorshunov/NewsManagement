@@ -40,7 +40,7 @@ public class AuthorDao implements Dao<Author> {
         Supplier<Author> supplier = () -> {
             Author a;
             try {
-                a = queryForObject(SELECT_BY_NAME_AND_SURNAME_QUERY, name, surname);
+                a = read(SELECT_BY_NAME_AND_SURNAME_QUERY, name, surname);
             } catch (DataAccessException e) {
                 a = null;
             }
@@ -62,7 +62,7 @@ public class AuthorDao implements Dao<Author> {
     public Author read(long id) throws DaoException {
         Author author;
         try {
-            author = queryForObject(SELECT_BY_ID_QUERY, id);
+            author = read(SELECT_BY_ID_QUERY, id);
         } catch (DataAccessException e) {
             throw new DaoException(e);
         }
@@ -95,7 +95,7 @@ public class AuthorDao implements Dao<Author> {
         return author;
     }
 
-    private Author queryForObject(String query, Object... objects) throws DataAccessException {
+    private Author read(String query, Object... objects) throws DataAccessException {
         return jdbcTemplate.queryForObject(query, objects,
                 (rs, rowNum) -> {
                     long idAuthor = rs.getLong("id");
