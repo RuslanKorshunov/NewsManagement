@@ -8,11 +8,10 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping(value = "/tag/")
 public class TagController implements Controller<Tag> {
     private static final Logger logger;
 
@@ -24,9 +23,9 @@ public class TagController implements Controller<Tag> {
     private TagService service;
 
     @Override
-    @PostMapping(value = "/tag/",
-            produces = "application/json",
-            consumes = "application/json")
+    @PostMapping(value = "/",
+            produces = PRODUCES,
+            consumes = CONSUMES)
     public ResponseEntity<Tag> create(@RequestBody Tag tag) {
         HttpStatus status = HttpStatus.CREATED;
         try {
@@ -39,8 +38,21 @@ public class TagController implements Controller<Tag> {
     }
 
     @Override
-    public ResponseEntity<Tag> read(long id) {
-        return null;
+    @GetMapping(value = "/{id}/",
+            produces = PRODUCES,
+            consumes = CONSUMES)
+    public ResponseEntity<Tag> read(@PathVariable("id") long id) {
+        HttpStatus status = HttpStatus.OK;
+        Tag tag;
+        try {
+            tag = service.read(id);
+        } catch (ServiceException e) {
+            logger.error(e);
+            status = HttpStatus.NOT_FOUND;
+            tag = new Tag();
+            tag.setId(id);
+        }
+        return new ResponseEntity<>(tag, status);
     }
 
     @Override

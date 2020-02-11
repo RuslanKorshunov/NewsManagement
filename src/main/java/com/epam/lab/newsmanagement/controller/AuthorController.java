@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping(value = "/author/")
 public class AuthorController implements Controller<Author> {
     private static final Logger logger;
 
@@ -22,9 +23,9 @@ public class AuthorController implements Controller<Author> {
     private AuthorService service;
 
     @Override
-    @PostMapping(value = "/author/",
-            produces = "application/json",
-            consumes = "application/json")
+    @PostMapping(value = "/",
+            produces = PRODUCES,
+            consumes = CONSUMES)
     public ResponseEntity<Author> create(@RequestBody Author author) {
         HttpStatus status = HttpStatus.CREATED;
         try {
@@ -37,9 +38,9 @@ public class AuthorController implements Controller<Author> {
     }
 
     @Override
-    @GetMapping(value = "/author/{id}/",
-            produces = "application/json",
-            consumes = "application/json")
+    @GetMapping(value = "/{id}/",
+            produces = PRODUCES,
+            consumes = CONSUMES)
     public ResponseEntity<Author> read(@PathVariable("id") long id) {
         HttpStatus status = HttpStatus.OK;
         Author author;
@@ -55,9 +56,9 @@ public class AuthorController implements Controller<Author> {
     }
 
     @Override
-    @PutMapping(value = "/author/{id}/",
-            produces = "application/json",
-            consumes = "application/json")
+    @PutMapping(value = "/{id}/",
+            produces = PRODUCES,
+            consumes = CONSUMES)
     public ResponseEntity<Author> update(@PathVariable long id, @RequestBody Author author) {
         HttpStatus status = HttpStatus.OK;
         Author currentAuthor = null;
@@ -76,7 +77,9 @@ public class AuthorController implements Controller<Author> {
     }
 
     @Override
-    @DeleteMapping(value = "/author/{id}/")
+    @DeleteMapping(value = "/{id}/",
+            produces = PRODUCES,
+            consumes = CONSUMES)
     public ResponseEntity<Author> delete(@PathVariable("id") long id) {
         HttpStatus status = HttpStatus.OK;
         Author author;

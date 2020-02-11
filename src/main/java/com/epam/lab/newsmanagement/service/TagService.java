@@ -29,7 +29,13 @@ public class TagService implements IntService<Tag> {
 
     @Override
     public Tag read(long id) throws ServiceException {
-        return null;
+        Tag tag;
+        try {
+            tag = dao.read(id);
+        } catch (DaoException e) {
+            throw new ServiceException(e);
+        }
+        return tag;
     }
 
     @Override

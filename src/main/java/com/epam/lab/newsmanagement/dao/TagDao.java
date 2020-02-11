@@ -16,11 +16,13 @@ import java.util.function.Supplier;
 @Qualifier("tagDao")
 public class TagDao implements Dao<Tag> {
     private static final String INSERT_QUERY;
-    public static final String SELECT_BY_NAME_QUERY;
+    private static final String SELECT_BY_NAME_QUERY;
+    private static final String READ_BY_ID_QUERY;
 
     static {
         INSERT_QUERY = "INSERT INTO \"tag\"(\"name\") VALUES (?)";
         SELECT_BY_NAME_QUERY = "SELECT * FROM \"tag\" WHERE \"name\"=?";
+        READ_BY_ID_QUERY = "SELECT * FROM \"tag\" WHERE \"id\"=?";
     }
 
     @Autowired
@@ -58,7 +60,18 @@ public class TagDao implements Dao<Tag> {
 
     @Override
     public Tag read(long id) throws DaoException {
-        return null;
+        Tag tag;
+        try {
+            tag = jdbcTemplate.queryForObject(READ_BY_ID_QUERY, new Object[]{id},
+                    (rs, rowNum) -> {
+                        long idTag = rs.getLong("id");
+                        String nameTag = rs.getString("name");
+                        return new Tag(idTag, nameTag);
+                    });
+        } catch (DataAccessException e) {
+            throw new DaoException(e);
+        }
+        return tag;
     }
 
     @Override
