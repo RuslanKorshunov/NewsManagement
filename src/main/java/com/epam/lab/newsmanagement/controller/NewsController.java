@@ -77,7 +77,20 @@ public class NewsController implements Controller<News> {
     }
 
     @Override
-    public ResponseEntity<News> delete(long id) {
-        return null;
+    @DeleteMapping(value = "/{id}/",
+            produces = PRODUCES,
+            consumes = CONSUMES)
+    public ResponseEntity<News> delete(@PathVariable("id") long id) {
+        HttpStatus status = HttpStatus.OK;
+        News news;
+        try {
+            news = service.delete(id);
+        } catch (ServiceException e) {
+            logger.error(e);
+            status = HttpStatus.NOT_FOUND;
+            news = new News();
+            news.setId(id);
+        }
+        return new ResponseEntity<>(news, status);
     }
 }

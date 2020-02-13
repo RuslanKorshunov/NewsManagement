@@ -33,6 +33,7 @@ public class NewsDao implements Dao<News> {
     private static final String UPDATE_QUERY;
     private static final String UPDATE_NEWS_AUTHOR_QUERY;
     private static final String DELETE_NEWS_TAG_QUERY;
+    private static final String DELETE_QUERY;
 
     static {
         INSERT_INTO_NEWS_QUERY = "INSERT INTO \"news\" (\"title\", \"short_text\", " +
@@ -49,6 +50,7 @@ public class NewsDao implements Dao<News> {
                 "\"modification_date\"=? WHERE \"id\"=?";
         UPDATE_NEWS_AUTHOR_QUERY = "UPDATE \"news_author\" SET \"author_id\"=? WHERE \"news_id\"=?";
         DELETE_NEWS_TAG_QUERY = "DELETE FROM \"news_tag\" WHERE \"news_id\"=?";
+        DELETE_QUERY = "DELETE FROM \"news\" WHERE \"id\"=?";
     }
 
     @Autowired
@@ -145,8 +147,15 @@ public class NewsDao implements Dao<News> {
     }
 
     @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public News delete(long id) throws DaoException {
-        return null;
+        News news = read(id);
+        try {
+            jdbcTemplate.update(DELETE_QUERY, id);
+        } catch (DataAccessException e) {
+            throw new DaoException(e);
+        }
+        return news;
     }
 
     private BatchPreparedStatementSetter getBatchPreparedStatementSetter(List<Tag> tags, long id) {
