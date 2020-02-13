@@ -58,7 +58,13 @@ public class NewsService implements IntService<News> {
 
     @Override
     public News read(long id) throws ServiceException {
-        return null;
+        News news;
+        try {
+            news = dao.read(id);
+        } catch (DaoException e) {
+            throw new ServiceException(e);
+        }
+        return news;
     }
 
     @Override

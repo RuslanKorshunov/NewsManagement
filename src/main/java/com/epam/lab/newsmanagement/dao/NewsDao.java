@@ -19,6 +19,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -27,12 +28,20 @@ public class NewsDao implements Dao<News> {
     private static final String INSERT_INTO_NEWS_QUERY;
     private static final String INSERT_INTO_NEWS_AUTHOR_QUERY;
     private static final String INSERT_INTO_NEWS_TAG_QUERY;
+    private static final String SELECT_NEWS_QUERY;
+    private static final String SELECT_TAGS_QUERY;
 
     static {
         INSERT_INTO_NEWS_QUERY = "INSERT INTO \"news\" (\"title\", \"short_text\", " +
                 "\"full_text\", \"creation_date\", \"modification_date\") VALUES (?, ?, ?, ?, ?)";
         INSERT_INTO_NEWS_AUTHOR_QUERY = "INSERT INTO \"news_author\" VALUES (?, ?)";
         INSERT_INTO_NEWS_TAG_QUERY = "INSERT INTO \"news_tag\" VALUES (?, ?)";
+        SELECT_NEWS_QUERY = "SELECT \"news\".\"id\", \"title\", \"short_text\", \"full_text\",\"creation_date\", " +
+                "\"modification_date\", \"news_author\".\"author_id\", \"author\".\"name\", " +
+                "\"author\".\"surname\" FROM \"news\" JOIN \"news_author\" ON " +
+                "\"news\".\"id\"=\"news_author\".\"news_id\" JOIN \"author\" ON \"author\".\"id\"=\"news_author\".\"author_id\" " +
+                "WHERE \"news\".\"id\"=?";
+        SELECT_TAGS_QUERY = "SELECT \"tag_id\", \"name\" FROM \"news_tag\" JOIN \"tag\" ON \"news_tag\".\"tag_id\"=\"tag\".\"id\" where \"news_id\"=?";
     }
 
     @Autowired
@@ -86,12 +95,37 @@ public class NewsDao implements Dao<News> {
 
     @Override
     public List<News> create(List<News> t) throws DaoException {
-        return null;
+        throw new DaoException("Operation isn't supported by newsDao.");
     }
 
     @Override
     public News read(long id) throws DaoException {
-        return null;
+        News news;
+        try {
+            news = jdbcTemplate.queryForObject(SELECT_NEWS_QUERY, new Object[]{id},
+                    (rs, rowNum) -> {
+                        long idNews = rs.getLong("id");
+                        String title = rs.getString("title");
+                        String short_text = rs.getString("short_text");
+                        String full_text = rs.getString("full_text");
+                        LocalDate creationDate = rs.getDate("creation_date").toLocalDate();
+                        LocalDate modificationDate = rs.getDate("modification_date").toLocalDate();
+                        long idAuthor = rs.getLong("author_id");
+                        String name = rs.getString("name");
+                        String surname = rs.getString("surname");
+                        Author author = new Author(idAuthor, name, surname);
+                        return new News(idNews, title, short_text, full_text, author, new ArrayList<>(), creationDate, modificationDate);
+                    });
+            List<Tag> tags = jdbcTemplate.query(SELECT_TAGS_QUERY, new Object[]{id}, (rs, rowNum) -> {
+                long idTag = rs.getLong("tag_id");
+                String name = rs.getString("name");
+                return new Tag(idTag, name);
+            });
+            news.setTags(tags);
+        } catch (DataAccessException e) {
+            throw new DaoException(e);
+        }
+        return news;
     }
 
     @Override

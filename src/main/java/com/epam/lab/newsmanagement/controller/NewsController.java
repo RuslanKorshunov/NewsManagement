@@ -8,10 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/news/")
@@ -42,8 +39,21 @@ public class NewsController implements Controller<News> {
     }
 
     @Override
-    public ResponseEntity<News> read(long id) {
-        return null;
+    @GetMapping(value = "/{id}/",
+            produces = PRODUCES,
+            consumes = CONSUMES)
+    public ResponseEntity<News> read(@PathVariable("id") long id) {
+        HttpStatus status = HttpStatus.OK;
+        News news;
+        try {
+            news = service.read(id);
+        } catch (ServiceException e) {
+            logger.error(e);
+            status = HttpStatus.NOT_FOUND;
+            news = new News();
+            news.setId(id);
+        }
+        return new ResponseEntity<>(news, status);
     }
 
     @Override
