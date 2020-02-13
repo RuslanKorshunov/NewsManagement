@@ -20,12 +20,13 @@ public class TagService implements IntService<Tag> {
     @Override
     public Tag create(Tag tag) throws ServiceException {
         validate(tag);
-        String name = tag.getName();
-        name = name.toLowerCase();
-        tag.setName(name);
         try {
+            tag = tag.clone();
+            String name = tag.getName();
+            name = name.toLowerCase();
+            tag.setName(name);
             tag = dao.create(tag);
-        } catch (DaoException e) {
+        } catch (DaoException | CloneNotSupportedException e) {
             throw new ServiceException(e);
         }
         return tag;
@@ -38,6 +39,7 @@ public class TagService implements IntService<Tag> {
         }
         for (Tag tag : tags) {
             validate(tag);
+            toLoverCase(tag);
         }
         try {
             tags = dao.create(tags);
@@ -89,5 +91,11 @@ public class TagService implements IntService<Tag> {
         if (name == null || !NameValidator.validate(name)) {
             throw new ServiceException("Tag's name has invalid value \"" + name + "\".");
         }
+    }
+
+    private void toLoverCase(Tag tag) {
+        String name = tag.getName();
+        name = name.toLowerCase();
+        tag.setName(name);
     }
 }
