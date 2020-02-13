@@ -34,8 +34,8 @@ public class TagService implements IntService<Tag> {
 
     @Override
     public List<Tag> create(List<Tag> tags) throws ServiceException {
-        if (tags == null) {
-            throw new ServiceException("parameter \"tags\" can't be null.");
+        if (tags == null || tags.isEmpty()) {
+            throw new ServiceException("parameter \"tags\" can't be null or empty.");
         }
         for (Tag tag : tags) {
             validate(tag);

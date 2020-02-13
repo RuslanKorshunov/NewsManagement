@@ -30,6 +30,9 @@ public class NewsDao implements Dao<News> {
     private static final String INSERT_INTO_NEWS_TAG_QUERY;
     private static final String SELECT_NEWS_QUERY;
     private static final String SELECT_TAGS_QUERY;
+    private static final String UPDATE_QUERY;
+    private static final String UPDATE_NEWS_AUTHOR_QUERY;
+    private static final String DELETE_NEWS_TAG_QUERY;
 
     static {
         INSERT_INTO_NEWS_QUERY = "INSERT INTO \"news\" (\"title\", \"short_text\", " +
@@ -42,6 +45,10 @@ public class NewsDao implements Dao<News> {
                 "\"news\".\"id\"=\"news_author\".\"news_id\" JOIN \"author\" ON \"author\".\"id\"=\"news_author\".\"author_id\" " +
                 "WHERE \"news\".\"id\"=?";
         SELECT_TAGS_QUERY = "SELECT \"tag_id\", \"name\" FROM \"news_tag\" JOIN \"tag\" ON \"news_tag\".\"tag_id\"=\"tag\".\"id\" where \"news_id\"=?";
+        UPDATE_QUERY = "UPDATE \"news\" SET \"title\"=?, \"short_text\"=?, \"full_text\"=?, " +
+                "\"modification_date\"=? WHERE \"id\"=?";
+        UPDATE_NEWS_AUTHOR_QUERY = "UPDATE \"news_author\" SET \"author_id\"=? WHERE \"news_id\"=?";
+        DELETE_NEWS_TAG_QUERY = "DELETE FROM \"news_tag\" WHERE \"news_id\"=?";
     }
 
     @Autowired
@@ -73,20 +80,7 @@ public class NewsDao implements Dao<News> {
             innerNews = new News(id, title, shortText, fullText, author, tags, creationDate, modificationDate);
             long idAuthor = author.getId();
             jdbcTemplate.update(INSERT_INTO_NEWS_AUTHOR_QUERY, id, idAuthor);
-            jdbcTemplate.batchUpdate(INSERT_INTO_NEWS_TAG_QUERY, new BatchPreparedStatementSetter() {
-                @Override
-                public void setValues(PreparedStatement ps, int i) throws SQLException {
-                    Tag tag = tags.get(i);
-                    long idTag = tag.getId();
-                    ps.setLong(1, id);
-                    ps.setLong(2, idTag);
-                }
-
-                @Override
-                public int getBatchSize() {
-                    return tags.size();
-                }
-            });
+            jdbcTemplate.batchUpdate(INSERT_INTO_NEWS_TAG_QUERY, getBatchPreparedStatementSetter(tags, id));
         } catch (DataAccessException e) {
             throw new DaoException(e);
         }
@@ -99,6 +93,7 @@ public class NewsDao implements Dao<News> {
     }
 
     @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public News read(long id) throws DaoException {
         News news;
         try {
@@ -129,12 +124,45 @@ public class NewsDao implements Dao<News> {
     }
 
     @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public News update(News news) throws DaoException {
-        return null;
+        long idNews = news.getId();
+        String title = news.getTitle();
+        String shortText = news.getShortText();
+        String fullText = news.getFullText();
+        LocalDate modificationDate = LocalDate.now();
+        List<Tag> tags = news.getTags();
+        try {
+            jdbcTemplate.update(UPDATE_QUERY, title, shortText, fullText, modificationDate, idNews);
+            long idAuthor = news.getAuthor().getId();
+            jdbcTemplate.update(UPDATE_NEWS_AUTHOR_QUERY, idAuthor, idNews);
+            jdbcTemplate.update(DELETE_NEWS_TAG_QUERY, idNews);
+            jdbcTemplate.batchUpdate(INSERT_INTO_NEWS_TAG_QUERY, getBatchPreparedStatementSetter(tags, idNews));
+        } catch (DataAccessException e) {
+            throw new DaoException(e);
+        }
+        return news;
     }
 
     @Override
     public News delete(long id) throws DaoException {
         return null;
+    }
+
+    private BatchPreparedStatementSetter getBatchPreparedStatementSetter(List<Tag> tags, long id) {
+        return new BatchPreparedStatementSetter() {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+                Tag tag = tags.get(i);
+                long idTag = tag.getId();
+                ps.setLong(1, id);
+                ps.setLong(2, idTag);
+            }
+
+            @Override
+            public int getBatchSize() {
+                return tags.size();
+            }
+        };
     }
 }

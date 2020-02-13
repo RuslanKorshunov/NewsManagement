@@ -68,8 +68,22 @@ public class NewsService implements IntService<News> {
     }
 
     @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public News update(News news) throws ServiceException {
-        return null;
+        validate(news);
+        try {
+            news = news.clone();
+            Author author = news.getAuthor();
+            author = authorService.create(author);
+            news.setAuthor(author);
+            List<Tag> tags = news.getTags();
+            tags = tagService.create(tags);
+            news.setTags(tags);
+            news = dao.update(news);
+        } catch (DaoException | CloneNotSupportedException e) {
+            throw new ServiceException(e);
+        }
+        return news;
     }
 
     @Override

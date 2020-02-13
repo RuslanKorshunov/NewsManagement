@@ -57,8 +57,23 @@ public class NewsController implements Controller<News> {
     }
 
     @Override
-    public ResponseEntity<News> update(long id, News news) {
-        return null;
+    @PutMapping(value = "/{id}/",
+            produces = PRODUCES,
+            consumes = CONSUMES)
+    public ResponseEntity<News> update(@PathVariable("id") long id, @RequestBody News news) {
+        news.setId(id);
+        HttpStatus status = HttpStatus.OK;
+        boolean isFound = false;
+        try {
+            if (service.read(id) != null) {
+                isFound = true;
+            }
+            news = service.update(news);
+        } catch (ServiceException e) {
+            logger.error(e);
+            status = !isFound ? HttpStatus.NOT_FOUND : HttpStatus.BAD_REQUEST;
+        }
+        return new ResponseEntity<>(news, status);
     }
 
     @Override
