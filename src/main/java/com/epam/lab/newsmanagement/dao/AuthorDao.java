@@ -6,10 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.PreparedStatement;
+import java.util.List;
 import java.util.function.Supplier;
 
 @Repository
@@ -49,13 +53,25 @@ public class AuthorDao implements Dao<Author> {
         Author innerAuthor = supplier.get();
         if (innerAuthor == null) {
             try {
-                jdbcTemplate.update(INSERT_QUERY, name, surname);
-                innerAuthor = supplier.get();
+                KeyHolder keyHolder = new GeneratedKeyHolder();
+                jdbcTemplate.update(con -> {
+                    PreparedStatement ps = con.prepareStatement(INSERT_QUERY, new String[]{"id"});
+                    ps.setString(1, name);
+                    ps.setString(2, surname);
+                    return ps;
+                }, keyHolder);
+                long id = keyHolder.getKey().longValue();
+                innerAuthor = new Author(id, name, surname);
             } catch (DataAccessException e) {
                 throw new DaoException(e);
             }
         }
         return innerAuthor;
+    }
+
+    @Override
+    public List<Author> create(List<Author> authors) throws DaoException {
+        throw new DaoException("Operation isn't supported by authorDao.");
     }
 
     @Override

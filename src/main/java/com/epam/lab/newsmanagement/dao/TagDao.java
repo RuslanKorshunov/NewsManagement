@@ -6,10 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.PreparedStatement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
 @Repository
@@ -48,13 +53,29 @@ public class TagDao implements Dao<Tag> {
         Tag innerTag = supplier.get();
         if (innerTag == null) {
             try {
-                jdbcTemplate.update(INSERT_QUERY, name);
-                innerTag = supplier.get();
+                KeyHolder keyHolder = new GeneratedKeyHolder();
+                jdbcTemplate.update(con -> {
+                    PreparedStatement ps = con.prepareStatement(INSERT_QUERY, new String[]{"id"});
+                    ps.setString(1, name);
+                    return ps;
+                }, keyHolder);
+                long id = keyHolder.getKey().longValue();
+                innerTag = new Tag(id, name);
             } catch (DataAccessException e) {
                 throw new DaoException(e);
             }
         }
         return innerTag;
+    }
+
+    @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public List<Tag> create(List<Tag> tags) throws DaoException {
+        List<Tag> innerTags = new ArrayList<>();
+        for (Tag tag : tags) {
+            innerTags.add(create(tag));
+        }
+        return innerTags;
     }
 
     @Override
@@ -82,6 +103,7 @@ public class TagDao implements Dao<Tag> {
     }
 
     @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public Tag delete(long id) throws DaoException {
         Tag tag = read(id);
         try {
@@ -99,5 +121,19 @@ public class TagDao implements Dao<Tag> {
                     String nameTag = rs.getString("name");
                     return new Tag(idTag, nameTag);
                 });
+    }
+
+    private Tag getExistingTag(Tag tag) throws DataAccessException {
+        String name = tag.getName();
+        Supplier<Tag> supplier = () -> {
+            Tag t;
+            try {
+                t = read(SELECT_BY_NAME_QUERY, name);
+            } catch (DataAccessException e) {
+                t = null;
+            }
+            return t;
+        };
+        return supplier.get();
     }
 }

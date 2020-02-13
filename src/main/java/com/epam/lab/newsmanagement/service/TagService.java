@@ -6,9 +6,13 @@ import com.epam.lab.newsmanagement.exception.DaoException;
 import com.epam.lab.newsmanagement.exception.ServiceException;
 import com.epam.lab.newsmanagement.validator.NameValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
+@Qualifier("tagService")
 public class TagService implements IntService<Tag> {
     @Autowired
     private TagDao dao;
@@ -25,6 +29,22 @@ public class TagService implements IntService<Tag> {
             throw new ServiceException(e);
         }
         return tag;
+    }
+
+    @Override
+    public List<Tag> create(List<Tag> tags) throws ServiceException {
+        if (tags == null) {
+            throw new ServiceException("parameter \"tags\" can't be null.");
+        }
+        for (Tag tag : tags) {
+            validate(tag);
+        }
+        try {
+            tags = dao.create(tags);
+        } catch (DaoException e) {
+            throw new ServiceException(e);
+        }
+        return tags;
     }
 
     @Override
@@ -60,8 +80,8 @@ public class TagService implements IntService<Tag> {
         return tag;
     }
 
-    //TODO убрать дублирование
-    private void validate(Tag tag) throws ServiceException {
+    @Override
+    public void validate(Tag tag) throws ServiceException {
         if (tag == null) {
             throw new ServiceException("parameter \"tag\" can't be null.");
         }

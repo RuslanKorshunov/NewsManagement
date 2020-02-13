@@ -6,9 +6,13 @@ import com.epam.lab.newsmanagement.exception.DaoException;
 import com.epam.lab.newsmanagement.exception.ServiceException;
 import com.epam.lab.newsmanagement.validator.NameValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
+@Qualifier("authorService")
 public class AuthorService implements IntService<Author> {
     @Autowired
     private AuthorDao dao;
@@ -22,6 +26,11 @@ public class AuthorService implements IntService<Author> {
             throw new ServiceException(e);
         }
         return author;
+    }
+
+    @Override
+    public List<Author> create(List<Author> authors) throws ServiceException {
+        throw new ServiceException("Operation isn't supported by authorService.");
     }
 
     @Override
@@ -57,7 +66,8 @@ public class AuthorService implements IntService<Author> {
         return author;
     }
 
-    private void validate(Author author) throws ServiceException {
+    @Override
+    public void validate(Author author) throws ServiceException {
         if (author == null) {
             throw new ServiceException("parameter \"author\" can't be null.");
         }
