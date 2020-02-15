@@ -1,6 +1,6 @@
 package com.epam.lab.newsmanagement.entity;
 
-public class Tag {
+public class Tag implements Cloneable {
     private long id;
     private String name;
 
@@ -26,6 +26,11 @@ public class Tag {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public Tag clone() throws CloneNotSupportedException {
+        return (Tag) super.clone();
     }
 
     @Override

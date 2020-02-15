@@ -1,6 +1,6 @@
 package com.epam.lab.newsmanagement.entity;
 
-public class Author {
+public class Author implements Cloneable {
     private long id;
     private String name;
     private String surname;
@@ -36,6 +36,11 @@ public class Author {
 
     public void setSurname(String surname) {
         this.surname = surname;
+    }
+
+    @Override
+    public Author clone() throws CloneNotSupportedException {
+        return (Author) super.clone();
     }
 
     @Override

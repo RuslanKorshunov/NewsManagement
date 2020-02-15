@@ -1,32 +1,32 @@
 package com.epam.lab.newsmanagement.controller;
 
-import com.epam.lab.newsmanagement.entity.Author;
-import com.epam.lab.newsmanagement.service.AuthorService;
+import com.epam.lab.newsmanagement.entity.News;
 import com.epam.lab.newsmanagement.service.IntService;
+import com.epam.lab.newsmanagement.service.NewsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/author/")
-public class AuthorController extends AbstractController<Author> {
+@RequestMapping(value = "/news/")
+public class NewsController extends AbstractController<News> {
 
     @Autowired
-    private AuthorService service;
+    private NewsService service;
 
     @Override
     @PostMapping(value = "/",
             produces = PRODUCES,
             consumes = CONSUMES)
-    public ResponseEntity<Author> create(@RequestBody Author author) {
-        return super.create(author);
+    public ResponseEntity<News> create(@RequestBody News news) {
+        return super.create(news);
     }
 
     @Override
     @GetMapping(value = "/{id}/",
             produces = PRODUCES,
             consumes = CONSUMES)
-    public ResponseEntity<Author> read(@PathVariable("id") long id) {
+    public ResponseEntity<News> read(@PathVariable("id") long id) {
         return super.read(id);
     }
 
@@ -34,32 +34,32 @@ public class AuthorController extends AbstractController<Author> {
     @PutMapping(value = "/{id}/",
             produces = PRODUCES,
             consumes = CONSUMES)
-    public ResponseEntity<Author> update(@PathVariable long id, @RequestBody Author author) {
-        return super.update(id, author);
+    public ResponseEntity<News> update(@PathVariable("id") long id, @RequestBody News news) {
+        return super.update(id, news);
     }
 
     @Override
     @DeleteMapping(value = "/{id}/",
             produces = PRODUCES,
             consumes = CONSUMES)
-    public ResponseEntity<Author> delete(@PathVariable("id") long id) {
+    public ResponseEntity<News> delete(@PathVariable("id") long id) {
         return super.delete(id);
     }
 
     @Override
-    IntService<Author> getService() {
+    IntService<News> getService() {
         return service;
     }
 
     @Override
-    Author createEntity(long id) {
-        Author author = new Author();
-        author.setId(id);
-        return author;
+    News createEntity(long id) {
+        News news = new News();
+        news.setId(id);
+        return news;
     }
 
     @Override
-    void setId(Author author, long id) {
-        author.setId(id);
+    void setId(News news, long id) {
+        news.setId(id);
     }
 }

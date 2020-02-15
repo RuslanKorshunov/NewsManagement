@@ -6,15 +6,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.PreparedStatement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
 @Repository
 @Qualifier("tagDao")
-public class TagDao implements Dao<Tag> {
+public class TagDao extends AbstractDao<Tag> {
     private static final String INSERT_QUERY;
     private static final String SELECT_BY_NAME_QUERY;
     private static final String SELECT_BY_ID_QUERY;
@@ -35,69 +39,106 @@ public class TagDao implements Dao<Tag> {
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public Tag create(Tag tag) throws DaoException {
-        String name = tag.getName();
-        Supplier<Tag> supplier = () -> {
-            Tag t;
-            try {
-                t = read(SELECT_BY_NAME_QUERY, name);
-            } catch (DataAccessException e) {
-                t = null;
-            }
-            return t;
-        };
-        Tag innerTag = supplier.get();
-        if (innerTag == null) {
-            try {
-                jdbcTemplate.update(INSERT_QUERY, name);
-                innerTag = supplier.get();
-            } catch (DataAccessException e) {
-                throw new DaoException(e);
-            }
-        }
-        return innerTag;
+        return super.create(tag);
     }
 
     @Override
-    public Tag read(long id) throws DaoException {
-        Tag tag;
-        try {
-            tag = read(SELECT_BY_ID_QUERY, id);
-        } catch (DataAccessException e) {
-            throw new DaoException(e);
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public List<Tag> create(List<Tag> tags) throws DaoException {
+        List<Tag> innerTags = new ArrayList<>();
+        for (Tag tag : tags) {
+            innerTags.add(create(tag));
         }
-        return tag;
+        return innerTags;
+    }
+
+    @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public Tag read(long id) throws DaoException {
+        return super.read(id);
     }
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public Tag update(Tag tag) throws DaoException {
-        long id = tag.getId();
-        String name = tag.getName();
-        try {
-            jdbcTemplate.update(UPDATE_QUERY, name, id);
-        } catch (DataAccessException e) {
-            throw new DaoException(e);
-        }
-        return tag;
+        return super.update(tag);
     }
 
     @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public Tag delete(long id) throws DaoException {
-        Tag tag = read(id);
-        try {
-            jdbcTemplate.update(DELETE_QUERY, id);
-        } catch (DataAccessException e) {
-            throw new DaoException(e);
-        }
-        return tag;
+        return super.delete(id);
     }
 
-    private Tag read(String query, Object... objects) throws DataAccessException {
-        return jdbcTemplate.queryForObject(query, objects,
+    @Override
+    Supplier<Tag> getSupplier(Tag tag) {
+        return super.getSupplier(tag);
+    }
+
+    @Override
+    JdbcTemplate getJdbcTemplate() {
+        return jdbcTemplate;
+    }
+
+    @Override
+    Tag readEntity(String query, Object... objects) throws DataAccessException {
+        return getJdbcTemplate().queryForObject(query, objects,
                 (rs, rowNum) -> {
                     long idTag = rs.getLong("id");
                     String nameTag = rs.getString("name");
                     return new Tag(idTag, nameTag);
                 });
+    }
+
+    @Override
+    String getQueryForSupplier() {
+        return SELECT_BY_NAME_QUERY;
+    }
+
+    @Override
+    String getSelectByIdQuery() {
+        return SELECT_BY_ID_QUERY;
+    }
+
+    @Override
+    String getUpdateQuery() {
+        return UPDATE_QUERY;
+    }
+
+    @Override
+    String getDeleteQuery() {
+        return DELETE_QUERY;
+    }
+
+    @Override
+    Object[] getParametersForSupplier(Tag tag) {
+        return new Object[]{tag.getName()};
+    }
+
+    @Override
+    Object[] getParametersForUpdate(Tag tag) {
+        long id = tag.getId();
+        String name = tag.getName();
+        return new Object[]{name, id};
+    }
+
+    @Override
+    PreparedStatementCreator getCreatorForCreateQuery(Tag tag) throws DataAccessException {
+        String name = tag.getName();
+        return con -> {
+            PreparedStatement ps = con.prepareStatement(INSERT_QUERY, new String[]{"id"});
+            ps.setString(1, name);
+            return ps;
+        };
+    }
+
+    @Override
+    Tag getClone(Tag tag) throws CloneNotSupportedException {
+        return tag.clone();
+    }
+
+    @Override
+    void setId(Tag tag, long id) {
+        tag.setId(id);
     }
 }
