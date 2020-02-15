@@ -6,8 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +17,7 @@ import java.util.function.Supplier;
 
 @Repository
 @Qualifier("authorDao")
-public class AuthorDao implements Dao<Author> {
+public class AuthorDao extends AbstractDao<Author> {
     private static final String INSERT_QUERY;
     private static final String SELECT_BY_ID_QUERY;
     private static final String UPDATE_QUERY;
@@ -39,85 +38,108 @@ public class AuthorDao implements Dao<Author> {
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public Author create(Author author) throws DaoException {
-        String name = author.getName();
-        String surname = author.getSurname();
-        Supplier<Author> supplier = () -> {
-            Author a;
-            try {
-                a = read(SELECT_BY_NAME_AND_SURNAME_QUERY, name, surname);
-            } catch (DataAccessException e) {
-                a = null;
-            }
-            return a;
-        };
-        Author innerAuthor = supplier.get();
-        if (innerAuthor == null) {
-            try {
-                KeyHolder keyHolder = new GeneratedKeyHolder();
-                jdbcTemplate.update(con -> {
-                    PreparedStatement ps = con.prepareStatement(INSERT_QUERY, new String[]{"id"});
-                    ps.setString(1, name);
-                    ps.setString(2, surname);
-                    return ps;
-                }, keyHolder);
-                long id = keyHolder.getKey().longValue();
-                innerAuthor = new Author(id, name, surname);
-            } catch (DataAccessException e) {
-                throw new DaoException(e);
-            }
-        }
-        return innerAuthor;
+        return super.create(author);
     }
 
     @Override
-    public List<Author> create(List<Author> authors) throws DaoException {
-        throw new DaoException("Operation isn't supported by authorDao.");
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public List<Author> create(List<Author> t) throws DaoException {
+        return super.create(t);
     }
 
     @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public Author read(long id) throws DaoException {
-        Author author;
-        try {
-            author = read(SELECT_BY_ID_QUERY, id);
-        } catch (DataAccessException e) {
-            throw new DaoException(e);
-        }
-        return author;
+        return super.read(id);
     }
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public Author update(Author author) throws DaoException {
-        long id = author.getId();
-        String name = author.getName();
-        String surname = author.getSurname();
-        try {
-            jdbcTemplate.update(UPDATE_QUERY, name, surname, id);
-        } catch (DataAccessException e) {
-            throw new DaoException(e);
-        }
-        return author;
+        return super.update(author);
     }
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public Author delete(long id) throws DaoException {
-        Author author = read(id);
-        try {
-            jdbcTemplate.update(DELETE_QUERY, id);
-        } catch (DataAccessException e) {
-            throw new DaoException(e);
-        }
-        return author;
+        return super.delete(id);
     }
 
-    private Author read(String query, Object... objects) throws DataAccessException {
-        return jdbcTemplate.queryForObject(query, objects,
+    @Override
+    Supplier<Author> getSupplier(Author author) {
+        return super.getSupplier(author);
+    }
+
+    @Override
+    Author readEntity(String query, Object... objects) throws DataAccessException {
+        return getJdbcTemplate().queryForObject(query, objects,
                 (rs, rowNum) -> {
                     long idAuthor = rs.getLong("id");
                     String nameAuthor = rs.getString("name");
                     String surnameAuthor = rs.getString("surname");
                     return new Author(idAuthor, nameAuthor, surnameAuthor);
                 });
+    }
+
+    @Override
+    String getQueryForSupplier() {
+        return SELECT_BY_NAME_AND_SURNAME_QUERY;
+    }
+
+    @Override
+    String getSelectByIdQuery() {
+        return SELECT_BY_ID_QUERY;
+    }
+
+    @Override
+    String getUpdateQuery() {
+        return UPDATE_QUERY;
+    }
+
+    @Override
+    String getDeleteQuery() {
+        return DELETE_QUERY;
+    }
+
+    @Override
+    Object[] getParametersForSupplier(Author author) {
+        String name = author.getName();
+        String surname = author.getSurname();
+        return new Object[]{name, surname};
+    }
+
+    @Override
+    Object[] getParametersForUpdate(Author author) {
+        long id = author.getId();
+        String name = author.getName();
+        String surname = author.getSurname();
+        return new Object[]{name, surname, id};
+    }
+
+    @Override
+    PreparedStatementCreator getCreatorForCreateQuery(Author author) throws DataAccessException {
+        String name = author.getName();
+        String surname = author.getSurname();
+        return con -> {
+            PreparedStatement ps = con.prepareStatement(INSERT_QUERY, new String[]{"id"});
+            ps.setString(1, name);
+            ps.setString(2, surname);
+            return ps;
+        };
+    }
+
+    @Override
+    Author getClone(Author author) throws CloneNotSupportedException {
+        return author.clone();
+    }
+
+    @Override
+    void setId(Author author, long id) {
+        author.setId(id);
+    }
+
+    @Override
+    JdbcTemplate getJdbcTemplate() {
+        return jdbcTemplate;
     }
 }
