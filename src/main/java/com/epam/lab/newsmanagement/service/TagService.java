@@ -1,5 +1,6 @@
 package com.epam.lab.newsmanagement.service;
 
+import com.epam.lab.newsmanagement.dao.Dao;
 import com.epam.lab.newsmanagement.dao.TagDao;
 import com.epam.lab.newsmanagement.entity.Tag;
 import com.epam.lab.newsmanagement.exception.DaoException;
@@ -13,7 +14,7 @@ import java.util.List;
 
 @Service
 @Qualifier("tagService")
-public class TagService implements IntService<Tag> {
+public class TagService extends AbstractService<Tag> {
     @Autowired
     private TagDao dao;
 
@@ -51,35 +52,17 @@ public class TagService implements IntService<Tag> {
 
     @Override
     public Tag read(long id) throws ServiceException {
-        Tag tag;
-        try {
-            tag = dao.read(id);
-        } catch (DaoException e) {
-            throw new ServiceException(e);
-        }
-        return tag;
+        return super.read(id);
     }
 
     @Override
     public Tag update(Tag tag) throws ServiceException {
-        validate(tag);
-        try {
-            dao.update(tag);
-        } catch (DaoException e) {
-            throw new ServiceException(e);
-        }
-        return tag;
+        return super.update(tag);
     }
 
     @Override
     public Tag delete(long id) throws ServiceException {
-        Tag tag;
-        try {
-            tag = dao.delete(id);
-        } catch (DaoException e) {
-            throw new ServiceException(e);
-        }
-        return tag;
+        return super.delete(id);
     }
 
     @Override
@@ -91,6 +74,11 @@ public class TagService implements IntService<Tag> {
         if (name == null || !NameValidator.validate(name)) {
             throw new ServiceException("Tag's name has invalid value \"" + name + "\".");
         }
+    }
+
+    @Override
+    Dao<Tag> getDao() {
+        return dao;
     }
 
     private void toLoverCase(Tag tag) {

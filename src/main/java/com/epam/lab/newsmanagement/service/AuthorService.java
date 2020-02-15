@@ -1,8 +1,8 @@
 package com.epam.lab.newsmanagement.service;
 
 import com.epam.lab.newsmanagement.dao.AuthorDao;
+import com.epam.lab.newsmanagement.dao.Dao;
 import com.epam.lab.newsmanagement.entity.Author;
-import com.epam.lab.newsmanagement.exception.DaoException;
 import com.epam.lab.newsmanagement.exception.ServiceException;
 import com.epam.lab.newsmanagement.validator.NameValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,57 +13,33 @@ import java.util.List;
 
 @Service
 @Qualifier("authorService")
-public class AuthorService implements IntService<Author> {
+public class AuthorService extends AbstractService<Author> {
     @Autowired
     private AuthorDao dao;
 
     @Override
     public Author create(Author author) throws ServiceException {
-        validate(author);
-        try {
-            author = dao.create(author);
-        } catch (DaoException e) {
-            throw new ServiceException(e);
-        }
-        return author;
+        return super.create(author);
     }
 
     @Override
-    public List<Author> create(List<Author> authors) throws ServiceException {
-        throw new ServiceException("Operation isn't supported by authorService.");
+    public List<Author> create(List<Author> t) throws ServiceException {
+        return super.create(t);
     }
 
     @Override
     public Author read(long id) throws ServiceException {
-        Author author;
-        try {
-            author = dao.read(id);
-        } catch (DaoException e) {
-            throw new ServiceException(e);
-        }
-        return author;
+        return super.read(id);
     }
 
     @Override
     public Author update(Author author) throws ServiceException {
-        validate(author);
-        try {
-            dao.update(author);
-        } catch (DaoException e) {
-            throw new ServiceException(e);
-        }
-        return author;
+        return super.update(author);
     }
 
     @Override
     public Author delete(long id) throws ServiceException {
-        Author author;
-        try {
-            author = dao.delete(id);
-        } catch (DaoException e) {
-            throw new ServiceException(e);
-        }
-        return author;
+        return super.delete(id);
     }
 
     @Override
@@ -79,5 +55,10 @@ public class AuthorService implements IntService<Author> {
         if (surname == null || !NameValidator.validate(surname)) {
             throw new ServiceException("Author's surname has invalid value \"" + surname + "\".");
         }
+    }
+
+    @Override
+    Dao<Author> getDao() {
+        return dao;
     }
 }
