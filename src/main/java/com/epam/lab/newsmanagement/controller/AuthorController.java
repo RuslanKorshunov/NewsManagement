@@ -1,23 +1,15 @@
 package com.epam.lab.newsmanagement.controller;
 
 import com.epam.lab.newsmanagement.entity.Author;
-import com.epam.lab.newsmanagement.exception.ServiceException;
 import com.epam.lab.newsmanagement.service.AuthorService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.epam.lab.newsmanagement.service.IntService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/author/")
-public class AuthorController implements Controller<Author> {
-    private static final Logger logger;
-
-    static {
-        logger = LogManager.getLogger(AuthorController.class);
-    }
+public class AuthorController extends AbstractController<Author> {
 
     @Autowired
     private AuthorService service;
@@ -27,14 +19,7 @@ public class AuthorController implements Controller<Author> {
             produces = PRODUCES,
             consumes = CONSUMES)
     public ResponseEntity<Author> create(@RequestBody Author author) {
-        HttpStatus status = HttpStatus.CREATED;
-        try {
-            author = service.create(author);
-        } catch (ServiceException e) {
-            logger.error(e);
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
-        }
-        return new ResponseEntity<>(author, status);
+        return super.create(author);
     }
 
     @Override
@@ -42,17 +27,7 @@ public class AuthorController implements Controller<Author> {
             produces = PRODUCES,
             consumes = CONSUMES)
     public ResponseEntity<Author> read(@PathVariable("id") long id) {
-        HttpStatus status = HttpStatus.OK;
-        Author author;
-        try {
-            author = service.read(id);
-        } catch (ServiceException e) {
-            logger.error(e);
-            status = HttpStatus.NOT_FOUND;//TODO проверить статус
-            author = new Author();
-            author.setId(id);
-        }
-        return new ResponseEntity<>(author, status);
+        return super.read(id);
     }
 
     @Override
@@ -60,19 +35,7 @@ public class AuthorController implements Controller<Author> {
             produces = PRODUCES,
             consumes = CONSUMES)
     public ResponseEntity<Author> update(@PathVariable long id, @RequestBody Author author) {
-        author.setId(id);
-        HttpStatus status = HttpStatus.OK;
-        boolean isFound = false;
-        try {
-            if (service.read(id) != null) {
-                isFound = true;
-            }
-            service.update(author);
-        } catch (ServiceException e) {
-            logger.error(e);
-            status = !isFound ? HttpStatus.NOT_FOUND : HttpStatus.BAD_REQUEST;
-        }
-        return new ResponseEntity<>(author, status);
+        return super.update(id, author);
     }
 
     @Override
@@ -80,16 +43,23 @@ public class AuthorController implements Controller<Author> {
             produces = PRODUCES,
             consumes = CONSUMES)
     public ResponseEntity<Author> delete(@PathVariable("id") long id) {
-        HttpStatus status = HttpStatus.OK;
-        Author author;
-        try {
-            author = service.delete(id);
-        } catch (ServiceException e) {
-            logger.error(e);
-            status = HttpStatus.NOT_FOUND;
-            author = new Author();
-            author.setId(id);
-        }
-        return new ResponseEntity<>(author, status);
+        return super.delete(id);
+    }
+
+    @Override
+    IntService<Author> getService() {
+        return service;
+    }
+
+    @Override
+    Author createEntity(long id) {
+        Author author = new Author();
+        author.setId(id);
+        return author;
+    }
+
+    @Override
+    void setId(Author author, long id) {
+        author.setId(id);
     }
 }

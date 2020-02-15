@@ -1,23 +1,15 @@
 package com.epam.lab.newsmanagement.controller;
 
 import com.epam.lab.newsmanagement.entity.News;
-import com.epam.lab.newsmanagement.exception.ServiceException;
+import com.epam.lab.newsmanagement.service.IntService;
 import com.epam.lab.newsmanagement.service.NewsService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/news/")
-public class NewsController implements Controller<News> {
-    private static final Logger logger;
-
-    static {
-        logger = LogManager.getLogger(NewsController.class);
-    }
+public class NewsController extends AbstractController<News> {
 
     @Autowired
     private NewsService service;
@@ -27,15 +19,7 @@ public class NewsController implements Controller<News> {
             produces = PRODUCES,
             consumes = CONSUMES)
     public ResponseEntity<News> create(@RequestBody News news) {
-        logger.info(news);
-        HttpStatus status = HttpStatus.CREATED;
-        try {
-            news = service.create(news);
-        } catch (ServiceException e) {
-            logger.error(e);
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
-        }
-        return new ResponseEntity<>(news, status);
+        return super.create(news);
     }
 
     @Override
@@ -43,17 +27,7 @@ public class NewsController implements Controller<News> {
             produces = PRODUCES,
             consumes = CONSUMES)
     public ResponseEntity<News> read(@PathVariable("id") long id) {
-        HttpStatus status = HttpStatus.OK;
-        News news;
-        try {
-            news = service.read(id);
-        } catch (ServiceException e) {
-            logger.error(e);
-            status = HttpStatus.NOT_FOUND;
-            news = new News();
-            news.setId(id);
-        }
-        return new ResponseEntity<>(news, status);
+        return super.read(id);
     }
 
     @Override
@@ -61,19 +35,7 @@ public class NewsController implements Controller<News> {
             produces = PRODUCES,
             consumes = CONSUMES)
     public ResponseEntity<News> update(@PathVariable("id") long id, @RequestBody News news) {
-        news.setId(id);
-        HttpStatus status = HttpStatus.OK;
-        boolean isFound = false;
-        try {
-            if (service.read(id) != null) {
-                isFound = true;
-            }
-            news = service.update(news);
-        } catch (ServiceException e) {
-            logger.error(e);
-            status = !isFound ? HttpStatus.NOT_FOUND : HttpStatus.BAD_REQUEST;
-        }
-        return new ResponseEntity<>(news, status);
+        return super.update(id, news);
     }
 
     @Override
@@ -81,16 +43,23 @@ public class NewsController implements Controller<News> {
             produces = PRODUCES,
             consumes = CONSUMES)
     public ResponseEntity<News> delete(@PathVariable("id") long id) {
-        HttpStatus status = HttpStatus.OK;
-        News news;
-        try {
-            news = service.delete(id);
-        } catch (ServiceException e) {
-            logger.error(e);
-            status = HttpStatus.NOT_FOUND;
-            news = new News();
-            news.setId(id);
-        }
-        return new ResponseEntity<>(news, status);
+        return super.delete(id);
+    }
+
+    @Override
+    IntService<News> getService() {
+        return service;
+    }
+
+    @Override
+    News createEntity(long id) {
+        News news = new News();
+        news.setId(id);
+        return news;
+    }
+
+    @Override
+    void setId(News news, long id) {
+        news.setId(id);
     }
 }
