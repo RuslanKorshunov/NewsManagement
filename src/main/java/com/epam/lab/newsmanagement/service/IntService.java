@@ -14,6 +14,4 @@ public interface IntService<T> {
     T update(T t) throws ServiceException;
 
     T delete(long id) throws ServiceException;
-
-    void validate(T t) throws ServiceException;
 }

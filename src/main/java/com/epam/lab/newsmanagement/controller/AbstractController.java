@@ -11,7 +11,7 @@ public abstract class AbstractController<T> implements Controller<T> {
     private static final Logger logger;
 
     static {
-        logger = LogManager.getLogger(AuthorController.class);
+        logger = LogManager.getLogger(AbstractController.class);
     }
 
     @Override
