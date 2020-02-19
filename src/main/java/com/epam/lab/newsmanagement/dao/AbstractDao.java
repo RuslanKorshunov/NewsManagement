@@ -1,5 +1,6 @@
 package com.epam.lab.newsmanagement.dao;
 
+import com.epam.lab.newsmanagement.entity.SearchCriteria;
 import com.epam.lab.newsmanagement.exception.DaoException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -43,6 +44,11 @@ public abstract class AbstractDao<T> implements Dao<T> {
             throw new DaoException(e);
         }
         return t;
+    }
+
+    @Override
+    public List<T> read(SearchCriteria sc) throws DaoException {
+        throw new DaoException("Operation isn't supported by dao.");
     }
 
     public T update(T t) throws DaoException {

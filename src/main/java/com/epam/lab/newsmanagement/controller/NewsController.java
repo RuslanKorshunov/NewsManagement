@@ -1,11 +1,19 @@
 package com.epam.lab.newsmanagement.controller;
 
 import com.epam.lab.newsmanagement.entity.News;
+import com.epam.lab.newsmanagement.entity.SearchCriteria;
+import com.epam.lab.newsmanagement.exception.ServiceException;
 import com.epam.lab.newsmanagement.service.IntService;
 import com.epam.lab.newsmanagement.service.NewsService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/news/")
@@ -44,6 +52,24 @@ public class NewsController extends AbstractController<News> {
             consumes = CONSUMES)
     public ResponseEntity<News> delete(@PathVariable("id") long id) {
         return super.delete(id);
+    }
+
+    @Override
+    @GetMapping(value = "/search/",
+            produces = PRODUCES,
+            consumes = CONSUMES)
+    public ResponseEntity<List<News>> read(@RequestBody SearchCriteria searchCriteria) {
+        HttpStatus status = HttpStatus.OK;
+        List<News> news;
+        try {
+            news = service.read(searchCriteria);
+        } catch (ServiceException e) {
+            Logger logger = LogManager.getLogger(NewsController.class);
+            logger.error(e);
+            status = HttpStatus.NOT_FOUND;
+            news = new ArrayList<>();
+        }
+        return new ResponseEntity<>(news, status);
     }
 
     @Override

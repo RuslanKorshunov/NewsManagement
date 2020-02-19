@@ -1,6 +1,7 @@
 package com.epam.lab.newsmanagement.service;
 
 import com.epam.lab.newsmanagement.dao.Dao;
+import com.epam.lab.newsmanagement.entity.SearchCriteria;
 import com.epam.lab.newsmanagement.exception.DaoException;
 import com.epam.lab.newsmanagement.exception.IncorrectDataException;
 import com.epam.lab.newsmanagement.exception.ServiceException;
@@ -35,6 +36,11 @@ public abstract class AbstractService<T> implements IntService<T> {
             throw new ServiceException(e);
         }
         return t;
+    }
+
+    @Override
+    public List<T> read(SearchCriteria sc) throws ServiceException {
+        throw new ServiceException("Operation isn't supported by service.");
     }
 
     @Override

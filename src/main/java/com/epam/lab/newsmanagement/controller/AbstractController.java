@@ -1,11 +1,14 @@
 package com.epam.lab.newsmanagement.controller;
 
+import com.epam.lab.newsmanagement.entity.SearchCriteria;
 import com.epam.lab.newsmanagement.exception.ServiceException;
 import com.epam.lab.newsmanagement.service.IntService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import java.util.List;
 
 public abstract class AbstractController<T> implements Controller<T> {
     private static final Logger logger;
@@ -38,6 +41,11 @@ public abstract class AbstractController<T> implements Controller<T> {
             t = createEntity(id);
         }
         return new ResponseEntity<>(t, status);
+    }
+
+    @Override
+    public ResponseEntity<List<T>> read(SearchCriteria sc) {
+        return new ResponseEntity<>(null, HttpStatus.NOT_IMPLEMENTED);
     }
 
     @Override
