@@ -7,6 +7,8 @@ import com.epam.lab.newsmanagement.entity.Tag;
 import com.epam.lab.newsmanagement.exception.DaoException;
 import com.epam.lab.newsmanagement.exception.IncorrectDataException;
 import com.epam.lab.newsmanagement.validator.NumberValidator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
@@ -49,6 +51,8 @@ public class NewsDao implements Dao<News> {
     private static final String ORDER_BY_AUTHOR;
     private static final String ORDER_BY_DATE;
 
+    private static final Logger logger;
+
     static {
         ID_SUFFIX = "WHERE \"news\".\"id\"=?";
         AUTHOR_SUFFIX = "\"author\".\"name\"=? AND \"author\".\"surname\"=?";
@@ -76,6 +80,7 @@ public class NewsDao implements Dao<News> {
         UPDATE_NEWS_AUTHOR_QUERY = "UPDATE \"news_author\" SET \"author_id\"=? WHERE \"news_id\"=?";
         DELETE_NEWS_TAG_QUERY = "DELETE FROM \"news_tag\" WHERE \"news_id\"=?";
         DELETE_QUERY = "DELETE FROM \"news\" WHERE \"id\"=?";
+        logger = LogManager.getLogger(NewsDao.class);
     }
 
     @Autowired
@@ -87,7 +92,6 @@ public class NewsDao implements Dao<News> {
         AUTHOR,
         DATE
     }
-
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
@@ -146,7 +150,7 @@ public class NewsDao implements Dao<News> {
         Author author = sc.getAuthor();
         List<Tag> tags = sc.getTags();
         String query = BEGIN_SELECT_NEWS_QUERY;
-        boolean isExisted = tags == null || tags.isEmpty() ? false : true;
+        boolean isExisted = tags != null && !tags.isEmpty();
         if (!(author == null && !isExisted)) {
             query += " " + WHERE;
             if (author != null) {
@@ -273,7 +277,7 @@ public class NewsDao implements Dao<News> {
                     Tag tag = new Tag(idTag, tagInfo[1]);
                     tags.add(tag);
                 } catch (IncorrectDataException e) {
-                    //todo чем-то нужно заполнить
+                    logger.warn("Tag " + tagString + " can't be processed.");
                 }
             }
             long idAuthor = rs.getLong("author_id");

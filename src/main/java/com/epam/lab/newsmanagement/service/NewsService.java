@@ -81,6 +81,7 @@ public class NewsService implements IntService<News> {
         return news;
     }
 
+    @Override
     public List<News> read(SortCriteria sc) throws ServiceException {
         if (sc == null) {
             throw new ServiceException("SortCriteria can't be null.");

@@ -5,6 +5,8 @@ import com.epam.lab.newsmanagement.exception.ServiceException;
 
 import java.util.List;
 
+import static com.epam.lab.newsmanagement.dao.NewsDao.SortCriteria;
+
 public interface IntService<T> {
     T create(T t) throws ServiceException;
 
@@ -13,6 +15,8 @@ public interface IntService<T> {
     T read(long id) throws ServiceException;
 
     List<T> read(SearchCriteria sc) throws ServiceException;
+
+    List<T> read(SortCriteria sc) throws ServiceException;
 
     T update(T t) throws ServiceException;
 

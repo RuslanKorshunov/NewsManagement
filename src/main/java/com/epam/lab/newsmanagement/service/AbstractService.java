@@ -1,6 +1,7 @@
 package com.epam.lab.newsmanagement.service;
 
 import com.epam.lab.newsmanagement.dao.Dao;
+import com.epam.lab.newsmanagement.dao.NewsDao;
 import com.epam.lab.newsmanagement.entity.SearchCriteria;
 import com.epam.lab.newsmanagement.exception.DaoException;
 import com.epam.lab.newsmanagement.exception.IncorrectDataException;
@@ -12,7 +13,7 @@ import java.util.List;
 public abstract class AbstractService<T> implements IntService<T> {
     @Override
     public T create(T t) throws ServiceException {
-        Validator validator = getValidator();
+        Validator<T> validator = getValidator();
         try {
             validator.validate(t);
             t = getDao().create(t);
@@ -44,8 +45,13 @@ public abstract class AbstractService<T> implements IntService<T> {
     }
 
     @Override
+    public List<T> read(NewsDao.SortCriteria sc) throws ServiceException {
+        throw new ServiceException("Operation isn't supported by service.");
+    }
+
+    @Override
     public T update(T t) throws ServiceException {
-        Validator validator = getValidator();
+        Validator<T> validator = getValidator();
         try {
             validator.validate(t);
             getDao().update(t);
@@ -66,7 +72,7 @@ public abstract class AbstractService<T> implements IntService<T> {
         return t;
     }
 
-    abstract Validator getValidator();
+    abstract Validator<T> getValidator();
 
     abstract Dao<T> getDao();
 }

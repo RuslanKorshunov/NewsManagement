@@ -79,6 +79,7 @@ public class NewsController extends AbstractController<News> {
         return new ResponseEntity<>(news, status);
     }
 
+    @Override
     @GetMapping(value = "/sort/{criteria}/",
             produces = PRODUCES,
             consumes = CONSUMES)

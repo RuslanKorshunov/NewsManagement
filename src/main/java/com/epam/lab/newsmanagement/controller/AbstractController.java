@@ -1,5 +1,6 @@
 package com.epam.lab.newsmanagement.controller;
 
+import com.epam.lab.newsmanagement.dao.NewsDao;
 import com.epam.lab.newsmanagement.entity.SearchCriteria;
 import com.epam.lab.newsmanagement.exception.ServiceException;
 import com.epam.lab.newsmanagement.service.IntService;
@@ -38,6 +39,11 @@ public abstract class AbstractController<T> implements Controller<T> {
 
     @Override
     public ResponseEntity<List<T>> read(SearchCriteria sc) {
+        return new ResponseEntity<>(null, HttpStatus.NOT_IMPLEMENTED);
+    }
+
+    @Override
+    public ResponseEntity<List<T>> read(NewsDao.SortCriteria sc) {
         return new ResponseEntity<>(null, HttpStatus.NOT_IMPLEMENTED);
     }
 
