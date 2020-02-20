@@ -1,18 +1,23 @@
 package com.epam.lab.newsmanagement.service;
 
 import com.epam.lab.newsmanagement.dao.Dao;
+import com.epam.lab.newsmanagement.dao.NewsDao;
+import com.epam.lab.newsmanagement.entity.SearchCriteria;
 import com.epam.lab.newsmanagement.exception.DaoException;
+import com.epam.lab.newsmanagement.exception.IncorrectDataException;
 import com.epam.lab.newsmanagement.exception.ServiceException;
+import com.epam.lab.newsmanagement.validator.Validator;
 
 import java.util.List;
 
 public abstract class AbstractService<T> implements IntService<T> {
     @Override
     public T create(T t) throws ServiceException {
-        validate(t);
+        Validator<T> validator = getValidator();
         try {
+            validator.validate(t);
             t = getDao().create(t);
-        } catch (DaoException e) {
+        } catch (DaoException | IncorrectDataException e) {
             throw new ServiceException(e);
         }
         return t;
@@ -35,11 +40,22 @@ public abstract class AbstractService<T> implements IntService<T> {
     }
 
     @Override
+    public List<T> read(SearchCriteria sc) throws ServiceException {
+        throw new ServiceException("Operation isn't supported by service.");
+    }
+
+    @Override
+    public List<T> read(NewsDao.SortCriteria sc) throws ServiceException {
+        throw new ServiceException("Operation isn't supported by service.");
+    }
+
+    @Override
     public T update(T t) throws ServiceException {
-        validate(t);
+        Validator<T> validator = getValidator();
         try {
+            validator.validate(t);
             getDao().update(t);
-        } catch (DaoException e) {
+        } catch (DaoException | IncorrectDataException e) {
             throw new ServiceException(e);
         }
         return t;
@@ -56,8 +72,7 @@ public abstract class AbstractService<T> implements IntService<T> {
         return t;
     }
 
-    @Override
-    public abstract void validate(T t) throws ServiceException;
+    abstract Validator<T> getValidator();
 
     abstract Dao<T> getDao();
 }
