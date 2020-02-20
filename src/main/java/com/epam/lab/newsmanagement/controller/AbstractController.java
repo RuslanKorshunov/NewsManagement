@@ -3,7 +3,6 @@ package com.epam.lab.newsmanagement.controller;
 import com.epam.lab.newsmanagement.entity.SearchCriteria;
 import com.epam.lab.newsmanagement.exception.ServiceException;
 import com.epam.lab.newsmanagement.service.IntService;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,19 +10,13 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public abstract class AbstractController<T> implements Controller<T> {
-    private static final Logger logger;
-
-    static {
-        logger = LogManager.getLogger(AbstractController.class);
-    }
-
     @Override
     public ResponseEntity<T> create(T t) {
         HttpStatus status = HttpStatus.CREATED;
         try {
             t = getService().create(t);
         } catch (ServiceException e) {
-            logger.error(e);
+            getLogger().error(e);
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
         return new ResponseEntity<>(t, status);
@@ -36,7 +29,7 @@ public abstract class AbstractController<T> implements Controller<T> {
         try {
             t = getService().read(id);
         } catch (ServiceException e) {
-            logger.error(e);
+            getLogger().error(e);
             status = HttpStatus.NOT_FOUND;
             t = createEntity(id);
         }
@@ -59,7 +52,7 @@ public abstract class AbstractController<T> implements Controller<T> {
             }
             getService().update(t);
         } catch (ServiceException e) {
-            logger.error(e);
+            getLogger().error(e);
             status = !isFound ? HttpStatus.NOT_FOUND : HttpStatus.BAD_REQUEST;
         }
         return new ResponseEntity<>(t, status);
@@ -72,7 +65,7 @@ public abstract class AbstractController<T> implements Controller<T> {
         try {
             t = getService().delete(id);
         } catch (ServiceException e) {
-            logger.error(e);
+            getLogger().error(e);
             status = HttpStatus.NOT_FOUND;
             t = createEntity(id);
         }
@@ -84,4 +77,6 @@ public abstract class AbstractController<T> implements Controller<T> {
     abstract T createEntity(long id);
 
     abstract void setId(T t, long id);
+
+    abstract Logger getLogger();
 }

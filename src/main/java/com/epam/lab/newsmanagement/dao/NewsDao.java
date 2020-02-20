@@ -45,6 +45,9 @@ public class NewsDao implements Dao<News> {
     private static final String WHERE;
     private static final String AND;
     private static final String OR;
+    private static final String ORDER_BY_NEWS_ID;
+    private static final String ORDER_BY_AUTHOR;
+    private static final String ORDER_BY_DATE;
 
     static {
         ID_SUFFIX = "WHERE \"news\".\"id\"=?";
@@ -53,16 +56,16 @@ public class NewsDao implements Dao<News> {
         WHERE = "WHERE";
         OR = "OR";
         AND = "AND";
-        BEGIN_SELECT_NEWS_QUERY = "SELECT \"news\".\"id\", \"news\".\"title\", \"short_text\", \"full_text\", \"creation_date\", \"modification_date\", " +
-                "STRING_AGG(\"news_tag\".\"tag_id\"||'-'||\"tag\".\"name\", ',') AS tags, " +
-                "\"news_author\".\"author_id\" AS \"author_id\", \"author\".\"name\", \"author\".\"surname\" " +
-                "FROM news_tag " +
-                "JOIN \"tag\" ON \"tag\".\"id\"=\"news_tag\".\"tag_id\" " +
+        ORDER_BY_NEWS_ID = "ORDER BY \"news\".\"id\"";
+        ORDER_BY_AUTHOR = "ORDER BY \"author\".\"surname\", \"author\".\"name\"";
+        ORDER_BY_DATE = "ORDER BY \"news\".\"modification_date\" DESC";
+        BEGIN_SELECT_NEWS_QUERY = "SELECT \"news\".\"id\", STRING_AGG(\"tag\".\"id\"||'-'||\"tag\".\"name\", ',') as \"tags\", \"news\".\"title\", \"news\".\"short_text\", \"news\".\"full_text\", " +
+                "\"news\".\"creation_date\", \"news\".\"modification_date\", \"author\".\"id\" AS \"author_id\", \"author\".\"name\", \"author\".\"surname\" FROM \"tag\" " +
+                "JOIN \"news_tag\" ON \"tag\".\"id\"=\"news_tag\".\"tag_id\" " +
                 "JOIN \"news\" ON \"news\".\"id\"=\"news_tag\".\"news_id\" " +
-                "JOIN \"news_author\" ON \"news\".\"id\"=\"news_author\".\"news_id\" " +
-                "JOIN \"author\" ON \"author\".\"id\"=\"news_author\".\"news_id\"";
-        END_SELECT_BY_CRITERIA_QUERY = "GROUP BY \"news_tag\".\"news_id\", \"news\".\"id\", \"news_author\".\"news_id\", " +
-                "\"author\".\"name\", \"author\".\"surname\", \"news_author\".\"author_id\" ORDER BY \"news\".\"id\"";
+                "JOIN \"news_author\" ON \"news_author\".\"news_id\"=\"news\".\"id\" " +
+                "JOIN \"author\" ON \"news_author\".\"author_id\"=\"author\".\"id\"";
+        END_SELECT_BY_CRITERIA_QUERY = "GROUP BY \"news\".\"id\", \"author\".\"id\"";
         INSERT_INTO_NEWS_QUERY = "INSERT INTO \"news\" (\"title\", \"short_text\", " +
                 "\"full_text\", \"creation_date\", \"modification_date\") VALUES (?, ?, ?, ?, ?)";
         INSERT_INTO_NEWS_AUTHOR_QUERY = "INSERT INTO \"news_author\" VALUES (?, ?)";
@@ -79,6 +82,12 @@ public class NewsDao implements Dao<News> {
     private JdbcTemplate jdbcTemplate;
     @Autowired
     private NumberValidator validator;
+
+    public enum SortCriteria {
+        AUTHOR,
+        DATE
+    }
+
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
@@ -154,7 +163,7 @@ public class NewsDao implements Dao<News> {
                 }
             }
         }
-        query += " " + END_SELECT_BY_CRITERIA_QUERY;
+        query += " " + END_SELECT_BY_CRITERIA_QUERY + " " + ORDER_BY_NEWS_ID;
         List<News> news;
         try {
             List<String> parameters = new ArrayList<>();
@@ -170,6 +179,26 @@ public class NewsDao implements Dao<News> {
             }
             RowMapper<News> rowMapper = getRowMapper();
             news = jdbcTemplate.query(query, parameters.toArray(), rowMapper);
+        } catch (DataAccessException e) {
+            throw new DaoException(e);
+        }
+        return news;
+    }
+
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public List<News> read(SortCriteria sc) throws DaoException {
+        List<News> news;
+        String query = BEGIN_SELECT_NEWS_QUERY + " " + END_SELECT_BY_CRITERIA_QUERY;
+        switch (sc) {
+            case AUTHOR:
+                query += " " + ORDER_BY_AUTHOR;
+                break;
+            case DATE:
+                query += " " + ORDER_BY_DATE;
+        }
+        try {
+            RowMapper<News> rowMapper = getRowMapper();
+            news = jdbcTemplate.query(query, rowMapper);
         } catch (DataAccessException e) {
             throw new DaoException(e);
         }

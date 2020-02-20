@@ -15,9 +15,16 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.epam.lab.newsmanagement.dao.NewsDao.SortCriteria;
+
 @RestController
 @RequestMapping(value = "/news/")
 public class NewsController extends AbstractController<News> {
+    private static final Logger logger;
+
+    static {
+        logger = LogManager.getLogger(NewsController.class);
+    }
 
     @Autowired
     private NewsService service;
@@ -72,6 +79,22 @@ public class NewsController extends AbstractController<News> {
         return new ResponseEntity<>(news, status);
     }
 
+    @GetMapping(value = "/sort/{criteria}/",
+            produces = PRODUCES,
+            consumes = CONSUMES)
+    public ResponseEntity<List<News>> read(@PathVariable("criteria") SortCriteria sc) {
+        HttpStatus status = HttpStatus.OK;
+        List<News> news;
+        try {
+            news = service.read(sc);
+        } catch (ServiceException e) {
+            logger.error(e);
+            status = HttpStatus.NOT_FOUND;
+            news = new ArrayList<>();
+        }
+        return new ResponseEntity<>(news, status);
+    }
+
     @Override
     IntService<News> getService() {
         return service;
@@ -87,5 +110,10 @@ public class NewsController extends AbstractController<News> {
     @Override
     void setId(News news, long id) {
         news.setId(id);
+    }
+
+    @Override
+    Logger getLogger() {
+        return logger;
     }
 }

@@ -18,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.epam.lab.newsmanagement.dao.NewsDao.SortCriteria;
+
 @Service
 @Qualifier("newsService")
 public class NewsService implements IntService<News> {
@@ -74,6 +76,19 @@ public class NewsService implements IntService<News> {
             searchCriteriaValidator.validate(sc);
             news = dao.read(sc);
         } catch (DaoException | IncorrectDataException e) {
+            throw new ServiceException(e);
+        }
+        return news;
+    }
+
+    public List<News> read(SortCriteria sc) throws ServiceException {
+        if (sc == null) {
+            throw new ServiceException("SortCriteria can't be null.");
+        }
+        List<News> news;
+        try {
+            news = dao.read(sc);
+        } catch (DaoException e) {
             throw new ServiceException(e);
         }
         return news;
