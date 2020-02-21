@@ -1,6 +1,5 @@
 package com.epam.lab.newsmanagement.controller;
 
-import com.epam.lab.newsmanagement.dao.NewsDao;
 import com.epam.lab.newsmanagement.entity.SearchCriteria;
 import com.epam.lab.newsmanagement.exception.ServiceException;
 import com.epam.lab.newsmanagement.service.IntService;
@@ -9,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+
+import static com.epam.lab.newsmanagement.dao.NewsDao.SortCriteria;
 
 public abstract class AbstractController<T> implements Controller<T> {
     @Override
@@ -43,7 +44,7 @@ public abstract class AbstractController<T> implements Controller<T> {
     }
 
     @Override
-    public ResponseEntity<List<T>> read(NewsDao.SortCriteria sc) {
+    public ResponseEntity<List<T>> read(SortCriteria sc) {
         return new ResponseEntity<>(null, HttpStatus.NOT_IMPLEMENTED);
     }
 

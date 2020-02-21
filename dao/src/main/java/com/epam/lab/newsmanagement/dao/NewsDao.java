@@ -5,7 +5,6 @@ import com.epam.lab.newsmanagement.entity.News;
 import com.epam.lab.newsmanagement.entity.SearchCriteria;
 import com.epam.lab.newsmanagement.entity.Tag;
 import com.epam.lab.newsmanagement.exception.DaoException;
-import com.epam.lab.newsmanagement.exception.IncorrectDataException;
 import com.epam.lab.newsmanagement.validator.NumberValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -271,12 +270,11 @@ public class NewsDao implements Dao<News> {
             List<Tag> tags = new ArrayList<>();
             for (String tagString : tagsString.split(",")) {
                 String[] tagInfo = tagString.split("-");
-                try {
-                    validator.validate(tagInfo[0]);
+                if (validator.validate(tagInfo[0])) {
                     long idTag = Long.parseLong(tagInfo[0]);
                     Tag tag = new Tag(idTag, tagInfo[1]);
                     tags.add(tag);
-                } catch (IncorrectDataException e) {
+                } else {
                     logger.warn("Tag " + tagString + " can't be processed.");
                 }
             }

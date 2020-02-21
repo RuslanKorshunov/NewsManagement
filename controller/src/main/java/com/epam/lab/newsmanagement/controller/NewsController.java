@@ -97,7 +97,7 @@ public class NewsController extends AbstractController<News> {
     }
 
     @Override
-    IntService<News> getService() {
+    IntService getService() {
         return service;
     }
 

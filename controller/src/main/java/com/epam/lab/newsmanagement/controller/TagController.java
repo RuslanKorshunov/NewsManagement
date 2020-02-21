@@ -1,8 +1,8 @@
 package com.epam.lab.newsmanagement.controller;
 
-import com.epam.lab.newsmanagement.entity.Author;
-import com.epam.lab.newsmanagement.service.AuthorService;
+import com.epam.lab.newsmanagement.entity.Tag;
 import com.epam.lab.newsmanagement.service.IntService;
+import com.epam.lab.newsmanagement.service.TagService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,30 +10,30 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/author/")
-public class AuthorController extends AbstractController<Author> {
+@RequestMapping(value = "/tag/")
+public class TagController extends AbstractController<Tag> {
     private static final Logger logger;
 
     static {
-        logger = LogManager.getLogger(AuthorController.class);
+        logger = LogManager.getLogger(TagController.class);
     }
 
     @Autowired
-    private AuthorService service;
+    private TagService service;
 
     @Override
     @PostMapping(value = "/",
             produces = PRODUCES,
             consumes = CONSUMES)
-    public ResponseEntity<Author> create(@RequestBody Author author) {
-        return super.create(author);
+    public ResponseEntity<Tag> create(@RequestBody Tag tag) {
+        return super.create(tag);
     }
 
     @Override
     @GetMapping(value = "/{id}/",
             produces = PRODUCES,
             consumes = CONSUMES)
-    public ResponseEntity<Author> read(@PathVariable("id") long id) {
+    public ResponseEntity<Tag> read(@PathVariable("id") long id) {
         return super.read(id);
     }
 
@@ -41,33 +41,33 @@ public class AuthorController extends AbstractController<Author> {
     @PutMapping(value = "/{id}/",
             produces = PRODUCES,
             consumes = CONSUMES)
-    public ResponseEntity<Author> update(@PathVariable long id, @RequestBody Author author) {
-        return super.update(id, author);
+    public ResponseEntity<Tag> update(@PathVariable("id") long id, @RequestBody Tag tag) {
+        return super.update(id, tag);
     }
 
     @Override
     @DeleteMapping(value = "/{id}/",
             produces = PRODUCES,
             consumes = CONSUMES)
-    public ResponseEntity<Author> delete(@PathVariable("id") long id) {
+    public ResponseEntity<Tag> delete(@PathVariable("id") long id) {
         return super.delete(id);
     }
 
     @Override
-    IntService<Author> getService() {
+    IntService getService() {
         return service;
     }
 
     @Override
-    Author createEntity(long id) {
-        Author author = new Author();
-        author.setId(id);
-        return author;
+    Tag createEntity(long id) {
+        Tag tag = new Tag();
+        tag.setId(id);
+        return tag;
     }
 
     @Override
-    void setId(Author author, long id) {
-        author.setId(id);
+    void setId(Tag tag, long id) {
+        tag.setId(id);
     }
 
     @Override
