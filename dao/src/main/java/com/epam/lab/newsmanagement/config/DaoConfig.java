@@ -33,7 +33,7 @@ public class DaoConfig {
     private Environment environment;
 
     @Bean
-    public DataSource hikariDataSource() {
+    public DataSource getDataSource() {
         HikariDataSource hikariDataSource = new HikariDataSource();
         hikariDataSource.setJdbcUrl(environment.getProperty(URL));
         hikariDataSource.setUsername(environment.getProperty(USERNAME));
@@ -43,7 +43,7 @@ public class DaoConfig {
     }
 
     @Bean
-    public JdbcTemplate jdbcTemplate(DataSource dataSource) {
-        return new JdbcTemplate(dataSource);
+    public JdbcTemplate getJdbcTemplate() {
+        return new JdbcTemplate(getDataSource());
     }
 }

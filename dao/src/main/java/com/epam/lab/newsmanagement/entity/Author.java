@@ -1,11 +1,18 @@
 package com.epam.lab.newsmanagement.entity;
 
+import java.util.Objects;
+
 public class Author implements Cloneable {
     private long id;
     private String name;
     private String surname;
 
     public Author() {
+    }
+
+    public Author(String name, String surname) {
+        this.name = name;
+        this.surname = surname;
     }
 
     public Author(long id, String name, String surname) {
@@ -41,6 +48,21 @@ public class Author implements Cloneable {
     @Override
     public Author clone() throws CloneNotSupportedException {
         return (Author) super.clone();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Author author = (Author) o;
+        return id == author.id &&
+                Objects.equals(name, author.name) &&
+                Objects.equals(surname, author.surname);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, surname);
     }
 
     @Override
