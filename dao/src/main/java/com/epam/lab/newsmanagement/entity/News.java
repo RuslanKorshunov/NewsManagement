@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class News implements Cloneable {
+public class News extends AbstractEntity implements Cloneable {
     private long id;
     private String title;
     private String shortText;

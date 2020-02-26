@@ -2,7 +2,7 @@ package com.epam.lab.newsmanagement.entity;
 
 import java.util.Objects;
 
-public class Tag implements Cloneable {
+public class Tag extends AbstractEntity implements Cloneable {
     private long id;
     private String name;
 

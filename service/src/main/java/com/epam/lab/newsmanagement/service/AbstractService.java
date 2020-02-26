@@ -2,7 +2,7 @@ package com.epam.lab.newsmanagement.service;
 
 import com.epam.lab.newsmanagement.dao.Dao;
 import com.epam.lab.newsmanagement.dao.NewsDao;
-import com.epam.lab.newsmanagement.entity.SearchCriteria;
+import com.epam.lab.newsmanagement.dao.entity.SearchCriteria;
 import com.epam.lab.newsmanagement.exception.DaoException;
 import com.epam.lab.newsmanagement.exception.IncorrectDataException;
 import com.epam.lab.newsmanagement.exception.ServiceException;
