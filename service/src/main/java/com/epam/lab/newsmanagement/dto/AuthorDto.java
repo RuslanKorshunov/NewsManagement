@@ -1,22 +1,11 @@
-package com.epam.lab.newsmanagement.entity;
+package com.epam.lab.newsmanagement.dto;
 
 import java.util.Objects;
 
-public class Tag extends AbstractEntity implements Cloneable {
+public class AuthorDto extends AbstractDto {
     private long id;
     private String name;
-
-    public Tag() {
-    }
-
-    public Tag(String name) {
-        this.name = name;
-    }
-
-    public Tag(long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
+    private String surname;
 
     public long getId() {
         return id;
@@ -34,30 +23,35 @@ public class Tag extends AbstractEntity implements Cloneable {
         this.name = name;
     }
 
-    @Override
-    public Tag clone() throws CloneNotSupportedException {
-        return (Tag) super.clone();
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Tag tag = (Tag) o;
-        return id == tag.id &&
-                Objects.equals(name, tag.name);
+        AuthorDto dto = (AuthorDto) o;
+        return id == dto.id &&
+                Objects.equals(name, dto.name) &&
+                Objects.equals(surname, dto.surname);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name);
+        return Objects.hash(id, name, surname);
     }
 
     @Override
     public String toString() {
-        return "Tag{" +
+        return "AuthorDto{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
                 '}';
     }
 }

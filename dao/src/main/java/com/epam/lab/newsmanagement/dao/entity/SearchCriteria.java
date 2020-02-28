@@ -1,4 +1,7 @@
-package com.epam.lab.newsmanagement.entity;
+package com.epam.lab.newsmanagement.dao.entity;
+
+import com.epam.lab.newsmanagement.entity.Author;
+import com.epam.lab.newsmanagement.entity.Tag;
 
 import java.util.ArrayList;
 import java.util.List;

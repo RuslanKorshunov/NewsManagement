@@ -1,7 +1,7 @@
 package com.epam.lab.newsmanagement.controller;
 
 import com.epam.lab.newsmanagement.entity.News;
-import com.epam.lab.newsmanagement.entity.SearchCriteria;
+import com.epam.lab.newsmanagement.dao.entity.SearchCriteria;
 import com.epam.lab.newsmanagement.exception.ServiceException;
 import com.epam.lab.newsmanagement.service.IntService;
 import com.epam.lab.newsmanagement.service.NewsService;

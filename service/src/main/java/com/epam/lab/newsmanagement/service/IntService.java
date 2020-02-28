@@ -1,6 +1,6 @@
 package com.epam.lab.newsmanagement.service;
 
-import com.epam.lab.newsmanagement.entity.SearchCriteria;
+import com.epam.lab.newsmanagement.dao.entity.SearchCriteria;
 import com.epam.lab.newsmanagement.exception.ServiceException;
 
 import java.util.List;

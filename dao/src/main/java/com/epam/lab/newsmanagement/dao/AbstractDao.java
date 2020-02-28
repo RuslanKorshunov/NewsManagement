@@ -1,6 +1,7 @@
 package com.epam.lab.newsmanagement.dao;
 
-import com.epam.lab.newsmanagement.entity.SearchCriteria;
+import com.epam.lab.newsmanagement.dao.entity.SearchCriteria;
+import com.epam.lab.newsmanagement.entity.AbstractEntity;
 import com.epam.lab.newsmanagement.exception.DaoException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 
-public abstract class AbstractDao<T> implements Dao<T> {
+public abstract class AbstractDao<T extends AbstractEntity> implements Dao<T> {
 
     public T create(T t) throws DaoException {
         Supplier<T> supplier = getSupplier(t);

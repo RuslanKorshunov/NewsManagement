@@ -1,7 +1,7 @@
 package com.epam.lab.newsmanagement.validator;
 
 import com.epam.lab.newsmanagement.entity.Author;
-import com.epam.lab.newsmanagement.entity.SearchCriteria;
+import com.epam.lab.newsmanagement.dao.entity.SearchCriteria;
 import com.epam.lab.newsmanagement.entity.Tag;
 import com.epam.lab.newsmanagement.exception.IncorrectDataException;
 import org.springframework.beans.factory.annotation.Autowired;
