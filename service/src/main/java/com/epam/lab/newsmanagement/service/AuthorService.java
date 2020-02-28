@@ -2,8 +2,11 @@ package com.epam.lab.newsmanagement.service;
 
 import com.epam.lab.newsmanagement.dao.AuthorDao;
 import com.epam.lab.newsmanagement.dao.Dao;
+import com.epam.lab.newsmanagement.dto.AuthorDto;
 import com.epam.lab.newsmanagement.entity.Author;
 import com.epam.lab.newsmanagement.exception.ServiceException;
+import com.epam.lab.newsmanagement.mapper.AbstractMapper;
+import com.epam.lab.newsmanagement.mapper.AuthorMapper;
 import com.epam.lab.newsmanagement.validator.AuthorValidator;
 import com.epam.lab.newsmanagement.validator.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,34 +17,36 @@ import java.util.List;
 
 @Service
 @Qualifier("authorService")
-public class AuthorService extends AbstractService<Author> {
+public class AuthorService extends AbstractService<Author, AuthorDto> {
     @Autowired
     private AuthorDao dao;
     @Autowired
     private AuthorValidator validator;
+    @Autowired
+    private AuthorMapper mapper;
 
     @Override
-    public Author create(Author author) throws ServiceException {
-        return super.create(author);
+    public AuthorDto create(AuthorDto authorDto) throws ServiceException {
+        return super.create(authorDto);
     }
 
     @Override
-    public List<Author> create(List<Author> t) throws ServiceException {
+    public List<AuthorDto> create(List<AuthorDto> t) throws ServiceException {
         return super.create(t);
     }
 
     @Override
-    public Author read(long id) throws ServiceException {
+    public AuthorDto read(long id) throws ServiceException {
         return super.read(id);
     }
 
     @Override
-    public Author update(Author author) throws ServiceException {
-        return super.update(author);
+    public AuthorDto update(AuthorDto authorDto) throws ServiceException {
+        return super.update(authorDto);
     }
 
     @Override
-    public Author delete(long id) throws ServiceException {
+    public AuthorDto delete(long id) throws ServiceException {
         return super.delete(id);
     }
 
@@ -51,7 +56,12 @@ public class AuthorService extends AbstractService<Author> {
     }
 
     @Override
-    Validator getValidator() {
+    Validator<Author> getValidator() {
         return validator;
+    }
+
+    @Override
+    AbstractMapper<Author, AuthorDto> getMapper() {
+        return mapper;
     }
 }

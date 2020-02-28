@@ -1,13 +1,15 @@
 package com.epam.lab.newsmanagement.service;
 
 import com.epam.lab.newsmanagement.dao.NewsDao;
-import com.epam.lab.newsmanagement.entity.Author;
-import com.epam.lab.newsmanagement.entity.News;
 import com.epam.lab.newsmanagement.dao.entity.SearchCriteria;
-import com.epam.lab.newsmanagement.entity.Tag;
+import com.epam.lab.newsmanagement.dto.AuthorDto;
+import com.epam.lab.newsmanagement.dto.NewsDto;
+import com.epam.lab.newsmanagement.dto.TagDto;
+import com.epam.lab.newsmanagement.entity.News;
 import com.epam.lab.newsmanagement.exception.DaoException;
 import com.epam.lab.newsmanagement.exception.IncorrectDataException;
 import com.epam.lab.newsmanagement.exception.ServiceException;
+import com.epam.lab.newsmanagement.mapper.NewsMapper;
 import com.epam.lab.newsmanagement.validator.NewsValidator;
 import com.epam.lab.newsmanagement.validator.SearchCriteriaValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +18,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.epam.lab.newsmanagement.dao.NewsDao.SortCriteria;
 
 @Service
 @Qualifier("newsService")
-public class NewsService implements IntService<News> {
+public class NewsService implements IntService<News, NewsDto> {
     @Autowired
     private AuthorService authorService;
     @Autowired
@@ -33,95 +36,108 @@ public class NewsService implements IntService<News> {
     private NewsValidator newsValidator;
     @Autowired
     private SearchCriteriaValidator searchCriteriaValidator;
+    @Autowired
+    private NewsMapper mapper;
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public News create(News news) throws ServiceException {
+    public NewsDto create(NewsDto newsDto) throws ServiceException {
         try {
+            AuthorDto authorDto = authorService.create(newsDto.getAuthorDto());
+            List<TagDto> tagDtos = tagService.create(newsDto.getTagDtos());
+            newsDto.setAuthorDto(authorDto);
+            newsDto.setTagDtos(tagDtos);
+            News news = mapper.toEntity(newsDto);
             newsValidator.validate(news);
-            news = news.clone();
-            Author author = news.getAuthor();
-            author = authorService.create(author);
-            news.setAuthor(author);
-            List<Tag> tags = news.getTags();
-            tags = tagService.create(tags);
-            news.setTags(tags);
             news = dao.create(news);
-        } catch (DaoException | CloneNotSupportedException | IncorrectDataException e) {
+            newsDto = mapper.toDto(news);
+        } catch (DaoException | IncorrectDataException e) {
             throw new ServiceException(e);
         }
-        return news;
+        return newsDto;
     }
 
     @Override
-    public List<News> create(List<News> news) throws ServiceException {
+    public List<NewsDto> create(List<NewsDto> newsDtos) throws ServiceException {
         throw new ServiceException("Operation isn't supported by newsService.");
     }
 
     @Override
-    public News read(long id) throws ServiceException {
-        News news;
+    public NewsDto read(long id) throws ServiceException {
+        NewsDto newsDto;
         try {
-            news = dao.read(id);
+            News news = dao.read(id);
+            newsDto = mapper.toDto(news);
         } catch (DaoException e) {
             throw new ServiceException(e);
         }
-        return news;
+        return newsDto;
     }
 
     @Override
-    public List<News> read(SearchCriteria sc) throws ServiceException {
-        List<News> news;
+    public List<NewsDto> read(SearchCriteria sc) throws ServiceException {
+        List<NewsDto> newsDtos;
         try {
             searchCriteriaValidator.validate(sc);
-            news = dao.read(sc);
+            List<News> newsList = dao.read(sc);
+            newsDtos = toNewsDtoList(newsList);
         } catch (DaoException | IncorrectDataException e) {
             throw new ServiceException(e);
         }
-        return news;
+        return newsDtos;
     }
 
     @Override
-    public List<News> read(SortCriteria sc) throws ServiceException {
+    public List<NewsDto> read(SortCriteria sc) throws ServiceException {
         if (sc == null) {
             throw new ServiceException("SortCriteria can't be null.");
         }
-        List<News> news;
+        List<NewsDto> newsDtos;
         try {
-            news = dao.read(sc);
+            List<News> news = dao.read(sc);
+            newsDtos = toNewsDtoList(news);
         } catch (DaoException e) {
             throw new ServiceException(e);
         }
-        return news;
+        return newsDtos;
     }
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public News update(News news) throws ServiceException {
+    public NewsDto update(NewsDto newsDto) throws ServiceException {
         try {
+            AuthorDto authorDto = authorService.create(newsDto.getAuthorDto());
+            List<TagDto> tagDtos = tagService.create(newsDto.getTagDtos());
+            newsDto.setAuthorDto(authorDto);
+            newsDto.setTagDtos(tagDtos);
+            News news = mapper.toEntity(newsDto);
             newsValidator.validate(news);
-            news = news.clone();
-            Author author = news.getAuthor();
-            author = authorService.create(author);
-            news.setAuthor(author);
-            List<Tag> tags = news.getTags();
-            tags = tagService.create(tags);
-            news.setTags(tags);
             news = dao.update(news);
-        } catch (DaoException | CloneNotSupportedException | IncorrectDataException e) {
+            newsDto = mapper.toDto(news);
+        } catch (DaoException | IncorrectDataException e) {
             throw new ServiceException(e);
         }
-        return news;
+        return newsDto;
     }
 
     @Override
-    public News delete(long id) throws ServiceException {
-        News news;
+    public NewsDto delete(long id) throws ServiceException {
+        NewsDto newsDto;
         try {
-            news = dao.delete(id);
+            News news = dao.delete(id);
+            newsDto = mapper.toDto(news);
         } catch (DaoException e) {
             throw new ServiceException(e);
         }
-        return news;
+        return newsDto;
+    }
+
+    private List<NewsDto> toNewsDtoList(List<News> newsList) {
+        List<NewsDto> newsDtos = new ArrayList<>();
+        newsList.forEach(n -> {
+            NewsDto newsDto = mapper.toDto(n);
+            newsDtos.add(newsDto);
+        });
+        return newsDtos;
     }
 }
