@@ -18,12 +18,16 @@ import java.util.List;
 @Service
 @Qualifier("authorService")
 public class AuthorService extends AbstractService<Author, AuthorDto> {
-    @Autowired
     private AuthorDao dao;
-    @Autowired
     private AuthorValidator validator;
-    @Autowired
     private AuthorMapper mapper;
+
+    @Autowired
+    public AuthorService(AuthorDao dao, AuthorValidator validator, AuthorMapper mapper) {
+        this.dao = dao;
+        this.validator = validator;
+        this.mapper = mapper;
+    }
 
     @Override
     public AuthorDto create(AuthorDto authorDto) throws ServiceException {
