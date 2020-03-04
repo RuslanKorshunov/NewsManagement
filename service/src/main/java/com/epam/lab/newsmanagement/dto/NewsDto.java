@@ -1,6 +1,7 @@
 package com.epam.lab.newsmanagement.dto;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class NewsDto extends AbstractDto {
@@ -12,6 +13,15 @@ public class NewsDto extends AbstractDto {
     private List<TagDto> tagDtos;
     private LocalDate creationDate;
     private LocalDate modificationDate;
+
+    public NewsDto() {
+        this.title = "";
+        this.shortText = "";
+        this.fullText = "";
+        tagDtos = new ArrayList<>();
+        creationDate = LocalDate.now();
+        modificationDate = creationDate;
+    }
 
     public long getId() {
         return id;

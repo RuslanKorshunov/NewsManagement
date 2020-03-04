@@ -4,7 +4,7 @@ import com.epam.lab.newsmanagement.config.ServiceTestConfig;
 import com.epam.lab.newsmanagement.dto.AuthorDto;
 import com.epam.lab.newsmanagement.entity.Author;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,15 +19,15 @@ public class AuthorMapperTest {
     @Autowired
     private AuthorMapper mapper;
 
-    private AuthorDto dto;
-    private Author author;
+    private static AuthorDto dto;
+    private static Author author;
 
-    @Before
-    public void initialize() {
+    @BeforeClass
+    public static void initialize() {
         long id = 31;
         String name = "Ruslan";
         String surname = "Korshunov";
-        dto = new AuthorDto();
+        dto = new AuthorDto(id, name, surname);
         dto.setId(id);
         dto.setName(name);
         dto.setSurname(surname);

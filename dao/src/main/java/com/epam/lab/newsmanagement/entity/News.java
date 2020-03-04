@@ -16,6 +16,9 @@ public class News extends AbstractEntity implements Cloneable {
     private LocalDate modificationDate;
 
     public News() {
+        this.title = "";
+        this.shortText = "";
+        this.fullText = "";
         tags = new ArrayList<>();
         creationDate = LocalDate.now();
         modificationDate = creationDate;

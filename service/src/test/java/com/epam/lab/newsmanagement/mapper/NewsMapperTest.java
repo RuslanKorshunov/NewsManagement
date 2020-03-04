@@ -8,7 +8,7 @@ import com.epam.lab.newsmanagement.entity.Author;
 import com.epam.lab.newsmanagement.entity.News;
 import com.epam.lab.newsmanagement.entity.Tag;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +27,11 @@ public class NewsMapperTest {
     @Autowired
     private NewsMapper mapper;
 
-    private News news;
-    private NewsDto dto;
+    private static News news;
+    private static NewsDto newsDto;
 
-    @Before
-    public void initialize() {
+    @BeforeClass
+    public static void initialize() {
         long id = 20;
         String title = "Passengers leave Diamond";
         String shortText = "Passengers have begun leaving a quarantined cruise ship.";
@@ -64,32 +64,32 @@ public class NewsMapperTest {
         List<Tag> tags = Arrays.asList(tagOne, tagTwo);
         List<TagDto> tagDtos = Arrays.asList(tagDtoOne, tagDtoTwo);
 
-        News news = new News();
-        news.setId(id);
-        news.setTitle(title);
-        news.setShortText(shortText);
-        news.setFullText(fullText);
-        news.setAuthor(author);
-        news.setTags(tags);
-        news.setCreationDate(creationDate);
-        news.setModificationDate(creationDate);
-        this.news = news;
+        News n = new News();
+        n.setId(id);
+        n.setTitle(title);
+        n.setShortText(shortText);
+        n.setFullText(fullText);
+        n.setAuthor(author);
+        n.setTags(tags);
+        n.setCreationDate(creationDate);
+        n.setModificationDate(creationDate);
+        news = n;
 
-        NewsDto newsDto = new NewsDto();
-        newsDto.setId(id);
-        newsDto.setTitle(title);
-        newsDto.setShortText(shortText);
-        newsDto.setFullText(fullText);
-        newsDto.setAuthorDto(authorDto);
-        newsDto.setTagDtos(tagDtos);
-        newsDto.setCreationDate(creationDate);
-        newsDto.setModificationDate(creationDate);
-        this.dto = newsDto;
+        NewsDto dto = new NewsDto();
+        dto.setId(id);
+        dto.setTitle(title);
+        dto.setShortText(shortText);
+        dto.setFullText(fullText);
+        dto.setAuthorDto(authorDto);
+        dto.setTagDtos(tagDtos);
+        dto.setCreationDate(creationDate);
+        dto.setModificationDate(creationDate);
+        newsDto = dto;
     }
 
     @Test
     public void toNewsTest() {
-        News news = mapper.toEntity(dto);
+        News news = mapper.toEntity(newsDto);
         boolean result = news.getAuthor() != null && news.getTags() != null;
         Assert.assertTrue(result);
     }

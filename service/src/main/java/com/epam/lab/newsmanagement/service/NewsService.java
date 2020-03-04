@@ -26,18 +26,27 @@ import static com.epam.lab.newsmanagement.dao.NewsDao.SortCriteria;
 @Service
 @Qualifier("newsService")
 public class NewsService implements IntService<News, NewsDto> {
-    @Autowired
     private AuthorService authorService;
-    @Autowired
     private TagService tagService;
-    @Autowired
     private NewsDao dao;
-    @Autowired
     private NewsValidator newsValidator;
-    @Autowired
     private SearchCriteriaValidator searchCriteriaValidator;
-    @Autowired
     private NewsMapper mapper;
+
+    @Autowired
+    public NewsService(AuthorService authorService,
+                       TagService tagService,
+                       NewsDao dao,
+                       NewsValidator newsValidator,
+                       SearchCriteriaValidator searchCriteriaValidator,
+                       NewsMapper mapper) {
+        this.authorService = authorService;
+        this.tagService = tagService;
+        this.dao = dao;
+        this.newsValidator = newsValidator;
+        this.searchCriteriaValidator = searchCriteriaValidator;
+        this.mapper = mapper;
+    }
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)

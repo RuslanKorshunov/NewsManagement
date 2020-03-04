@@ -9,7 +9,7 @@ import com.epam.lab.newsmanagement.exception.ServiceException;
 import com.epam.lab.newsmanagement.mapper.AuthorMapper;
 import com.epam.lab.newsmanagement.validator.AuthorValidator;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -29,31 +29,26 @@ public class AuthorServiceTest {
     @InjectMocks
     private AuthorService service;
 
-    private AuthorDto rightAuthorDtoWithoutId;
-    private AuthorDto rightAuthorDtoWithId;
-    private AuthorDto wrongAuthorDtoWithoutId;
-    private AuthorDto wrongAuthorDto;
-    private AuthorDto nullAuthorDto;
-    private Author rightAuthorWithoutId;
-    private Author rightAuthorWithId;
-    private Author wrongAuthorWithoutId;
-    private Author nullAuthor;
+    private static AuthorDto rightAuthorDtoWithoutId;
+    private static AuthorDto rightAuthorDtoWithId;
+    private static AuthorDto wrongAuthorDtoWithoutId;
+    private static AuthorDto wrongAuthorDto;
+    private static AuthorDto nullAuthorDto;
+    private static Author rightAuthorWithoutId;
+    private static Author rightAuthorWithId;
+    private static Author wrongAuthorWithoutId;
+    private static Author nullAuthor;
 
-    @Before
-    public void initialize() {
+    @BeforeClass
+    public static void initialize() {
         long id = 31;
         long idNull = 100;
         String name = "Ruslan";
         String surname = "Korshunov";
 
-        rightAuthorDtoWithoutId = new AuthorDto();
-        rightAuthorDtoWithoutId.setName(name);
-        rightAuthorDtoWithoutId.setSurname(surname);
+        rightAuthorDtoWithoutId = new AuthorDto(name, surname);
 
-        rightAuthorDtoWithId = new AuthorDto();
-        rightAuthorDtoWithId.setId(id);
-        rightAuthorDtoWithId.setName(name);
-        rightAuthorDtoWithId.setSurname(surname);
+        rightAuthorDtoWithId = new AuthorDto(id, name, surname);
 
         wrongAuthorDtoWithoutId = new AuthorDto();
         wrongAuthorDtoWithoutId.setName(name);
@@ -62,10 +57,7 @@ public class AuthorServiceTest {
         wrongAuthorDto.setId(id);
         wrongAuthorDto.setName(name);
 
-        nullAuthorDto = new AuthorDto();
-        nullAuthorDto.setId(idNull);
-        nullAuthorDto.setName(name);
-        nullAuthorDto.setSurname(surname);
+        nullAuthorDto = new AuthorDto(id, name, surname);
 
         rightAuthorWithoutId = new Author(name, surname);
 

@@ -9,7 +9,7 @@ import com.epam.lab.newsmanagement.exception.ServiceException;
 import com.epam.lab.newsmanagement.mapper.TagMapper;
 import com.epam.lab.newsmanagement.validator.TagValidator;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -32,46 +32,38 @@ public class TagServiceTest {
     @InjectMocks
     private TagService service;
 
-    private TagDto tagDtoOneWithoutId;
-    private TagDto tagDtoOneWithId;
-    private TagDto tagDtoTwoWithoutId;
-    private TagDto tagDtoTwoWithId;
-    private TagDto wrongTagDto;
-    private TagDto nullTagDto;
-    private Tag tagOneWithoutId;
-    private Tag tagOneWithId;
-    private Tag tagTwoWithoutId;
-    private Tag tagTwoWithId;
-    private Tag wrongTag;
-    private Tag nullTag;
+    private static TagDto tagDtoOneWithoutId;
+    private static TagDto tagDtoOneWithId;
+    private static TagDto tagDtoTwoWithoutId;
+    private static TagDto tagDtoTwoWithId;
+    private static TagDto wrongTagDto;
+    private static TagDto nullTagDto;
+    private static Tag tagOneWithoutId;
+    private static Tag tagOneWithId;
+    private static Tag tagTwoWithoutId;
+    private static Tag tagTwoWithId;
+    private static Tag wrongTag;
+    private static Tag nullTag;
 
-    @Before
-    public void initialize() {
+    @BeforeClass
+    public static void initialize() {
         long idOne = 15;
         String nameOne = "belarus";
         long idTwo = 16;
         String nameTwo = "russia";
         long idNull = 17;
 
-        tagDtoOneWithoutId = new TagDto();
-        tagDtoOneWithoutId.setName(nameOne);
+        tagDtoOneWithoutId = new TagDto(nameOne);
 
-        tagDtoOneWithId = new TagDto();
-        tagDtoOneWithId.setId(idOne);
-        tagDtoOneWithId.setName(nameOne);
+        tagDtoOneWithId = new TagDto(idOne, nameOne);
 
-        tagDtoTwoWithoutId = new TagDto();
-        tagDtoTwoWithoutId.setName(nameTwo);
+        tagDtoTwoWithoutId = new TagDto(nameTwo);
 
-        tagDtoTwoWithId = new TagDto();
-        tagDtoTwoWithId.setId(idTwo);
-        tagDtoTwoWithId.setName(nameTwo);
+        tagDtoTwoWithId = new TagDto(idTwo, nameTwo);
 
         wrongTagDto = new TagDto();
 
-        nullTagDto = new TagDto();
-        nullTagDto.setId(idNull);
-        nullTagDto.setName(nameOne);
+        nullTagDto = new TagDto(idNull, nameOne);
 
         tagOneWithoutId = new Tag(nameOne);
 

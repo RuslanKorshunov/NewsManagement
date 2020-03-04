@@ -6,6 +6,19 @@ public class TagDto extends AbstractDto {
     private long id;
     private String name;
 
+    public TagDto() {
+        name = "";
+    }
+
+    public TagDto(String name) {
+        this.name = name;
+    }
+
+    public TagDto(long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public long getId() {
         return id;
     }

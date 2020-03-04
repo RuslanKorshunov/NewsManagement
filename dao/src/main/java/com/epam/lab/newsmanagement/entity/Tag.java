@@ -7,6 +7,7 @@ public class Tag extends AbstractEntity implements Cloneable {
     private String name;
 
     public Tag() {
+        name = "";
     }
 
     public Tag(String name) {

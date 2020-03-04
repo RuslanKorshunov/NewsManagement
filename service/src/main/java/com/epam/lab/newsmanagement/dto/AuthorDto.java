@@ -7,6 +7,22 @@ public class AuthorDto extends AbstractDto {
     private String name;
     private String surname;
 
+    public AuthorDto() {
+        name = "";
+        surname = "";
+    }
+
+    public AuthorDto(String name, String surname) {
+        this.name = name;
+        this.surname = surname;
+    }
+
+    public AuthorDto(long id, String name, String surname) {
+        this.id = id;
+        this.name = name;
+        this.surname = surname;
+    }
+
     public long getId() {
         return id;
     }

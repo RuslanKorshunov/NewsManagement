@@ -4,7 +4,7 @@ import com.epam.lab.newsmanagement.config.ServiceTestConfig;
 import com.epam.lab.newsmanagement.dto.TagDto;
 import com.epam.lab.newsmanagement.entity.Tag;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +19,11 @@ public class TagMapperTest {
     @Autowired
     private TagMapper mapper;
 
-    private TagDto dto;
-    private Tag tag;
+    private static TagDto dto;
+    private static Tag tag;
 
-    @Before
-    public void initialize() {
+    @BeforeClass
+    public static void initialize() {
         long id = 31;
         String name = "ruslan";
         dto = new TagDto();

@@ -8,6 +8,8 @@ public class Author extends AbstractEntity implements Cloneable {
     private String surname;
 
     public Author() {
+        name = "";
+        surname = "";
     }
 
     public Author(String name, String surname) {
