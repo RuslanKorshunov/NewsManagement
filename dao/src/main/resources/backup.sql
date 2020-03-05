@@ -28,7 +28,7 @@ CREATE DATABASE "NewsDB" WITH TEMPLATE = template0 ENCODING = 'UTF8' LC_COLLATE 
 
 ALTER DATABASE "NewsDB" OWNER TO postgres;
 
-\connect "NewsDB"
+connect "NewsDB"
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;

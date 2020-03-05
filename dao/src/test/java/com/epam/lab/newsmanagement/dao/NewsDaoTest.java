@@ -1,6 +1,5 @@
 package com.epam.lab.newsmanagement.dao;
 
-import com.epam.lab.newsmanagement.config.DatabaseInitializer;
 import com.epam.lab.newsmanagement.config.TestConfig;
 import com.epam.lab.newsmanagement.entity.Author;
 import com.epam.lab.newsmanagement.entity.News;
@@ -9,7 +8,7 @@ import com.epam.lab.newsmanagement.entity.Tag;
 import com.epam.lab.newsmanagement.exception.DaoException;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,14 +29,12 @@ public class NewsDaoTest {
     private NewsDao dao;
     @Autowired
     private Logger logger;
-    @Autowired
-    private DatabaseInitializer dbi;
 
-    private News news;
-    private News existingNews;
+    private static News news;
+    private static News existingNews;
 
-    @Before
-    public void initializeAuthor() {
+    @BeforeClass
+    public static void initializeAuthor() {
         String title = "About me";
         String shortText = "Here I'd like to tell you about me.";
         String fullText = "\"My Name Is\" is a song by American rapper Eminem from his second studio album " +
@@ -68,7 +65,7 @@ public class NewsDaoTest {
         existingNews.setFullText(fullTextExistingNews);
         existingNews.setAuthor(authorExistingNews);
         existingNews.setTags(tags);
-        dbi.createDatabase();
+        //dbi.createDatabase();
     }
 
     @Test
@@ -189,7 +186,7 @@ public class NewsDaoTest {
     @Test
     public void deleteNewsTest() {
         try {
-            News news = dao.delete(21);
+            News news = dao.delete(22);
             long id = news.getId();
             boolean result = id != 0;
             Assert.assertTrue(result);

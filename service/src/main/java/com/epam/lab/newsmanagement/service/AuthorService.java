@@ -54,4 +54,9 @@ public class AuthorService extends AbstractService<Author> {
     Validator getValidator() {
         return validator;
     }
+
+    @Override
+    Author getClone(Author author) throws CloneNotSupportedException {
+        return author.clone();
+    }
 }

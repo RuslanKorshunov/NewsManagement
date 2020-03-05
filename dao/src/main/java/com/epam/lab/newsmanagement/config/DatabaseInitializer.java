@@ -4,7 +4,6 @@ import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 import java.io.*;
@@ -24,12 +23,16 @@ public class DatabaseInitializer {
 
     }
 
-    @Autowired
     private DataSource dataSource;
-    @Autowired
     private Logger logger;
-    @Autowired
     private ClassLoader classLoader;
+
+    @Autowired
+    public DatabaseInitializer(DataSource dataSource, Logger logger, ClassLoader classLoader) {
+        this.dataSource = dataSource;
+        this.logger = logger;
+        this.classLoader = classLoader;
+    }
 
     public void createDatabase() {
         try (Connection connection = dataSource.getConnection();
