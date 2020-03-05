@@ -8,8 +8,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
 import java.util.List;
@@ -36,31 +34,26 @@ public class AuthorDao extends AbstractDao<Author> {
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    @Transactional(isolation = Isolation.SERIALIZABLE)
     public Author create(Author author) throws DaoException {
         return super.create(author);
     }
 
     @Override
-    @Transactional(isolation = Isolation.SERIALIZABLE)
     public List<Author> create(List<Author> t) throws DaoException {
         return super.create(t);
     }
 
     @Override
-    @Transactional(isolation = Isolation.SERIALIZABLE)
     public Author read(long id) throws DaoException {
         return super.read(id);
     }
 
     @Override
-    @Transactional(isolation = Isolation.SERIALIZABLE)
     public Author update(Author author) throws DaoException {
         return super.update(author);
     }
 
     @Override
-    @Transactional(isolation = Isolation.SERIALIZABLE)
     public Author delete(long id) throws DaoException {
         return super.delete(id);
     }

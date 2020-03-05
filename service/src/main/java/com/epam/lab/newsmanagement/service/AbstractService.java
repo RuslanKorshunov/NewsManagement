@@ -15,9 +15,10 @@ public abstract class AbstractService<T> implements IntService<T> {
     public T create(T t) throws ServiceException {
         Validator<T> validator = getValidator();
         try {
+            t = getClone(t);
             validator.validate(t);
             t = getDao().create(t);
-        } catch (DaoException | IncorrectDataException e) {
+        } catch (DaoException | IncorrectDataException | CloneNotSupportedException e) {
             throw new ServiceException(e);
         }
         return t;
@@ -53,9 +54,10 @@ public abstract class AbstractService<T> implements IntService<T> {
     public T update(T t) throws ServiceException {
         Validator<T> validator = getValidator();
         try {
+            t = getClone(t);
             validator.validate(t);
             getDao().update(t);
-        } catch (DaoException | IncorrectDataException e) {
+        } catch (DaoException | IncorrectDataException | CloneNotSupportedException e) {
             throw new ServiceException(e);
         }
         return t;
@@ -75,4 +77,6 @@ public abstract class AbstractService<T> implements IntService<T> {
     abstract Validator<T> getValidator();
 
     abstract Dao<T> getDao();
+
+    abstract T getClone(T t) throws CloneNotSupportedException;
 }

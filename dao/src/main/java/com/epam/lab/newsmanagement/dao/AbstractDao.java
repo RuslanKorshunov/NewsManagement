@@ -7,13 +7,16 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.function.Supplier;
 
-
 public abstract class AbstractDao<T> implements Dao<T> {
 
+    @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public T create(T t) throws DaoException {
         Supplier<T> supplier = getSupplier(t);
         T t2 = supplier.get();
@@ -31,11 +34,13 @@ public abstract class AbstractDao<T> implements Dao<T> {
         return t2;
     }
 
-
+    @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<T> create(List<T> t) throws DaoException {
         throw new DaoException("Operation isn't supported by dao.");
     }
 
+    @Override
     public T read(long id) throws DaoException {
         T t;
         try {
@@ -51,6 +56,8 @@ public abstract class AbstractDao<T> implements Dao<T> {
         throw new DaoException("Operation isn't supported by dao.");
     }
 
+    @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public T update(T t) throws DaoException {
         try {
             getJdbcTemplate().update(getUpdateQuery(), getParametersForUpdate(t));
@@ -60,6 +67,8 @@ public abstract class AbstractDao<T> implements Dao<T> {
         return t;
     }
 
+    @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public T delete(long id) throws DaoException {
         T t = read(id);
         try {

@@ -1,13 +1,11 @@
 package com.epam.lab.newsmanagement.dao;
 
-import com.epam.lab.newsmanagement.config.DatabaseInitializer;
 import com.epam.lab.newsmanagement.config.TestConfig;
 import com.epam.lab.newsmanagement.entity.Tag;
 import com.epam.lab.newsmanagement.exception.DaoException;
 import org.apache.logging.log4j.Logger;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,21 +24,19 @@ public class TagDaoTest {
     private TagDao dao;
     @Autowired
     private Logger logger;
-    @Autowired
-    private DatabaseInitializer dbi;
 
-    private Tag newTag;
-    private Tag existingTagOne;
-    private Tag existingTagTwo;
-    private Tag existingTagThree;
+    private static Tag newTag;
+    private static Tag existingTagOne;
+    private static Tag existingTagTwo;
+    private static Tag existingTagThree;
 
-    @Before
-    public void initializeAuthor() {
+    @BeforeClass
+    public static void initializeAuthor() {
         newTag = new Tag("snape");
         existingTagOne = new Tag(31, "policy");
         existingTagTwo = new Tag(22, "uk");
         existingTagThree = new Tag(3, "italy");
-        dbi.createDatabase();
+        //dbi.createDatabase();
     }
 
     @Test
@@ -132,10 +128,5 @@ public class TagDaoTest {
     public void deleteNullTagTest() throws DaoException {
         Tag tag = dao.delete(100);
         Assert.fail("deleteNullTagTest was failed.");
-    }
-
-    @After
-    public void deleteDatabase() {
-        dbi.dropDatabase();
     }
 }

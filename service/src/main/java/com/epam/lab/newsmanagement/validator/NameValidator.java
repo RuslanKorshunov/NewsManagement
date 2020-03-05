@@ -13,7 +13,7 @@ public class NameValidator implements Validator<String> {
 
     @Override
     public void validate(String name) throws IncorrectDataException {
-        if(name==null){
+        if (name == null) {
             throw new IncorrectDataException("Value can't be null.");
         }
         if (!name.matches(NAME_REGEX)) {
@@ -21,4 +21,3 @@ public class NameValidator implements Validator<String> {
         }
     }
 }
-

@@ -39,8 +39,10 @@ public class TestConfig {
     }
 
     @Bean
-    public DatabaseInitializer getDatabaseConfig() {
-        return new DatabaseInitializer();
+    public DatabaseInitializer getDatabaseConfig(DataSource dataSource, Logger logger, ClassLoader classLoader) {
+        DatabaseInitializer di = new DatabaseInitializer(dataSource, logger, classLoader);
+        di.createDatabase();
+        return di;
     }
 
     @Bean

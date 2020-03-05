@@ -38,14 +38,7 @@ public class NewsService implements IntService<News> {
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public News create(News news) throws ServiceException {
         try {
-            newsValidator.validate(news);
-            news = news.clone();
-            Author author = news.getAuthor();
-            author = authorService.create(author);
-            news.setAuthor(author);
-            List<Tag> tags = news.getTags();
-            tags = tagService.create(tags);
-            news.setTags(tags);
+            news = checkNews(news);
             news = dao.create(news);
         } catch (DaoException | CloneNotSupportedException | IncorrectDataException e) {
             throw new ServiceException(e);
@@ -99,14 +92,7 @@ public class NewsService implements IntService<News> {
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public News update(News news) throws ServiceException {
         try {
-            newsValidator.validate(news);
-            news = news.clone();
-            Author author = news.getAuthor();
-            author = authorService.create(author);
-            news.setAuthor(author);
-            List<Tag> tags = news.getTags();
-            tags = tagService.create(tags);
-            news.setTags(tags);
+            news = checkNews(news);
             news = dao.update(news);
         } catch (DaoException | CloneNotSupportedException | IncorrectDataException e) {
             throw new ServiceException(e);
@@ -122,6 +108,18 @@ public class NewsService implements IntService<News> {
         } catch (DaoException e) {
             throw new ServiceException(e);
         }
+        return news;
+    }
+
+    private News checkNews(News news) throws IncorrectDataException, CloneNotSupportedException, ServiceException {
+        newsValidator.validate(news);
+        news = news.clone();
+        Author author = news.getAuthor();
+        author = authorService.create(author);
+        news.setAuthor(author);
+        List<Tag> tags = news.getTags();
+        tags = tagService.create(tags);
+        news.setTags(tags);
         return news;
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -47,8 +48,12 @@ public class TagService extends AbstractService<Tag> {
                 validator.validate(tag);
                 toLoverCase(tag);
             }
+            List<Tag> copy = new ArrayList<>();
+            for (Tag tag : tags) {
+                copy.add(tag.clone());
+            }
             tags = dao.create(tags);
-        } catch (DaoException | IncorrectDataException e) {
+        } catch (DaoException | IncorrectDataException | CloneNotSupportedException e) {
             throw new ServiceException(e);
         }
         return tags;
@@ -90,5 +95,10 @@ public class TagService extends AbstractService<Tag> {
         String name = tag.getName();
         name = name.toLowerCase();
         tag.setName(name);
+    }
+
+    @Override
+    Tag getClone(Tag tag) throws CloneNotSupportedException {
+        return tag.clone();
     }
 }

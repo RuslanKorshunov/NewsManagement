@@ -1,11 +1,9 @@
 package com.epam.lab.newsmanagement.dao;
 
-import com.epam.lab.newsmanagement.config.DatabaseInitializer;
 import com.epam.lab.newsmanagement.config.TestConfig;
 import com.epam.lab.newsmanagement.entity.Author;
 import com.epam.lab.newsmanagement.exception.DaoException;
 import org.apache.logging.log4j.Logger;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,13 +23,11 @@ public class AuthorDaoTest {
     private AuthorDao dao;
     @Autowired
     private Logger logger;
-    @Autowired
-    private DatabaseInitializer dbi;
 
-    private Author newAuthor;
-    private Author existingAuthorOne;
-    private Author existingAuthorTwo;
-    private Author existingAuthorThree;
+    private static Author newAuthor;
+    private static Author existingAuthorOne;
+    private static Author existingAuthorTwo;
+    private static Author existingAuthorThree;
 
     @Before
     public void initializeAuthor() {
@@ -39,7 +35,6 @@ public class AuthorDaoTest {
         existingAuthorOne = new Author(31, "Ruslan", "Korshunov");
         existingAuthorTwo = new Author(23, "Evgenij", "Burak");
         existingAuthorThree = new Author(35, "Mari", "Kurl");
-        dbi.createDatabase();
     }
 
     @Test
@@ -124,10 +119,5 @@ public class AuthorDaoTest {
     public void deleteNullAuthorTest() throws DaoException {
         dao.delete(100);
         Assert.fail("deleteNullAuthorTest was failed.");
-    }
-
-    @After
-    public void deleteDatabase() {
-        dbi.dropDatabase();
     }
 }

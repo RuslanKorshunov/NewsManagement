@@ -8,8 +8,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
@@ -37,13 +35,11 @@ public class TagDao extends AbstractDao<Tag> {
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    @Transactional(isolation = Isolation.SERIALIZABLE)
     public Tag create(Tag tag) throws DaoException {
         return super.create(tag);
     }
 
     @Override
-    @Transactional(isolation = Isolation.SERIALIZABLE)
     public List<Tag> create(List<Tag> tags) throws DaoException {
         List<Tag> innerTags = new ArrayList<>();
         for (Tag tag : tags) {
@@ -53,19 +49,16 @@ public class TagDao extends AbstractDao<Tag> {
     }
 
     @Override
-    @Transactional(isolation = Isolation.SERIALIZABLE)
     public Tag read(long id) throws DaoException {
         return super.read(id);
     }
 
     @Override
-    @Transactional(isolation = Isolation.SERIALIZABLE)
     public Tag update(Tag tag) throws DaoException {
         return super.update(tag);
     }
 
     @Override
-    @Transactional(isolation = Isolation.SERIALIZABLE)
     public Tag delete(long id) throws DaoException {
         return super.delete(id);
     }
