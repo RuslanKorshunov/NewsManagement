@@ -1,20 +1,20 @@
-package com.epam.lab.newsmanagement.entity;
+package com.epam.lab.newsmanagement.dto;
 
 import java.util.Objects;
 
-public class Tag extends AbstractEntity implements Cloneable {
+public class TagDto extends AbstractDto {
     private long id;
     private String name;
 
-    public Tag() {
+    public TagDto() {
         name = "";
     }
 
-    public Tag(String name) {
+    public TagDto(String name) {
         this.name = name;
     }
 
-    public Tag(long id, String name) {
+    public TagDto(long id, String name) {
         this.id = id;
         this.name = name;
     }
@@ -36,17 +36,12 @@ public class Tag extends AbstractEntity implements Cloneable {
     }
 
     @Override
-    public Tag clone() throws CloneNotSupportedException {
-        return (Tag) super.clone();
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Tag tag = (Tag) o;
-        return id == tag.id &&
-                Objects.equals(name, tag.name);
+        TagDto tagDto = (TagDto) o;
+        return id == tagDto.id &&
+                Objects.equals(name, tagDto.name);
     }
 
     @Override
@@ -56,7 +51,7 @@ public class Tag extends AbstractEntity implements Cloneable {
 
     @Override
     public String toString() {
-        return "Tag{" +
+        return "TagDto{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 '}';

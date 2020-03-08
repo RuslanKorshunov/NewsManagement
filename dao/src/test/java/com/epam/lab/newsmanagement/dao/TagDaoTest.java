@@ -1,7 +1,7 @@
 package com.epam.lab.newsmanagement.dao;
 
 import com.epam.lab.newsmanagement.config.DatabaseInitializer;
-import com.epam.lab.newsmanagement.config.TestConfig;
+import com.epam.lab.newsmanagement.config.DaoTestConfig;
 import com.epam.lab.newsmanagement.entity.Tag;
 import com.epam.lab.newsmanagement.exception.DaoException;
 import org.apache.logging.log4j.Logger;
@@ -20,7 +20,7 @@ import java.util.List;
 
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(classes = {TestConfig.class})
+@ContextConfiguration(classes = {DaoTestConfig.class})
 public class TagDaoTest {
     @Autowired
     private TagDao dao;

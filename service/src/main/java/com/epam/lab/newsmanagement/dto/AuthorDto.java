@@ -1,23 +1,23 @@
-package com.epam.lab.newsmanagement.entity;
+package com.epam.lab.newsmanagement.dto;
 
 import java.util.Objects;
 
-public class Author extends AbstractEntity implements Cloneable {
+public class AuthorDto extends AbstractDto {
     private long id;
     private String name;
     private String surname;
 
-    public Author() {
+    public AuthorDto() {
         name = "";
         surname = "";
     }
 
-    public Author(String name, String surname) {
+    public AuthorDto(String name, String surname) {
         this.name = name;
         this.surname = surname;
     }
 
-    public Author(long id, String name, String surname) {
+    public AuthorDto(long id, String name, String surname) {
         this.id = id;
         this.name = name;
         this.surname = surname;
@@ -48,18 +48,13 @@ public class Author extends AbstractEntity implements Cloneable {
     }
 
     @Override
-    public Author clone() throws CloneNotSupportedException {
-        return (Author) super.clone();
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Author author = (Author) o;
-        return id == author.id &&
-                Objects.equals(name, author.name) &&
-                Objects.equals(surname, author.surname);
+        AuthorDto dto = (AuthorDto) o;
+        return id == dto.id &&
+                Objects.equals(name, dto.name) &&
+                Objects.equals(surname, dto.surname);
     }
 
     @Override
@@ -69,7 +64,7 @@ public class Author extends AbstractEntity implements Cloneable {
 
     @Override
     public String toString() {
-        return "Author{" +
+        return "AuthorDto{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
