@@ -31,10 +31,10 @@ public class NewsMapper extends AbstractMapper<News, NewsDto> {
             if (author != null) {
                 news.setAuthor(author);
             }
-            List<TagDto> tagDtos = newsDto.getTagDtos();
+            List<TagDto> tagDtoList = newsDto.getTagDtoList();
             List<Tag> tags = new ArrayList<>();
-            if (tagDtos != null) {
-                tagDtos.forEach(tagDto -> {
+            if (tagDtoList != null) {
+                tagDtoList.forEach(tagDto -> {
                     Tag tag = tagMapper.toEntity(tagDto);
                     if (tag != null) {
                         tags.add(tag);
@@ -65,18 +65,18 @@ public class NewsMapper extends AbstractMapper<News, NewsDto> {
                     }
                 });
             }
-            newsDto.setTagDtos(tagDtos);
+            newsDto.setTagDtoList(tagDtos);
         }
         return newsDto;
     }
 
     @Override
-    News getEntity(NewsDto dto) {
+    protected News getEntity(NewsDto dto) {
         return mapper.map(dto, News.class);
     }
 
     @Override
-    NewsDto getDto(News news) {
+    protected NewsDto getDto(News news) {
         return mapper.map(news, NewsDto.class);
     }
 }

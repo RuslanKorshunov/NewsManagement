@@ -1,7 +1,7 @@
 package com.epam.lab.newsmanagement.service;
 
-import com.epam.lab.newsmanagement.dao.entity.SearchCriteria;
 import com.epam.lab.newsmanagement.dto.AbstractDto;
+import com.epam.lab.newsmanagement.dto.SearchCriteriaDto;
 import com.epam.lab.newsmanagement.entity.AbstractEntity;
 import com.epam.lab.newsmanagement.exception.ServiceException;
 
@@ -16,7 +16,7 @@ public interface IntService<N extends AbstractEntity, T extends AbstractDto> {
 
     T read(long id) throws ServiceException;
 
-    List<T> read(SearchCriteria sc) throws ServiceException;
+    List<T> read(SearchCriteriaDto sc) throws ServiceException;
 
     List<T> read(SortCriteria sc) throws ServiceException;
 

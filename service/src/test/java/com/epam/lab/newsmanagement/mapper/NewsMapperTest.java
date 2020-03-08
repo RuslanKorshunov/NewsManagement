@@ -81,7 +81,7 @@ public class NewsMapperTest {
         dto.setShortText(shortText);
         dto.setFullText(fullText);
         dto.setAuthorDto(authorDto);
-        dto.setTagDtos(tagDtos);
+        dto.setTagDtoList(tagDtos);
         dto.setCreationDate(creationDate);
         dto.setModificationDate(creationDate);
         newsDto = dto;
@@ -97,7 +97,7 @@ public class NewsMapperTest {
     @Test
     public void toDtoTest() {
         NewsDto dto = mapper.toDto(news);
-        boolean result = dto.getAuthorDto() != null && dto.getTagDtos() != null;
+        boolean result = dto.getAuthorDto() != null && dto.getTagDtoList() != null;
         Assert.assertTrue(result);
     }
 }

@@ -12,12 +12,12 @@ public class TagMapper extends AbstractMapper<Tag, TagDto> {
     private ModelMapper mapper;
 
     @Override
-    Tag getEntity(TagDto dto) {
+    protected Tag getEntity(TagDto dto) {
         return mapper.map(dto, Tag.class);
     }
 
     @Override
-    TagDto getDto(Tag tag) {
+    protected TagDto getDto(Tag tag) {
         return mapper.map(tag, TagDto.class);
     }
 }

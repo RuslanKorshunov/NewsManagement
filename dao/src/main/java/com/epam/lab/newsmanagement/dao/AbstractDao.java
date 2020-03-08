@@ -1,6 +1,6 @@
 package com.epam.lab.newsmanagement.dao;
 
-import com.epam.lab.newsmanagement.dao.entity.SearchCriteria;
+import com.epam.lab.newsmanagement.entity.SearchCriteria;
 import com.epam.lab.newsmanagement.entity.AbstractEntity;
 import com.epam.lab.newsmanagement.exception.DaoException;
 import org.springframework.dao.DataAccessException;

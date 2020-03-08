@@ -12,12 +12,12 @@ public class AuthorMapper extends AbstractMapper<Author, AuthorDto> {
     private ModelMapper mapper;
 
     @Override
-    Author getEntity(AuthorDto dto) {
+    protected Author getEntity(AuthorDto dto) {
         return mapper.map(dto, Author.class);
     }
 
     @Override
-    AuthorDto getDto(Author author) {
+    protected AuthorDto getDto(Author author) {
         return mapper.map(author, AuthorDto.class);
     }
 }

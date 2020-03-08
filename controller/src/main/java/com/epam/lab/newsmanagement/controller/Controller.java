@@ -1,6 +1,6 @@
 package com.epam.lab.newsmanagement.controller;
 
-import com.epam.lab.newsmanagement.dao.entity.SearchCriteria;
+import com.epam.lab.newsmanagement.entity.SearchCriteria;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;

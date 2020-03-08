@@ -4,7 +4,7 @@ import com.epam.lab.newsmanagement.config.DatabaseInitializer;
 import com.epam.lab.newsmanagement.config.DaoTestConfig;
 import com.epam.lab.newsmanagement.entity.Author;
 import com.epam.lab.newsmanagement.entity.News;
-import com.epam.lab.newsmanagement.dao.entity.SearchCriteria;
+import com.epam.lab.newsmanagement.entity.SearchCriteria;
 import com.epam.lab.newsmanagement.entity.Tag;
 import com.epam.lab.newsmanagement.exception.DaoException;
 import org.apache.logging.log4j.Logger;

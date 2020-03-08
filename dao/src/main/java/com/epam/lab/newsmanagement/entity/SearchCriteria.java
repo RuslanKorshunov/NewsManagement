@@ -1,12 +1,9 @@
-package com.epam.lab.newsmanagement.dao.entity;
-
-import com.epam.lab.newsmanagement.entity.Author;
-import com.epam.lab.newsmanagement.entity.Tag;
+package com.epam.lab.newsmanagement.entity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchCriteria {
+public class SearchCriteria extends AbstractEntity {
     private Author author;
     private List<Tag> tags;
 

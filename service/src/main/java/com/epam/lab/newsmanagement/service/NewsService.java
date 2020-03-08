@@ -1,15 +1,21 @@
 package com.epam.lab.newsmanagement.service;
 
 import com.epam.lab.newsmanagement.dao.NewsDao;
-import com.epam.lab.newsmanagement.dao.entity.SearchCriteria;
 import com.epam.lab.newsmanagement.dto.AuthorDto;
 import com.epam.lab.newsmanagement.dto.NewsDto;
+import com.epam.lab.newsmanagement.dto.SearchCriteriaDto;
 import com.epam.lab.newsmanagement.dto.TagDto;
+import com.epam.lab.newsmanagement.entity.Author;
 import com.epam.lab.newsmanagement.entity.News;
+import com.epam.lab.newsmanagement.entity.SearchCriteria;
+import com.epam.lab.newsmanagement.entity.Tag;
 import com.epam.lab.newsmanagement.exception.DaoException;
 import com.epam.lab.newsmanagement.exception.IncorrectDataException;
 import com.epam.lab.newsmanagement.exception.ServiceException;
+import com.epam.lab.newsmanagement.mapper.AbstractMapper;
+import com.epam.lab.newsmanagement.mapper.AuthorMapper;
 import com.epam.lab.newsmanagement.mapper.NewsMapper;
+import com.epam.lab.newsmanagement.mapper.TagMapper;
 import com.epam.lab.newsmanagement.validator.NewsValidator;
 import com.epam.lab.newsmanagement.validator.SearchCriteriaValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +37,9 @@ public class NewsService implements IntService<News, NewsDto> {
     private NewsDao dao;
     private NewsValidator newsValidator;
     private SearchCriteriaValidator searchCriteriaValidator;
-    private NewsMapper mapper;
+    private NewsMapper newsMapper;
+    private AuthorMapper authorMapper;
+    private TagMapper tagMapper;
 
     @Autowired
     public NewsService(AuthorService authorService,
@@ -39,27 +47,26 @@ public class NewsService implements IntService<News, NewsDto> {
                        NewsDao dao,
                        NewsValidator newsValidator,
                        SearchCriteriaValidator searchCriteriaValidator,
-                       NewsMapper mapper) {
+                       NewsMapper newsMapper,
+                       AuthorMapper authorMapper,
+                       TagMapper tagMapper) {
         this.authorService = authorService;
         this.tagService = tagService;
         this.dao = dao;
         this.newsValidator = newsValidator;
         this.searchCriteriaValidator = searchCriteriaValidator;
-        this.mapper = mapper;
+        this.newsMapper = newsMapper;
+        this.authorMapper = authorMapper;
+        this.tagMapper = tagMapper;
     }
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public NewsDto create(NewsDto newsDto) throws ServiceException {
         try {
-            AuthorDto authorDto = authorService.create(newsDto.getAuthorDto());
-            List<TagDto> tagDtos = tagService.create(newsDto.getTagDtos());
-            newsDto.setAuthorDto(authorDto);
-            newsDto.setTagDtos(tagDtos);
-            News news = mapper.toEntity(newsDto);
-            newsValidator.validate(news);
+            News news = checkNews(newsDto);
             news = dao.create(news);
-            newsDto = mapper.toDto(news);
+            newsDto = newsMapper.toDto(news);
         } catch (DaoException | IncorrectDataException e) {
             throw new ServiceException(e);
         }
@@ -76,7 +83,7 @@ public class NewsService implements IntService<News, NewsDto> {
         NewsDto newsDto;
         try {
             News news = dao.read(id);
-            newsDto = mapper.toDto(news);
+            newsDto = newsMapper.toDto(news);
         } catch (DaoException e) {
             throw new ServiceException(e);
         }
@@ -84,9 +91,11 @@ public class NewsService implements IntService<News, NewsDto> {
     }
 
     @Override
-    public List<NewsDto> read(SearchCriteria sc) throws ServiceException {
+    public List<NewsDto> read(SearchCriteriaDto scd) throws ServiceException {
         List<NewsDto> newsDtos;
         try {
+            AbstractMapper<SearchCriteria, SearchCriteriaDto> mapper = getSearchCriteriaMapper();
+            SearchCriteria sc = mapper.toEntity(scd);
             searchCriteriaValidator.validate(sc);
             List<News> newsList = dao.read(sc);
             newsDtos = toNewsDtoList(newsList);
@@ -115,14 +124,9 @@ public class NewsService implements IntService<News, NewsDto> {
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public NewsDto update(NewsDto newsDto) throws ServiceException {
         try {
-            AuthorDto authorDto = authorService.create(newsDto.getAuthorDto());
-            List<TagDto> tagDtos = tagService.create(newsDto.getTagDtos());
-            newsDto.setAuthorDto(authorDto);
-            newsDto.setTagDtos(tagDtos);
-            News news = mapper.toEntity(newsDto);
-            newsValidator.validate(news);
+            News news = checkNews(newsDto);
             news = dao.update(news);
-            newsDto = mapper.toDto(news);
+            newsDto = newsMapper.toDto(news);
         } catch (DaoException | IncorrectDataException e) {
             throw new ServiceException(e);
         }
@@ -134,7 +138,7 @@ public class NewsService implements IntService<News, NewsDto> {
         NewsDto newsDto;
         try {
             News news = dao.delete(id);
-            newsDto = mapper.toDto(news);
+            newsDto = newsMapper.toDto(news);
         } catch (DaoException e) {
             throw new ServiceException(e);
         }
@@ -144,9 +148,62 @@ public class NewsService implements IntService<News, NewsDto> {
     private List<NewsDto> toNewsDtoList(List<News> newsList) {
         List<NewsDto> newsDtos = new ArrayList<>();
         newsList.forEach(n -> {
-            NewsDto newsDto = mapper.toDto(n);
+            NewsDto newsDto = newsMapper.toDto(n);
             newsDtos.add(newsDto);
         });
         return newsDtos;
+    }
+
+    private AbstractMapper<SearchCriteria, SearchCriteriaDto> getSearchCriteriaMapper() {
+        return new AbstractMapper<SearchCriteria, SearchCriteriaDto>() {
+            @Override
+            public SearchCriteria toEntity(SearchCriteriaDto dto) {
+                SearchCriteria searchCriteria = new SearchCriteria();
+                if (dto != null) {
+                    AuthorDto authorDto = dto.getAuthorDto();
+                    Author author = authorMapper.toEntity(authorDto);
+                    if (author != null) {
+                        searchCriteria.setAuthor(author);
+                    }
+                    List<TagDto> tagDtoList = dto.getTagDtoList();
+                    List<Tag> tags = new ArrayList<>();
+                    if (tagDtoList != null) {
+                        tagDtoList.forEach(tagDto -> {
+                            Tag tag = tagMapper.toEntity(tagDto);
+                            if (tag != null) {
+                                tags.add(tag);
+                            }
+                        });
+                    }
+                    searchCriteria.setTags(tags);
+                }
+                return searchCriteria;
+            }
+
+            @Override
+            public SearchCriteriaDto toDto(SearchCriteria searchCriteria) {
+                return super.toDto(searchCriteria);
+            }
+
+            @Override
+            protected SearchCriteria getEntity(SearchCriteriaDto searchCriteriaDto) {
+                return null;
+            }
+
+            @Override
+            protected SearchCriteriaDto getDto(SearchCriteria searchCriteria) {
+                return null;
+            }
+        };
+    }
+
+    private News checkNews(NewsDto newsDto) throws ServiceException, IncorrectDataException {
+        AuthorDto authorDto = authorService.create(newsDto.getAuthorDto());
+        List<TagDto> tagDtos = tagService.create(newsDto.getTagDtoList());
+        newsDto.setAuthorDto(authorDto);
+        newsDto.setTagDtoList(tagDtos);
+        News news = newsMapper.toEntity(newsDto);
+        newsValidator.validate(news);
+        return news;
     }
 }

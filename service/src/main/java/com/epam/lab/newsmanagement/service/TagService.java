@@ -49,9 +49,9 @@ public class TagService extends AbstractService<Tag, TagDto> {
     }
 
     @Override
-    public List<TagDto> create(List<TagDto> tagDtos) throws ServiceException {
+    public List<TagDto> create(List<TagDto> tagDtoList) throws ServiceException {
         List<Tag> tags = new ArrayList<>();
-        for (TagDto tagDto : tagDtos) {
+        for (TagDto tagDto : tagDtoList) {
             Tag tag = getMapper().toEntity(tagDto);
             tags.add(tag);
         }

@@ -14,7 +14,7 @@ public abstract class AbstractMapper<N extends AbstractEntity, T extends Abstrac
         return Objects.isNull(n) ? null : getDto(n);
     }
 
-    abstract N getEntity(T t);
+    protected abstract N getEntity(T t);
 
-    abstract T getDto(N n);
+    protected abstract T getDto(N n);
 }

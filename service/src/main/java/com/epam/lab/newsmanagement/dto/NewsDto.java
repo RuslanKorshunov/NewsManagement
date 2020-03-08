@@ -10,7 +10,7 @@ public class NewsDto extends AbstractDto {
     private String shortText;
     private String fullText;
     private AuthorDto authorDto;
-    private List<TagDto> tagDtos;
+    private List<TagDto> tagDtoList;
     private LocalDate creationDate;
     private LocalDate modificationDate;
 
@@ -18,7 +18,7 @@ public class NewsDto extends AbstractDto {
         this.title = "";
         this.shortText = "";
         this.fullText = "";
-        tagDtos = new ArrayList<>();
+        tagDtoList = new ArrayList<>();
         creationDate = LocalDate.now();
         modificationDate = creationDate;
     }
@@ -63,12 +63,12 @@ public class NewsDto extends AbstractDto {
         this.authorDto = authorDto;
     }
 
-    public List<TagDto> getTagDtos() {
-        return tagDtos;
+    public List<TagDto> getTagDtoList() {
+        return tagDtoList;
     }
 
-    public void setTagDtos(List<TagDto> tagDtos) {
-        this.tagDtos = tagDtos;
+    public void setTagDtoList(List<TagDto> tagDtoList) {
+        this.tagDtoList = tagDtoList;
     }
 
     public LocalDate getCreationDate() {
