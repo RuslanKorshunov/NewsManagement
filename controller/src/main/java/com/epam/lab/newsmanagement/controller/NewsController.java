@@ -1,7 +1,8 @@
 package com.epam.lab.newsmanagement.controller;
 
+import com.epam.lab.newsmanagement.dto.NewsDto;
+import com.epam.lab.newsmanagement.dto.SearchCriteriaDto;
 import com.epam.lab.newsmanagement.entity.News;
-import com.epam.lab.newsmanagement.entity.SearchCriteria;
 import com.epam.lab.newsmanagement.exception.ServiceException;
 import com.epam.lab.newsmanagement.service.IntService;
 import com.epam.lab.newsmanagement.service.NewsService;
@@ -19,13 +20,7 @@ import static com.epam.lab.newsmanagement.dao.NewsDao.SortCriteria;
 
 @RestController
 @RequestMapping(value = "/news/")
-public class NewsController extends AbstractController<News> {
-    private static final Logger logger;
-
-    static {
-        logger = LogManager.getLogger(NewsController.class);
-    }
-
+public class NewsController extends AbstractController<News, NewsDto> {
     @Autowired
     private NewsService service;
 
@@ -33,15 +28,15 @@ public class NewsController extends AbstractController<News> {
     @PostMapping(value = "/",
             produces = PRODUCES,
             consumes = CONSUMES)
-    public ResponseEntity<News> create(@RequestBody News news) {
-        return super.create(news);
+    public ResponseEntity<NewsDto> create(@RequestBody NewsDto newsDto) {
+        return super.create(newsDto);
     }
 
     @Override
     @GetMapping(value = "/{id}/",
             produces = PRODUCES,
             consumes = CONSUMES)
-    public ResponseEntity<News> read(@PathVariable("id") long id) {
+    public ResponseEntity<NewsDto> read(@PathVariable("id") long id) {
         return super.read(id);
     }
 
@@ -49,15 +44,15 @@ public class NewsController extends AbstractController<News> {
     @PutMapping(value = "/{id}/",
             produces = PRODUCES,
             consumes = CONSUMES)
-    public ResponseEntity<News> update(@PathVariable("id") long id, @RequestBody News news) {
-        return super.update(id, news);
+    public ResponseEntity<NewsDto> update(@PathVariable("id") long id, @RequestBody NewsDto newsDto) {
+        return super.update(id, newsDto);
     }
 
     @Override
     @DeleteMapping(value = "/{id}/",
             produces = PRODUCES,
             consumes = CONSUMES)
-    public ResponseEntity<News> delete(@PathVariable("id") long id) {
+    public ResponseEntity<NewsDto> delete(@PathVariable("id") long id) {
         return super.delete(id);
     }
 
@@ -65,11 +60,11 @@ public class NewsController extends AbstractController<News> {
     @GetMapping(value = "/search/",
             produces = PRODUCES,
             consumes = CONSUMES)
-    public ResponseEntity<List<News>> read(@RequestBody SearchCriteria searchCriteria) {
+    public ResponseEntity<List<NewsDto>> read(@RequestBody SearchCriteriaDto scd) {
         HttpStatus status = HttpStatus.OK;
-        List<News> news;
+        List<NewsDto> news;
         try {
-            news = service.read(searchCriteria);
+            news = service.read(scd);
         } catch (ServiceException e) {
             Logger logger = LogManager.getLogger(NewsController.class);
             logger.error(e);
@@ -83,13 +78,13 @@ public class NewsController extends AbstractController<News> {
     @GetMapping(value = "/sort/{criteria}/",
             produces = PRODUCES,
             consumes = CONSUMES)
-    public ResponseEntity<List<News>> read(@PathVariable("criteria") SortCriteria sc) {
+    public ResponseEntity<List<NewsDto>> read(@PathVariable("criteria") SortCriteria sc) {
         HttpStatus status = HttpStatus.OK;
-        List<News> news;
+        List<NewsDto> news;
         try {
             news = service.read(sc);
         } catch (ServiceException e) {
-            logger.error(e);
+            getLogger().error(e);
             status = HttpStatus.NOT_FOUND;
             news = new ArrayList<>();
         }
@@ -102,19 +97,14 @@ public class NewsController extends AbstractController<News> {
     }
 
     @Override
-    News createEntity(long id) {
-        News news = new News();
-        news.setId(id);
-        return news;
+    NewsDto createEntity(long id) {
+        NewsDto newsDto = new NewsDto();
+        newsDto.setId(id);
+        return newsDto;
     }
 
     @Override
-    void setId(News news, long id) {
-        news.setId(id);
-    }
-
-    @Override
-    Logger getLogger() {
-        return logger;
+    void setId(NewsDto newsDto, long id) {
+        newsDto.setId(id);
     }
 }

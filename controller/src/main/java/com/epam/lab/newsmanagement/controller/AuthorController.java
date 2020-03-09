@@ -1,5 +1,6 @@
 package com.epam.lab.newsmanagement.controller;
 
+import com.epam.lab.newsmanagement.dto.AuthorDto;
 import com.epam.lab.newsmanagement.entity.Author;
 import com.epam.lab.newsmanagement.service.AuthorService;
 import com.epam.lab.newsmanagement.service.IntService;
@@ -11,13 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/author/")
-public class AuthorController extends AbstractController<Author> {
-    private static final Logger logger;
-
-    static {
-        logger = LogManager.getLogger(AuthorController.class);
-    }
-
+public class AuthorController extends AbstractController<Author, AuthorDto> {
     @Autowired
     private AuthorService service;
 
@@ -25,15 +20,15 @@ public class AuthorController extends AbstractController<Author> {
     @PostMapping(value = "/",
             produces = PRODUCES,
             consumes = CONSUMES)
-    public ResponseEntity<Author> create(@RequestBody Author author) {
-        return super.create(author);
+    public ResponseEntity<AuthorDto> create(@RequestBody AuthorDto authorDto) {
+        return super.create(authorDto);
     }
 
     @Override
     @GetMapping(value = "/{id}/",
             produces = PRODUCES,
             consumes = CONSUMES)
-    public ResponseEntity<Author> read(@PathVariable("id") long id) {
+    public ResponseEntity<AuthorDto> read(@PathVariable("id") long id) {
         return super.read(id);
     }
 
@@ -41,15 +36,15 @@ public class AuthorController extends AbstractController<Author> {
     @PutMapping(value = "/{id}/",
             produces = PRODUCES,
             consumes = CONSUMES)
-    public ResponseEntity<Author> update(@PathVariable long id, @RequestBody Author author) {
-        return super.update(id, author);
+    public ResponseEntity<AuthorDto> update(@PathVariable long id, @RequestBody AuthorDto authorDto) {
+        return super.update(id, authorDto);
     }
 
     @Override
     @DeleteMapping(value = "/{id}/",
             produces = PRODUCES,
             consumes = CONSUMES)
-    public ResponseEntity<Author> delete(@PathVariable("id") long id) {
+    public ResponseEntity<AuthorDto> delete(@PathVariable("id") long id) {
         return super.delete(id);
     }
 
@@ -59,19 +54,14 @@ public class AuthorController extends AbstractController<Author> {
     }
 
     @Override
-    Author createEntity(long id) {
-        Author author = new Author();
-        author.setId(id);
-        return author;
+    AuthorDto createEntity(long id) {
+        AuthorDto authorDto = new AuthorDto();
+        authorDto.setId(id);
+        return authorDto;
     }
 
     @Override
-    void setId(Author author, long id) {
-        author.setId(id);
-    }
-
-    @Override
-    Logger getLogger() {
-        return logger;
+    void setId(AuthorDto authorDto, long id) {
+        authorDto.setId(id);
     }
 }
