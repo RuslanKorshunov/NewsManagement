@@ -1,8 +1,8 @@
 package com.epam.lab.newsmanagement.controller;
 
-import com.epam.lab.newsmanagement.dto.TagDto;
+import com.epam.lab.newsmanagement.dto.AuthorDto;
 import com.epam.lab.newsmanagement.exception.ServiceException;
-import com.epam.lab.newsmanagement.service.TagService;
+import com.epam.lab.newsmanagement.service.AuthorService;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -15,135 +15,136 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 @RunWith(MockitoJUnitRunner.class)
-public class TagControllerTest {
+public class AuthorControllerTest {
     @Mock
-    private static TagService service;
+    private AuthorService service;
 
     @InjectMocks
-    private static TagController controller;
+    private AuthorController controller;
 
-    private static TagDto tagDtoWithoutId;
-    private static TagDto tagDtoWithId;
+    private static AuthorDto authorDtoWithoutId;
+    private static AuthorDto authorDtoWithId;
 
     @BeforeClass
     public static void initialize() {
-        String name = "europe";
         long id = 1;
+        String name = "Ruslan";
+        String surname = "Korshunov";
 
-        tagDtoWithoutId = new TagDto(name);
+        authorDtoWithoutId = new AuthorDto(name, surname);
 
-        tagDtoWithId = new TagDto(id, name);
+        authorDtoWithId = new AuthorDto(id, name, surname);
     }
 
     @Test
-    public void createTagTest() {
+    public void createAuthorTest() {
         try {
-            Mockito.when(service.create(tagDtoWithoutId)).thenReturn(tagDtoWithId);
+            Mockito.when(service.create(authorDtoWithoutId)).thenReturn(authorDtoWithId);
 
-            ResponseEntity<TagDto> responseEntity = controller.create(tagDtoWithoutId);
+            ResponseEntity<AuthorDto> responseEntity = controller.create(authorDtoWithoutId);
             HttpStatus status = responseEntity.getStatusCode();
             Assert.assertEquals(HttpStatus.CREATED, status);
         } catch (ServiceException e) {
-            Assert.fail("createTagTest was failed.");
+            Assert.fail("createAuthorTest was failed.");
         }
     }
 
     @Test
-    public void createTagWrongTest() {
+    public void createAuthorWrongTest() {
         try {
-            Mockito.when(service.create(tagDtoWithoutId)).thenThrow(ServiceException.class);
+            Mockito.when(service.create(authorDtoWithoutId)).thenThrow(ServiceException.class);
 
-            ResponseEntity<TagDto> responseEntity = controller.create(tagDtoWithoutId);
+            ResponseEntity<AuthorDto> responseEntity = controller.create(authorDtoWithoutId);
             HttpStatus status = responseEntity.getStatusCode();
             Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, status);
         } catch (ServiceException e) {
-            Assert.fail("createTagWrongTest was failed.");
+            Assert.fail("createAuthorWrongTest was failed.");
         }
     }
 
     @Test
-    public void readTagTest() {
+    public void readAuthorTest() {
         long id = 1;
         try {
-            Mockito.when(service.read(id)).thenReturn(tagDtoWithId);
+            Mockito.when(service.read(id)).thenReturn(authorDtoWithId);
 
-            ResponseEntity<TagDto> responseEntity = controller.read(id);
+            ResponseEntity<AuthorDto> responseEntity = controller.read(id);
             HttpStatus status = responseEntity.getStatusCode();
             Assert.assertEquals(HttpStatus.OK, status);
         } catch (ServiceException e) {
-            Assert.fail("readTagTest was failed.");
+            Assert.fail("readAuthorTest was failed.");
         }
     }
 
     @Test
-    public void readTagWrongTest() {
+    public void readAuthorWrongTest() {
         long id = 1;
         try {
             Mockito.when(service.read(id)).thenThrow(ServiceException.class);
 
-            ResponseEntity<TagDto> responseEntity = controller.read(id);
+            ResponseEntity<AuthorDto> responseEntity = controller.read(id);
             HttpStatus status = responseEntity.getStatusCode();
             Assert.assertEquals(HttpStatus.NOT_FOUND, status);
         } catch (ServiceException e) {
-            Assert.fail("readTagWrongTest was failed.");
+            Assert.fail("readAuthorWrongTest was failed.");
         }
     }
 
     @Test
-    public void updateTagTest() {
+    public void updateAuthorTest() {
         long id = 1;
         try {
-            Mockito.when(service.read(id)).thenReturn(tagDtoWithId);
-            Mockito.when(service.update(tagDtoWithId)).thenReturn(tagDtoWithId);
+            Mockito.when(service.read(id)).thenReturn(authorDtoWithId);
+            Mockito.when(service.update(authorDtoWithId)).thenReturn(authorDtoWithId);
 
-            ResponseEntity<TagDto> responseEntity = controller.update(id, tagDtoWithoutId);
+            ResponseEntity<AuthorDto> responseEntity = controller.update(id, authorDtoWithoutId);
             HttpStatus status = responseEntity.getStatusCode();
             Assert.assertEquals(HttpStatus.OK, status);
         } catch (ServiceException e) {
-            Assert.fail("updateTagTest was failed.");
+            Assert.fail("updateAuthorTest was failed.");
         }
     }
 
     @Test
-    public void updateNullTagTest() {
+    public void updateNullAuthorTest() {
         long id = 1;
         try {
             Mockito.when(service.read(id)).thenReturn(null);
-            Mockito.when(service.update(tagDtoWithId)).thenThrow(ServiceException.class);
+            Mockito.when(service.update(authorDtoWithId)).thenThrow(ServiceException.class);
 
-            ResponseEntity<TagDto> responseEntity = controller.update(id, tagDtoWithoutId);
+            ResponseEntity<AuthorDto> responseEntity = controller.update(id, authorDtoWithoutId);
             HttpStatus status = responseEntity.getStatusCode();
             Assert.assertEquals(HttpStatus.NOT_FOUND, status);
         } catch (ServiceException e) {
-            Assert.fail("updateNullTagTest was failed.");
+            Assert.fail("updateNullAuthorTest was failed.");
         }
     }
 
     @Test
-    public void deleteTagTest() {
+    public void deleteAuthorTest() {
         long id = 1;
         try {
-            Mockito.when(service.delete(id)).thenReturn(tagDtoWithId);
+            Mockito.when(service.delete(id)).thenReturn(authorDtoWithId);
 
-            ResponseEntity<TagDto> responseEntity = controller.delete(id);
+            ResponseEntity<AuthorDto> responseEntity = controller.delete(id);
             HttpStatus status = responseEntity.getStatusCode();
             Assert.assertEquals(HttpStatus.OK, status);
         } catch (ServiceException e) {
-            Assert.fail("deleteTagTest was failed.");
+            Assert.fail("deleteAuthorTest was failed.");
         }
     }
 
     @Test
-    public void deleteNullTagTest() {
+    public void deleteNullAuthorTest() {
         long id = 1;
         try {
             Mockito.when(service.delete(id)).thenThrow(ServiceException.class);
 
-            ResponseEntity<TagDto> responseEntity = controller.delete(id);
+            ResponseEntity<AuthorDto> responseEntity = controller.delete(id);
             HttpStatus status = responseEntity.getStatusCode();
             Assert.assertEquals(HttpStatus.NOT_FOUND, status);
         } catch (ServiceException e) {
-            Assert.fail("deleteNullTagTest was failed.");
+            Assert.fail("deleteNullAuthorTest was failed.");
         }
     }
 }
