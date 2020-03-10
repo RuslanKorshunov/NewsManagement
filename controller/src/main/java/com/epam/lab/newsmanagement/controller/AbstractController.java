@@ -5,8 +5,8 @@ import com.epam.lab.newsmanagement.dto.SearchCriteriaDto;
 import com.epam.lab.newsmanagement.entity.AbstractEntity;
 import com.epam.lab.newsmanagement.exception.ServiceException;
 import com.epam.lab.newsmanagement.service.IntService;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -15,8 +15,7 @@ import java.util.List;
 import static com.epam.lab.newsmanagement.dao.NewsDao.SortCriteria;
 
 public abstract class AbstractController<N extends AbstractEntity, T extends AbstractDto> implements Controller<T> {
-    @Autowired
-    private Logger logger;
+    private static Logger logger = LogManager.getLogger();
 
     @Override
     public ResponseEntity<T> create(T t) {
