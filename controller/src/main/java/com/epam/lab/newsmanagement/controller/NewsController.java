@@ -21,8 +21,12 @@ import static com.epam.lab.newsmanagement.dao.NewsDao.SortCriteria;
 @RestController
 @RequestMapping(value = "/news/")
 public class NewsController extends AbstractController<News, NewsDto> {
-    @Autowired
     private NewsService service;
+
+    @Autowired
+    public NewsController(NewsService service) {
+        this.service = service;
+    }
 
     @Override
     @PostMapping(value = "/",
