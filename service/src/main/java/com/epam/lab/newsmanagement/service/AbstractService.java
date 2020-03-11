@@ -2,23 +2,27 @@ package com.epam.lab.newsmanagement.service;
 
 import com.epam.lab.newsmanagement.dao.Dao;
 import com.epam.lab.newsmanagement.dao.NewsDao;
-import com.epam.lab.newsmanagement.entity.SearchCriteria;
+import com.epam.lab.newsmanagement.dto.AbstractDto;
+import com.epam.lab.newsmanagement.dto.SearchCriteriaDto;
+import com.epam.lab.newsmanagement.entity.AbstractEntity;
 import com.epam.lab.newsmanagement.exception.DaoException;
 import com.epam.lab.newsmanagement.exception.IncorrectDataException;
 import com.epam.lab.newsmanagement.exception.ServiceException;
+import com.epam.lab.newsmanagement.mapper.AbstractMapper;
 import com.epam.lab.newsmanagement.validator.Validator;
 
 import java.util.List;
 
-public abstract class AbstractService<T> implements IntService<T> {
+public abstract class AbstractService<N extends AbstractEntity, T extends AbstractDto> implements IntService<N, T> {
     @Override
     public T create(T t) throws ServiceException {
-        Validator<T> validator = getValidator();
+        N n = getMapper().toEntity(t);
+        Validator<N> validator = getValidator();
         try {
-            t = getClone(t);
-            validator.validate(t);
-            t = getDao().create(t);
-        } catch (DaoException | IncorrectDataException | CloneNotSupportedException e) {
+            validator.validate(n);
+            n = getDao().create(n);
+            t = getMapper().toDto(n);
+        } catch (DaoException | IncorrectDataException e) {
             throw new ServiceException(e);
         }
         return t;
@@ -33,7 +37,8 @@ public abstract class AbstractService<T> implements IntService<T> {
     public T read(long id) throws ServiceException {
         T t;
         try {
-            t = getDao().read(id);
+            N n = getDao().read(id);
+            t = getMapper().toDto(n);
         } catch (DaoException e) {
             throw new ServiceException(e);
         }
@@ -41,7 +46,7 @@ public abstract class AbstractService<T> implements IntService<T> {
     }
 
     @Override
-    public List<T> read(SearchCriteria sc) throws ServiceException {
+    public List<T> read(SearchCriteriaDto sc) throws ServiceException {
         throw new ServiceException("Operation isn't supported by service.");
     }
 
@@ -52,12 +57,12 @@ public abstract class AbstractService<T> implements IntService<T> {
 
     @Override
     public T update(T t) throws ServiceException {
-        Validator<T> validator = getValidator();
+        N n = getMapper().toEntity(t);
+        Validator<N> validator = getValidator();
         try {
-            t = getClone(t);
-            validator.validate(t);
-            getDao().update(t);
-        } catch (DaoException | IncorrectDataException | CloneNotSupportedException e) {
+            validator.validate(n);
+            getDao().update(n);
+        } catch (DaoException | IncorrectDataException e) {
             throw new ServiceException(e);
         }
         return t;
@@ -67,16 +72,17 @@ public abstract class AbstractService<T> implements IntService<T> {
     public T delete(long id) throws ServiceException {
         T t;
         try {
-            t = getDao().delete(id);
+            N n = getDao().delete(id);
+            t = getMapper().toDto(n);
         } catch (DaoException e) {
             throw new ServiceException(e);
         }
         return t;
     }
 
-    abstract Validator<T> getValidator();
+    abstract Validator<N> getValidator();
 
-    abstract Dao<T> getDao();
+    abstract Dao<N> getDao();
 
-    abstract T getClone(T t) throws CloneNotSupportedException;
+    abstract AbstractMapper<N, T> getMapper();
 }

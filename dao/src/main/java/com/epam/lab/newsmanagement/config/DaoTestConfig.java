@@ -14,7 +14,7 @@ import java.io.IOException;
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = "com.epam.lab.newsmanagement")
-public class TestConfig {
+public class DaoTestConfig {
 
     @Bean
     public Logger getLogger() {

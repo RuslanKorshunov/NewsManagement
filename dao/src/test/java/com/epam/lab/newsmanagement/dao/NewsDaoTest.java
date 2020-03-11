@@ -65,7 +65,6 @@ public class NewsDaoTest {
         existingNews.setFullText(fullTextExistingNews);
         existingNews.setAuthor(authorExistingNews);
         existingNews.setTags(tags);
-        //dbi.createDatabase();
     }
 
     @Test

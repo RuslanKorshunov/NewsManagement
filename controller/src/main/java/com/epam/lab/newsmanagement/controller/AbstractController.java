@@ -1,8 +1,11 @@
 package com.epam.lab.newsmanagement.controller;
 
-import com.epam.lab.newsmanagement.entity.SearchCriteria;
+import com.epam.lab.newsmanagement.dto.AbstractDto;
+import com.epam.lab.newsmanagement.dto.SearchCriteriaDto;
+import com.epam.lab.newsmanagement.entity.AbstractEntity;
 import com.epam.lab.newsmanagement.exception.ServiceException;
 import com.epam.lab.newsmanagement.service.IntService;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +14,9 @@ import java.util.List;
 
 import static com.epam.lab.newsmanagement.dao.NewsDao.SortCriteria;
 
-public abstract class AbstractController<T> implements Controller<T> {
+public abstract class AbstractController<N extends AbstractEntity, T extends AbstractDto> implements Controller<T> {
+    private static Logger logger = LogManager.getLogger();
+
     @Override
     public ResponseEntity<T> create(T t) {
         HttpStatus status = HttpStatus.CREATED;
@@ -39,7 +44,7 @@ public abstract class AbstractController<T> implements Controller<T> {
     }
 
     @Override
-    public ResponseEntity<List<T>> read(SearchCriteria sc) {
+    public ResponseEntity<List<T>> read(SearchCriteriaDto scd) {
         return new ResponseEntity<>(null, HttpStatus.NOT_IMPLEMENTED);
     }
 
@@ -79,11 +84,13 @@ public abstract class AbstractController<T> implements Controller<T> {
         return new ResponseEntity<>(t, status);
     }
 
-    abstract IntService<T> getService();
+    Logger getLogger() {
+        return logger;
+    }
+
+    abstract IntService<N, T> getService();
 
     abstract T createEntity(long id);
 
     abstract void setId(T t, long id);
-
-    abstract Logger getLogger();
 }

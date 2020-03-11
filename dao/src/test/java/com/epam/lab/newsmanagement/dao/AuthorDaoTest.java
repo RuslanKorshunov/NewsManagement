@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(classes = {TestConfig.class})
+@ContextConfiguration(classes = {DaoTestConfig.class})
 public class AuthorDaoTest {
     @Autowired
     private AuthorDao dao;
@@ -29,8 +29,8 @@ public class AuthorDaoTest {
     private static Author existingAuthorTwo;
     private static Author existingAuthorThree;
 
-    @Before
-    public void initializeAuthor() {
+    @BeforeClass
+    public static void initializeAuthor() {
         newAuthor = new Author("Rigor", "Borodulin");
         existingAuthorOne = new Author(31, "Ruslan", "Korshunov");
         existingAuthorTwo = new Author(23, "Evgenij", "Burak");

@@ -36,7 +36,6 @@ public class TagDaoTest {
         existingTagOne = new Tag(31, "policy");
         existingTagTwo = new Tag(22, "uk");
         existingTagThree = new Tag(3, "italy");
-        //dbi.createDatabase();
     }
 
     @Test

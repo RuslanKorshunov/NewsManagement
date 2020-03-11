@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class News implements Cloneable {
+public class News extends AbstractEntity implements Cloneable {
     private long id;
     private String title;
     private String shortText;
@@ -15,6 +15,9 @@ public class News implements Cloneable {
     private LocalDate modificationDate;
 
     public News() {
+        this.title = "";
+        this.shortText = "";
+        this.fullText = "";
         tags = new ArrayList<>();
         creationDate = LocalDate.now();
         modificationDate = creationDate;

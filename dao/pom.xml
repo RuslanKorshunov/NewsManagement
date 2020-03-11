@@ -33,12 +33,6 @@
             <artifactId>spring-jdbc</artifactId>
             <version>5.2.3.RELEASE</version>
         </dependency>
-        <!--        <dependency>
-                    <groupId>org.junit.jupiter</groupId>
-                    <artifactId>junit-jupiter</artifactId>
-                    <version>RELEASE</version>
-                    <scope>test</scope>
-                </dependency>-->
         <dependency>
             <groupId>io.zonky.test</groupId>
             <artifactId>embedded-postgres</artifactId>

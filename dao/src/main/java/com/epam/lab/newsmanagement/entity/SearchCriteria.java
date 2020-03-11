@@ -3,7 +3,7 @@ package com.epam.lab.newsmanagement.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchCriteria {
+public class SearchCriteria extends AbstractEntity {
     private Author author;
     private List<Tag> tags;
 
