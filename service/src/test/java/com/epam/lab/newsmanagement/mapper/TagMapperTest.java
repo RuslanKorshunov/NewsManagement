@@ -1,23 +1,24 @@
 package com.epam.lab.newsmanagement.mapper;
 
-import com.epam.lab.newsmanagement.config.ServiceTestConfig;
 import com.epam.lab.newsmanagement.dto.TagDto;
 import com.epam.lab.newsmanagement.entity.Tag;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.modelmapper.ModelMapper;
 
-@RunWith(SpringRunner.class)
-@WebAppConfiguration
-@ContextConfiguration(classes = {ServiceTestConfig.class})
+@RunWith(MockitoJUnitRunner.class)
 public class TagMapperTest {
-    @Autowired
-    private TagMapper mapper;
+    @Mock
+    private ModelMapper mapper;
+
+    @InjectMocks
+    private TagMapper tagMapper;
 
     private static TagDto dto;
     private static Tag tag;
@@ -34,14 +35,16 @@ public class TagMapperTest {
 
     @Test
     public void toTagTest() {
-        Tag tag = mapper.toEntity(dto);
+        Mockito.when(mapper.map(dto, Tag.class)).thenReturn(tag);
+        Tag tag = tagMapper.toEntity(dto);
         boolean result = tag.equals(this.tag);
         Assert.assertTrue(result);
     }
 
     @Test
     public void toDtoTest() {
-        TagDto dto = mapper.toDto(this.tag);
+        Mockito.when(mapper.map(tag, TagDto.class)).thenReturn(dto);
+        TagDto dto = tagMapper.toDto(this.tag);
         boolean result = dto.equals(this.dto);
         Assert.assertTrue(result);
     }

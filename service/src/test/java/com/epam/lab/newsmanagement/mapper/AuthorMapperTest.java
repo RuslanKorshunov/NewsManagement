@@ -1,23 +1,24 @@
 package com.epam.lab.newsmanagement.mapper;
 
-import com.epam.lab.newsmanagement.config.ServiceTestConfig;
 import com.epam.lab.newsmanagement.dto.AuthorDto;
 import com.epam.lab.newsmanagement.entity.Author;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.modelmapper.ModelMapper;
 
-@RunWith(SpringRunner.class)
-@WebAppConfiguration
-@ContextConfiguration(classes = {ServiceTestConfig.class})
+@RunWith(MockitoJUnitRunner.class)
 public class AuthorMapperTest {
-    @Autowired
-    private AuthorMapper mapper;
+    @Mock
+    private ModelMapper mapper;
+
+    @InjectMocks
+    private AuthorMapper authorMapper;
 
     private static AuthorDto dto;
     private static Author author;
@@ -36,14 +37,16 @@ public class AuthorMapperTest {
 
     @Test
     public void toAuthorTest() {
-        Author author = mapper.toEntity(dto);
+        Mockito.when(mapper.map(dto, Author.class)).thenReturn(author);
+        Author author = authorMapper.toEntity(dto);
         boolean result = author.equals(this.author);
         Assert.assertTrue(result);
     }
 
     @Test
     public void toDtoTest() {
-        AuthorDto dto = mapper.toDto(author);
+        Mockito.when(mapper.map(author, AuthorDto.class)).thenReturn(dto);
+        AuthorDto dto = authorMapper.toDto(author);
         boolean result = dto.equals(this.dto);
         Assert.assertTrue(result);
     }

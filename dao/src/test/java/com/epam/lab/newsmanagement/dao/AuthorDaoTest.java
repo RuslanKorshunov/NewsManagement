@@ -1,11 +1,10 @@
 package com.epam.lab.newsmanagement.dao;
 
-import com.epam.lab.newsmanagement.config.TestConfig;
+import com.epam.lab.newsmanagement.config.DaoTestConfig;
 import com.epam.lab.newsmanagement.entity.Author;
 import com.epam.lab.newsmanagement.exception.DaoException;
-import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +20,6 @@ import java.util.ArrayList;
 public class AuthorDaoTest {
     @Autowired
     private AuthorDao dao;
-    @Autowired
-    private Logger logger;
 
     private static Author newAuthor;
     private static Author existingAuthorOne;
@@ -45,7 +42,6 @@ public class AuthorDaoTest {
             boolean result = id == existingAuthorOne.getId();
             Assert.assertTrue(result);
         } catch (DaoException e) {
-            logger.error(e);
             Assert.fail("createExistingAuthorTest was failed.");
         }
     }
@@ -58,7 +54,6 @@ public class AuthorDaoTest {
             boolean result = id != 0;
             Assert.assertTrue(id != 0);
         } catch (DaoException e) {
-            logger.error(e);
             Assert.fail("createExistingAuthorTest was failed.");
         }
     }
@@ -76,7 +71,6 @@ public class AuthorDaoTest {
             boolean result = author.equals(existingAuthorOne);
             Assert.assertTrue(result);
         } catch (DaoException e) {
-            logger.error(e);
             Assert.fail("readExistingAuthorTest was failed.");
         }
     }
@@ -98,7 +92,6 @@ public class AuthorDaoTest {
             boolean result = author.getName().equals(updatingAuthor.getName());
             Assert.assertTrue(result);
         } catch (CloneNotSupportedException | DaoException e) {
-            logger.error(e);
             Assert.fail("updateExistingAuthorTest was failed.");
         }
     }
@@ -110,7 +103,6 @@ public class AuthorDaoTest {
             boolean result = author.equals(existingAuthorTwo);
             Assert.assertTrue(result);
         } catch (DaoException e) {
-            logger.error(e);
             Assert.fail("deleteExistingAuthorTest was failed.");
         }
     }

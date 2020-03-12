@@ -23,6 +23,17 @@ public class NewsDto extends AbstractDto {
         modificationDate = creationDate;
     }
 
+    public NewsDto(long id, String title, String shortText, String fullText, AuthorDto authorDto, List<TagDto> tagDtoList, LocalDate creationDate, LocalDate modificationDate) {
+        this.id = id;
+        this.title = title;
+        this.shortText = shortText;
+        this.fullText = fullText;
+        this.authorDto = authorDto;
+        this.tagDtoList = tagDtoList;
+        this.creationDate = creationDate;
+        this.modificationDate = modificationDate;
+    }
+
     public long getId() {
         return id;
     }

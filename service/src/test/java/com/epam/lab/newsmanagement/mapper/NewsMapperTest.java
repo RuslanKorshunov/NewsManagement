@@ -1,6 +1,5 @@
 package com.epam.lab.newsmanagement.mapper;
 
-import com.epam.lab.newsmanagement.config.ServiceTestConfig;
 import com.epam.lab.newsmanagement.dto.AuthorDto;
 import com.epam.lab.newsmanagement.dto.NewsDto;
 import com.epam.lab.newsmanagement.dto.TagDto;
@@ -11,24 +10,34 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.modelmapper.ModelMapper;
 
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
-@RunWith(SpringRunner.class)
-@WebAppConfiguration
-@ContextConfiguration(classes = {ServiceTestConfig.class})
+@RunWith(MockitoJUnitRunner.class)
 public class NewsMapperTest {
-    @Autowired
-    private NewsMapper mapper;
+    @Mock
+    private ModelMapper mapper;
+    @Mock
+    private AuthorMapper authorMapper;
+    @Mock
+    private TagMapper tagMapper;
+
+    @InjectMocks
+    private NewsMapper newsMapper;
 
     private static News news;
     private static NewsDto newsDto;
+    private static Author author;
+    private static AuthorDto authorDto;
+    private static Tag tag;
+    private static TagDto tagDto;
 
     @BeforeClass
     public static void initialize() {
@@ -41,62 +50,38 @@ public class NewsMapperTest {
         long idAuthor = 31;
         String nameAuthor = "Ruslan";
         String surnameAuthor = "Korhunov";
-        Author author = new Author(idAuthor, nameAuthor, surnameAuthor);
-        AuthorDto authorDto = new AuthorDto();
-        authorDto.setId(idAuthor);
-        authorDto.setName(nameAuthor);
-        authorDto.setSurname(surnameAuthor);
+        author = new Author(idAuthor, nameAuthor, surnameAuthor);
+        authorDto = new AuthorDto(idAuthor, nameAuthor, surnameAuthor);
 
-        long idTagOne = 1;
-        String nameTagOne = "japan";
-        Tag tagOne = new Tag(idTagOne, nameTagOne);
-        TagDto tagDtoOne = new TagDto();
-        tagDtoOne.setId(idTagOne);
-        tagDtoOne.setName(nameTagOne);
+        long idTag = 1;
+        String nameTag = "japan";
+        tag = new Tag(idTag, nameTag);
+        tagDto = new TagDto(idTag, nameTag);
 
-        long idTagTwo = 2;
-        String nameTagTwo = "coronavirus";
-        Tag tagTwo = new Tag(idTagTwo, nameTagTwo);
-        TagDto tagDtoTwo = new TagDto();
-        tagDtoTwo.setId(idTagOne);
-        tagDtoTwo.setName(nameTagOne);
+        List<Tag> tags = Arrays.asList(tag);
+        List<TagDto> tagDtos = Arrays.asList(tagDto);
 
-        List<Tag> tags = Arrays.asList(tagOne, tagTwo);
-        List<TagDto> tagDtos = Arrays.asList(tagDtoOne, tagDtoTwo);
+        news = new News(id, title, shortText, fullText, author, tags, creationDate, creationDate);
 
-        News n = new News();
-        n.setId(id);
-        n.setTitle(title);
-        n.setShortText(shortText);
-        n.setFullText(fullText);
-        n.setAuthor(author);
-        n.setTags(tags);
-        n.setCreationDate(creationDate);
-        n.setModificationDate(creationDate);
-        news = n;
-
-        NewsDto dto = new NewsDto();
-        dto.setId(id);
-        dto.setTitle(title);
-        dto.setShortText(shortText);
-        dto.setFullText(fullText);
-        dto.setAuthorDto(authorDto);
-        dto.setTagDtoList(tagDtos);
-        dto.setCreationDate(creationDate);
-        dto.setModificationDate(creationDate);
-        newsDto = dto;
+        newsDto = new NewsDto(id, title, shortText, fullText, authorDto, tagDtos, creationDate, creationDate);
     }
 
     @Test
     public void toNewsTest() {
-        News news = mapper.toEntity(newsDto);
+        Mockito.when(mapper.map(newsDto, News.class)).thenReturn(news);
+        Mockito.when(authorMapper.toEntity(authorDto)).thenReturn(author);
+        Mockito.when(tagMapper.toEntity(tagDto)).thenReturn(tag);
+        News news = newsMapper.toEntity(newsDto);
         boolean result = news.getAuthor() != null && news.getTags() != null;
         Assert.assertTrue(result);
     }
 
     @Test
     public void toDtoTest() {
-        NewsDto dto = mapper.toDto(news);
+        Mockito.when(mapper.map(news, NewsDto.class)).thenReturn(newsDto);
+        Mockito.when(authorMapper.toDto(author)).thenReturn(authorDto);
+        Mockito.when(tagMapper.toDto(tag)).thenReturn(tagDto);
+        NewsDto dto = newsMapper.toDto(news);
         boolean result = dto.getAuthorDto() != null && dto.getTagDtoList() != null;
         Assert.assertTrue(result);
     }

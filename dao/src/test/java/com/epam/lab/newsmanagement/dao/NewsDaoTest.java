@@ -1,12 +1,11 @@
 package com.epam.lab.newsmanagement.dao;
 
-import com.epam.lab.newsmanagement.config.TestConfig;
+import com.epam.lab.newsmanagement.config.DaoTestConfig;
 import com.epam.lab.newsmanagement.entity.Author;
 import com.epam.lab.newsmanagement.entity.News;
 import com.epam.lab.newsmanagement.entity.SearchCriteria;
 import com.epam.lab.newsmanagement.entity.Tag;
 import com.epam.lab.newsmanagement.exception.DaoException;
-import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -23,12 +22,10 @@ import static com.epam.lab.newsmanagement.dao.NewsDao.SortCriteria;
 
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(classes = {TestConfig.class})
+@ContextConfiguration(classes = {DaoTestConfig.class})
 public class NewsDaoTest {
     @Autowired
     private NewsDao dao;
-    @Autowired
-    private Logger logger;
 
     private static News news;
     private static News existingNews;
@@ -72,7 +69,6 @@ public class NewsDaoTest {
         try {
             dao.create(news);
         } catch (DaoException e) {
-            logger.error(e);
             Assert.fail("createNewsTest was failed.");
         }
     }
@@ -88,7 +84,6 @@ public class NewsDaoTest {
         try {
             dao.read(21);
         } catch (DaoException e) {
-            logger.error(e);
             Assert.fail("readNewsTest was failed.");
         }
     }
@@ -107,7 +102,6 @@ public class NewsDaoTest {
             boolean result = news.size() > 0;
             Assert.assertTrue(result);
         } catch (DaoException e) {
-            logger.error(e);
             Assert.fail("readNewsBySearchCriteriaFirstTest was failed.");
         }
     }
@@ -122,7 +116,6 @@ public class NewsDaoTest {
             boolean result = news.size() > 0;
             Assert.assertTrue(result);
         } catch (DaoException e) {
-            logger.error(e);
             Assert.fail("readNewsBySearchCriteriaSecondTest was failed.");
         }
     }
@@ -141,7 +134,6 @@ public class NewsDaoTest {
             boolean result = news.size() > 0;
             Assert.assertTrue(result);
         } catch (DaoException e) {
-            logger.error(e);
             Assert.fail("readNewsBySearchCriteriaThirdTest was failed.");
         }
     }
@@ -153,7 +145,6 @@ public class NewsDaoTest {
             boolean result = news.size() > 0;
             Assert.assertTrue(true);
         } catch (DaoException e) {
-            logger.error(e);
             Assert.fail("readNewsBySortCriteriaFirstTest was failed.");
         }
     }
@@ -165,7 +156,6 @@ public class NewsDaoTest {
             boolean result = news.size() > 0;
             Assert.assertTrue(true);
         } catch (DaoException e) {
-            logger.error(e);
             Assert.fail("readNewsBySortCriteriaSecondTest was failed.");
         }
     }
@@ -177,7 +167,6 @@ public class NewsDaoTest {
             news.setTitle("Hello");
             dao.update(news);
         } catch (DaoException e) {
-            logger.error(e);
             Assert.fail("updateNewsTest was failed.");
         }
     }
@@ -190,7 +179,6 @@ public class NewsDaoTest {
             boolean result = id != 0;
             Assert.assertTrue(result);
         } catch (DaoException e) {
-            logger.error(e);
             Assert.fail("deleteNewsTest was failed.");
         }
     }
