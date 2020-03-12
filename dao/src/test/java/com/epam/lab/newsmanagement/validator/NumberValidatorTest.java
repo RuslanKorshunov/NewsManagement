@@ -1,6 +1,6 @@
 package com.epam.lab.newsmanagement.validator;
 
-import com.epam.lab.newsmanagement.config.TestConfig;
+import com.epam.lab.newsmanagement.config.DaoTestConfig;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,7 +11,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 @RunWith(SpringRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(classes = {TestConfig.class})
+@ContextConfiguration(classes = {DaoTestConfig.class})
 public class NumberValidatorTest {
     @Autowired
     private NumberValidator validator;

@@ -2,12 +2,14 @@ package com.epam.lab.newsmanagement.entity;
 
 import java.util.Objects;
 
-public class Author implements Cloneable {
+public class Author extends AbstractEntity implements Cloneable {
     private long id;
     private String name;
     private String surname;
 
     public Author() {
+        name = "";
+        surname = "";
     }
 
     public Author(String name, String surname) {

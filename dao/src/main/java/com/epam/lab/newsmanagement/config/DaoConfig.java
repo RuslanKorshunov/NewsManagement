@@ -14,7 +14,8 @@ import javax.sql.DataSource;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = "com.epam.lab.newsmanagement")
+@ComponentScan(basePackages = {"com.epam.lab.newsmanagement.dao",
+        "com.epam.lab.newsmanagement.validator"})
 @PropertySource("classpath:datasource.properties")
 public class DaoConfig {
     private static final String URL;

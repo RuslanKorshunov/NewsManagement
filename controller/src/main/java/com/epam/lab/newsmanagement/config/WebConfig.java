@@ -2,6 +2,7 @@ package com.epam.lab.newsmanagement.config;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -11,7 +12,8 @@ import static com.epam.lab.newsmanagement.dao.NewsDao.SortCriteria;
 
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = "com.epam.lab.newsmanagement")
+@Import({DaoConfig.class, ServiceConfig.class})
+@ComponentScan(basePackages = "com.epam.lab.newsmanagement.controller")
 public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addFormatters(FormatterRegistry registry) {

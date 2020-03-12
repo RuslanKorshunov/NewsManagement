@@ -1,13 +1,14 @@
 package com.epam.lab.newsmanagement.controller;
 
-import com.epam.lab.newsmanagement.entity.SearchCriteria;
+import com.epam.lab.newsmanagement.dto.AbstractDto;
+import com.epam.lab.newsmanagement.dto.SearchCriteriaDto;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 import static com.epam.lab.newsmanagement.dao.NewsDao.SortCriteria;
 
-public interface Controller<T> {
+public interface Controller<T extends AbstractDto> {
     String PRODUCES = "application/json";
     String CONSUMES = PRODUCES;
 
@@ -15,7 +16,7 @@ public interface Controller<T> {
 
     ResponseEntity<T> read(long id);
 
-    ResponseEntity<List<T>> read(SearchCriteria sc);
+    ResponseEntity<List<T>> read(SearchCriteriaDto scd);
 
     ResponseEntity<List<T>> read(SortCriteria sc);
 

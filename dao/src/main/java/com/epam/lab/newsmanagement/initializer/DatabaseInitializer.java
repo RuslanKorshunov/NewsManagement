@@ -1,6 +1,7 @@
-package com.epam.lab.newsmanagement.config;
+package com.epam.lab.newsmanagement.initializer;
 
 import org.apache.ibatis.jdbc.ScriptRunner;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -12,11 +13,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DatabaseInitializer {
+    private static Logger logger;
     private static final String FILE_NAME;
     private static final String DROP_DATABASE;
     private static final String ENCODING;
 
     static {
+        logger = LogManager.getLogger();
         FILE_NAME = "backup.sql";
         ENCODING = "UTF-8";
         DROP_DATABASE = "DROP DATABASE IF EXISTS \"NewsDB\"";
@@ -24,13 +27,11 @@ public class DatabaseInitializer {
     }
 
     private DataSource dataSource;
-    private Logger logger;
     private ClassLoader classLoader;
 
     @Autowired
-    public DatabaseInitializer(DataSource dataSource, Logger logger, ClassLoader classLoader) {
+    public DatabaseInitializer(DataSource dataSource, ClassLoader classLoader) {
         this.dataSource = dataSource;
-        this.logger = logger;
         this.classLoader = classLoader;
     }
 

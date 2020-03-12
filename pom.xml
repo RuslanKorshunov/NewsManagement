@@ -49,6 +49,12 @@
             <artifactId>javax.servlet-api</artifactId>
             <version>4.0.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.10.19</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -60,7 +66,7 @@
                     <artifactId>tomcat7-maven-plugin</artifactId>
                     <version>2.2</version>
                     <configuration>
-                        <url>http://127.0.0.1:8088/manager/text</url>
+                        <url>http://127.0.0.1:8080/manager/text</url>
                         <server>TomcatServer</server>
                         <path>/newsmanagement</path>
                         <username>tomcat</username>
