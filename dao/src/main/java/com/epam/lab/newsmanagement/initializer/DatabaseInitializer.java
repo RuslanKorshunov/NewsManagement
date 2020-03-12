@@ -1,4 +1,4 @@
-package com.epam.lab.newsmanagement.config;
+package com.epam.lab.newsmanagement.initializer;
 
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.logging.log4j.LogManager;

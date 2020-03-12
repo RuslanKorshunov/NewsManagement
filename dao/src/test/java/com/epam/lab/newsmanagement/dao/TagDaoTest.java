@@ -5,6 +5,7 @@ import com.epam.lab.newsmanagement.entity.Tag;
 import com.epam.lab.newsmanagement.exception.DaoException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,7 @@ public class TagDaoTest {
     }
 
     @Test
+    @Ignore
     public void createNewTagTest() {
         try {
             Tag tag = dao.create(newTag);
@@ -60,6 +62,7 @@ public class TagDaoTest {
     }
 
     @Test
+    @Ignore
     public void createTags() {
         try {
             List<Tag> tags = new ArrayList<>();
