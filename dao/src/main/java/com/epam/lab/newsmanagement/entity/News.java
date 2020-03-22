@@ -1,17 +1,34 @@
 package com.epam.lab.newsmanagement.entity;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
+@Table(name = "news")
 public class News extends AbstractEntity implements Cloneable {
+    @Id
     private long id;
+    @Column(name = "title")
     private String title;
+    @Column(name = "short_text")
     private String shortText;
+    @Column(name = "full_text")
     private String fullText;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinTable(name = "news_author",
+            joinColumns = {@JoinColumn(name = "news_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "author_id", referencedColumnName = "id")})
     private Author author;
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "news_tag",
+            joinColumns = {@JoinColumn(name = "news_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "tag_id", referencedColumnName = "id")})
     private List<Tag> tags;
+    @Column(name = "creation_date")
     private LocalDate creationDate;
+    @Column(name = "modification_date")
     private LocalDate modificationDate;
 
     public News() {
