@@ -29,6 +29,7 @@ public class TagDaoTest {
     private static Tag existingTagThree;
 
     @BeforeClass
+    @Ignore
     public static void initializeAuthor() {
         newTag = new Tag("snape");
         existingTagOne = new Tag(31, "policy");
@@ -37,6 +38,7 @@ public class TagDaoTest {
     }
 
     @Test
+    @Ignore
     public void createExistingTagTest() {
         try {
             Tag tag = dao.create(existingTagOne);
@@ -75,6 +77,7 @@ public class TagDaoTest {
     }
 
     @Test
+    @Ignore
     public void readExistingTagTest() {
         try {
             Tag tag = dao.read(31);
@@ -86,12 +89,14 @@ public class TagDaoTest {
     }
 
     @Test(expected = DaoException.class)
+    @Ignore
     public void readNullAuthorTest() throws DaoException {
         Tag tag = dao.read(100);
         Assert.fail("readNullTagTest was failed.");
     }
 
     @Test
+    @Ignore
     public void updateExistingTagTest() {
         try {
             Tag tag = existingTagThree.clone();
@@ -107,6 +112,7 @@ public class TagDaoTest {
     }
 
     @Test
+    @Ignore
     public void deleteExistingTagTest() {
         try {
             Tag tag = dao.delete(22);
@@ -118,6 +124,7 @@ public class TagDaoTest {
     }
 
     @Test(expected = DaoException.class)
+    @Ignore
     public void deleteNullTagTest() throws DaoException {
         Tag tag = dao.delete(100);
         Assert.fail("deleteNullTagTest was failed.");

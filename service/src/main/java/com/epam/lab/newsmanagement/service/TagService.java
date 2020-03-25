@@ -1,7 +1,7 @@
 package com.epam.lab.newsmanagement.service;
 
-import com.epam.lab.newsmanagement.dao.Dao;
-import com.epam.lab.newsmanagement.dao.TagDao;
+import com.epam.lab.newsmanagement.dao.DaoInterface;
+import com.epam.lab.newsmanagement.dao.TagDaoInterface;
 import com.epam.lab.newsmanagement.dto.TagDto;
 import com.epam.lab.newsmanagement.entity.Tag;
 import com.epam.lab.newsmanagement.exception.DaoException;
@@ -12,21 +12,19 @@ import com.epam.lab.newsmanagement.mapper.TagMapper;
 import com.epam.lab.newsmanagement.validator.TagValidator;
 import com.epam.lab.newsmanagement.validator.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
-@Qualifier("tagService")
+@Service("tagService")
 public class TagService extends AbstractService<Tag, TagDto> {
-    private TagDao dao;
+    private TagDaoInterface dao;
     private TagValidator validator;
     private TagMapper mapper;
 
     @Autowired
-    public TagService(TagDao dao, TagValidator validator, TagMapper mapper) {
+    public TagService(TagDaoInterface dao, TagValidator validator, TagMapper mapper) {
         this.dao = dao;
         this.validator = validator;
         this.mapper = mapper;
@@ -40,7 +38,7 @@ public class TagService extends AbstractService<Tag, TagDto> {
             String name = tag.getName();
             name = name.toLowerCase();
             tag.setName(name);
-            tag = getDao().create(tag);
+            tag = dao.create(tag);
             tagDto = getMapper().toDto(tag);
         } catch (DaoException | IncorrectDataException e) {
             throw new ServiceException(e);
@@ -64,7 +62,7 @@ public class TagService extends AbstractService<Tag, TagDto> {
                 getValidator().validate(tag);
                 toLoverCase(tag);
             }
-            tags = getDao().create(tags);
+            tags = dao.create(tags);
             for (Tag tag : tags) {
                 TagDto tagDto = getMapper().toDto(tag);
                 result.add(tagDto);
@@ -86,7 +84,7 @@ public class TagService extends AbstractService<Tag, TagDto> {
         try {
             getValidator().validate(tag);
             toLoverCase(tag);
-            getDao().update(tag);
+            dao.update(tag);
         } catch (DaoException | IncorrectDataException e) {
             throw new ServiceException(e);
         }
@@ -99,7 +97,7 @@ public class TagService extends AbstractService<Tag, TagDto> {
     }
 
     @Override
-    Dao<Tag> getDao() {
+    DaoInterface<Tag> getDao() {
         return dao;
     }
 

@@ -7,27 +7,20 @@ import com.epam.lab.newsmanagement.entity.Tag;
 import com.epam.lab.newsmanagement.exception.DaoException;
 import com.epam.lab.newsmanagement.validator.NumberValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-@Repository
-@Qualifier("newsDao")
-public class NewsDao implements Dao<News> {
+@Repository("newsDao")
+public class NewsDao implements NewsDaoInterface {
     private static final String INSERT_INTO_NEWS_QUERY;
     private static final String INSERT_INTO_NEWS_AUTHOR_QUERY;
     private static final String INSERT_INTO_NEWS_TAG_QUERY;
@@ -78,162 +71,41 @@ public class NewsDao implements Dao<News> {
     }
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
-    @Autowired
     private NumberValidator validator;
-
-    public enum SortCriteria {
-        AUTHOR,
-        DATE
-    }
 
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public News create(News news) throws DaoException {
-        String title = news.getTitle();
-        String shortText = news.getShortText();
-        String fullText = news.getFullText();
-        LocalDate creationDate = news.getCreationDate();
-        LocalDate modificationDate = news.getModificationDate();
-        Author author = news.getAuthor();
-        List<Tag> tags = news.getTags();
-        News innerNews;
-        try {
-            KeyHolder keyHolder = new GeneratedKeyHolder();
-            jdbcTemplate.update(con -> {
-                PreparedStatement ps = con.prepareStatement(INSERT_INTO_NEWS_QUERY, new String[]{"id"});
-                ps.setString(1, title);
-                ps.setString(2, shortText);
-                ps.setString(3, fullText);
-                ps.setDate(4, Date.valueOf(creationDate));
-                ps.setDate(5, Date.valueOf(modificationDate));
-                return ps;
-            }, keyHolder);
-            long id = (long) keyHolder.getKey();
-            innerNews = new News(id, title, shortText, fullText, author, tags, creationDate, modificationDate);
-            long idAuthor = author.getId();
-            jdbcTemplate.update(INSERT_INTO_NEWS_AUTHOR_QUERY, id, idAuthor);
-            jdbcTemplate.batchUpdate(INSERT_INTO_NEWS_TAG_QUERY, getBatchPreparedStatementSetter(tags, id));
-        } catch (DataAccessException e) {
-            throw new DaoException(e);
-        }
-        return innerNews;
-    }
-
-    @Override
-    public List<News> create(List<News> t) throws DaoException {
-        throw new DaoException("Operation isn't supported by newsDao.");
+        return null;
     }
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public News read(long id) throws DaoException {
-        News news;
-        try {
-            RowMapper<News> rowMapper = getRowMapper();
-            news = jdbcTemplate.queryForObject(SELECT_NEWS_BY_ID_QUERY, new Object[]{id}, rowMapper);
-        } catch (DataAccessException e) {
-            throw new DaoException(e);
-        }
-        return news;
+        return null;
     }
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public List<News> read(SearchCriteria sc) throws DaoException {
-        Author author = sc.getAuthor();
-        List<Tag> tags = sc.getTags();
-        String query = BEGIN_SELECT_NEWS_QUERY;
-        boolean isExisted = tags != null && !tags.isEmpty();
-        if (!(author == null && !isExisted)) {
-            query += " " + WHERE;
-            if (author != null) {
-                query += " " + AUTHOR_SUFFIX;
-                if (isExisted) {
-                    query += " " + AND;
-                }
-            }
-            if (isExisted) {
-                int size = tags.size();
-                query += " " + TAG_SUFFIX;
-                for (int i = 1; i < size; i++) {
-                    query += " " + OR + " " + TAG_SUFFIX;
-                }
-            }
-        }
-        query += " " + END_SELECT_BY_CRITERIA_QUERY + " " + ORDER_BY_NEWS_ID;
-        List<News> news;
-        try {
-            List<String> parameters = new ArrayList<>();
-            if (author != null) {
-                parameters.add(author.getName());
-                parameters.add(author.getSurname());
-            }
-            if (tags != null) {
-                tags.forEach(tag -> {
-                    String name = tag.getName();
-                    parameters.add(name);
-                });
-            }
-            RowMapper<News> rowMapper = getRowMapper();
-            news = jdbcTemplate.query(query, parameters.toArray(), rowMapper);
-        } catch (DataAccessException e) {
-            throw new DaoException(e);
-        }
-        return news;
+        return null;
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public List<News> read(SortCriteria sc) throws DaoException {
-        List<News> news;
-        String query = BEGIN_SELECT_NEWS_QUERY + " " + END_SELECT_BY_CRITERIA_QUERY;
-        switch (sc) {
-            case AUTHOR:
-                query += " " + ORDER_BY_AUTHOR;
-                break;
-            case DATE:
-                query += " " + ORDER_BY_DATE;
-        }
-        try {
-            RowMapper<News> rowMapper = getRowMapper();
-            news = jdbcTemplate.query(query, rowMapper);
-        } catch (DataAccessException e) {
-            throw new DaoException(e);
-        }
-        return news;
+        return null;
     }
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public News update(News news) throws DaoException {
-        long idNews = news.getId();
-        String title = news.getTitle();
-        String shortText = news.getShortText();
-        String fullText = news.getFullText();
-        LocalDate modificationDate = LocalDate.now();
-        List<Tag> tags = news.getTags();
-        try {
-            jdbcTemplate.update(UPDATE_QUERY, title, shortText, fullText, modificationDate, idNews);
-            long idAuthor = news.getAuthor().getId();
-            jdbcTemplate.update(UPDATE_NEWS_AUTHOR_QUERY, idAuthor, idNews);
-            jdbcTemplate.update(DELETE_NEWS_TAG_QUERY, idNews);
-            jdbcTemplate.batchUpdate(INSERT_INTO_NEWS_TAG_QUERY, getBatchPreparedStatementSetter(tags, idNews));
-        } catch (DataAccessException e) {
-            throw new DaoException(e);
-        }
-        return news;
+        return null;
     }
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public News delete(long id) throws DaoException {
-        News news = read(id);
-        try {
-            jdbcTemplate.update(DELETE_QUERY, id);
-        } catch (DataAccessException e) {
-            throw new DaoException(e);
-        }
-        return news;
+        return null;
     }
 
     private BatchPreparedStatementSetter getBatchPreparedStatementSetter(List<Tag> tags, long id) {

@@ -8,6 +8,7 @@ import com.epam.lab.newsmanagement.entity.News;
 import com.epam.lab.newsmanagement.entity.Tag;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -40,6 +41,7 @@ public class NewsMapperTest {
     private static TagDto tagDto;
 
     @BeforeClass
+    @Ignore
     public static void initialize() {
         long id = 20;
         String title = "Passengers leave Diamond";
@@ -67,6 +69,7 @@ public class NewsMapperTest {
     }
 
     @Test
+    @Ignore
     public void toNewsTest() {
         Mockito.when(mapper.map(newsDto, News.class)).thenReturn(news);
         Mockito.when(authorMapper.toEntity(authorDto)).thenReturn(author);
@@ -77,6 +80,7 @@ public class NewsMapperTest {
     }
 
     @Test
+    @Ignore
     public void toDtoTest() {
         Mockito.when(mapper.map(news, NewsDto.class)).thenReturn(newsDto);
         Mockito.when(authorMapper.toDto(author)).thenReturn(authorDto);

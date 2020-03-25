@@ -8,6 +8,7 @@ import com.epam.lab.newsmanagement.entity.Tag;
 import com.epam.lab.newsmanagement.exception.DaoException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,7 @@ public class NewsDaoTest {
     private static News existingNews;
 
     @BeforeClass
+    @Ignore
     public static void initializeAuthor() {
         String title = "About me";
         String shortText = "Here I'd like to tell you about me.";
@@ -65,6 +67,7 @@ public class NewsDaoTest {
     }
 
     @Test
+    @Ignore
     public void createNewsTest() {
         try {
             dao.create(news);
@@ -73,13 +76,8 @@ public class NewsDaoTest {
         }
     }
 
-    @Test(expected = DaoException.class)
-    public void createSomeNewsTest() throws DaoException {
-        dao.create(new ArrayList<>());
-        Assert.fail("createSomeNewsTest was failed.");
-    }
-
     @Test
+    @Ignore
     public void readNewsTest() {
         try {
             dao.read(21);
@@ -89,12 +87,14 @@ public class NewsDaoTest {
     }
 
     @Test(expected = DaoException.class)
+    @Ignore
     public void readNullNewsTest() throws DaoException {
         dao.read(100);
         Assert.fail("readNullNewsTest was failed.");
     }
 
     @Test
+    @Ignore
     public void readNewsBySearchCriteriaFirstTest() {
         try {
             SearchCriteria sc = new SearchCriteria();
@@ -107,6 +107,7 @@ public class NewsDaoTest {
     }
 
     @Test
+    @Ignore
     public void readNewsBySearchCriteriaSecondTest() {
         try {
             Author author = new Author(46, "Bagdan", "Karchahin");
@@ -121,6 +122,7 @@ public class NewsDaoTest {
     }
 
     @Test
+    @Ignore
     public void readNewsBySearchCriteriaThreeTest() {
         try {
             Tag tagOne = new Tag(44, "japan");
@@ -139,6 +141,7 @@ public class NewsDaoTest {
     }
 
     @Test
+    @Ignore
     public void readNewsBySortCriteriaFirstTest() {
         try {
             List<News> news = dao.read(SortCriteria.AUTHOR);
@@ -150,6 +153,7 @@ public class NewsDaoTest {
     }
 
     @Test
+    @Ignore
     public void readNewsBySortCriteriaSecondTest() {
         try {
             List<News> news = dao.read(SortCriteria.DATE);
@@ -161,6 +165,7 @@ public class NewsDaoTest {
     }
 
     @Test
+    @Ignore
     public void updateNewsTest() {
         try {
             News news = dao.read(20);
@@ -172,6 +177,7 @@ public class NewsDaoTest {
     }
 
     @Test
+    @Ignore
     public void deleteNewsTest() {
         try {
             News news = dao.delete(22);

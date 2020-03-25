@@ -5,6 +5,7 @@ import com.epam.lab.newsmanagement.exception.ServiceException;
 import com.epam.lab.newsmanagement.service.AuthorService;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -26,6 +27,7 @@ public class AuthorControllerTest {
     private static AuthorDto authorDtoWithId;
 
     @BeforeClass
+    @Ignore
     public static void initialize() {
         long id = 1;
         String name = "Ruslan";
@@ -37,6 +39,7 @@ public class AuthorControllerTest {
     }
 
     @Test
+    @Ignore
     public void createAuthorTest() {
         try {
             Mockito.when(service.create(authorDtoWithoutId)).thenReturn(authorDtoWithId);
@@ -50,6 +53,7 @@ public class AuthorControllerTest {
     }
 
     @Test
+    @Ignore
     public void createAuthorWrongTest() {
         try {
             Mockito.when(service.create(authorDtoWithoutId)).thenThrow(ServiceException.class);
@@ -63,6 +67,7 @@ public class AuthorControllerTest {
     }
 
     @Test
+    @Ignore
     public void readAuthorTest() {
         long id = 1;
         try {
@@ -77,6 +82,7 @@ public class AuthorControllerTest {
     }
 
     @Test
+    @Ignore
     public void readAuthorWrongTest() {
         long id = 1;
         try {
@@ -91,6 +97,7 @@ public class AuthorControllerTest {
     }
 
     @Test
+    @Ignore
     public void updateAuthorTest() {
         long id = 1;
         try {
@@ -106,6 +113,7 @@ public class AuthorControllerTest {
     }
 
     @Test
+    @Ignore
     public void updateNullAuthorTest() {
         long id = 1;
         try {
@@ -121,6 +129,7 @@ public class AuthorControllerTest {
     }
 
     @Test
+    @Ignore
     public void deleteAuthorTest() {
         long id = 1;
         try {
@@ -135,6 +144,7 @@ public class AuthorControllerTest {
     }
 
     @Test
+    @Ignore
     public void deleteNullAuthorTest() {
         long id = 1;
         try {

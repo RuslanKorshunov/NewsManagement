@@ -1,6 +1,6 @@
 package com.epam.lab.newsmanagement.service;
 
-import com.epam.lab.newsmanagement.dao.Dao;
+import com.epam.lab.newsmanagement.dao.DaoInterface;
 import com.epam.lab.newsmanagement.dao.NewsDao;
 import com.epam.lab.newsmanagement.dto.AbstractDto;
 import com.epam.lab.newsmanagement.dto.SearchCriteriaDto;
@@ -82,7 +82,7 @@ public abstract class AbstractService<N extends AbstractEntity, T extends Abstra
 
     abstract Validator<N> getValidator();
 
-    abstract Dao<N> getDao();
+    abstract DaoInterface<N> getDao();
 
     abstract AbstractMapper<N, T> getMapper();
 }

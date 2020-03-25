@@ -2,20 +2,18 @@ package com.epam.lab.newsmanagement.dao;
 
 import com.epam.lab.newsmanagement.entity.Author;
 import com.epam.lab.newsmanagement.exception.DaoException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.sql.PreparedStatement;
-import java.util.List;
 import java.util.function.Supplier;
 
-@Repository
-@Qualifier("authorDao")
-public class AuthorDao extends AbstractDao<Author> {
+@Repository("authorDao")
+public class AuthorDao extends AbstractDao<Author> implements AuthorDaoInterface {
     private static final String INSERT_QUERY;
     private static final String SELECT_BY_ID_QUERY;
     private static final String UPDATE_QUERY;
@@ -30,17 +28,12 @@ public class AuthorDao extends AbstractDao<Author> {
         DELETE_QUERY = "DELETE FROM \"author\" WHERE \"id\"=?";
     }
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public Author create(Author author) throws DaoException {
         return super.create(author);
-    }
-
-    @Override
-    public List<Author> create(List<Author> t) throws DaoException {
-        return super.create(t);
     }
 
     @Override
@@ -133,6 +126,16 @@ public class AuthorDao extends AbstractDao<Author> {
 
     @Override
     JdbcTemplate getJdbcTemplate() {
-        return jdbcTemplate;
+        return null;
+    }
+
+    @Override
+    EntityManager getEntityManager() {
+        return entityManager;
+    }
+
+    @Override
+    Class<Author> getClassObject() {
+        return Author.class;
     }
 }

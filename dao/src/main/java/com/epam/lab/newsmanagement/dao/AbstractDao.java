@@ -1,25 +1,30 @@
 package com.epam.lab.newsmanagement.dao;
 
 import com.epam.lab.newsmanagement.entity.AbstractEntity;
-import com.epam.lab.newsmanagement.entity.SearchCriteria;
 import com.epam.lab.newsmanagement.exception.DaoException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.TransactionRequiredException;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.function.Supplier;
 
-public abstract class AbstractDao<T extends AbstractEntity> implements Dao<T> {
+public abstract class AbstractDao<T extends AbstractEntity> implements DaoInterface<T> {
+    private static final String ID;
+
+    static {
+        ID = "id";
+    }
 
     @Override
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public T create(T t) throws DaoException {
-        Supplier<T> supplier = getSupplier(t);
+/*        Supplier<T> supplier = getSupplier(t);
         T t2 = supplier.get();
         if (t2 == null) {
             try {
@@ -32,29 +37,36 @@ public abstract class AbstractDao<T extends AbstractEntity> implements Dao<T> {
                 throw new DaoException(e);
             }
         }
-        return t2;
-    }
-
-    @Override
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public List<T> create(List<T> t) throws DaoException {
-        throw new DaoException("Operation isn't supported by dao.");
-    }
-
-    @Override
-    public T read(long id) throws DaoException {
-        T t;
+        return t2;*/
+        if (getEntityManager() == null) {
+            throw new DaoException("EntityManager is null.");
+        }
         try {
-            t = readEntity(getSelectByIdQuery(), id);
-        } catch (DataAccessException e) {
+            getEntityManager().persist(t);
+        } catch (IllegalArgumentException | TransactionRequiredException e) {
             throw new DaoException(e);
         }
         return t;
     }
 
     @Override
-    public List<T> read(SearchCriteria sc) throws DaoException {
-        throw new DaoException("Operation isn't supported by dao.");
+    public T read(long id) throws DaoException {
+        if (getEntityManager() == null) {
+            throw new DaoException("EntityManager is null");
+        }
+        T t;
+        try {
+            CriteriaBuilder builder =
+                    getEntityManager().getCriteriaBuilder();
+            CriteriaQuery<T> query = builder.createQuery(getClassObject());
+            Root<T> root = query.from(getClassObject());
+            query.select(root);
+            query.where(builder.equal(root.get(ID), id));
+            t = getEntityManager().createQuery(query).getSingleResult();
+        } catch (Exception e) {
+            throw new DaoException(e);
+        }
+        return t;
     }
 
     @Override
@@ -113,4 +125,8 @@ public abstract class AbstractDao<T extends AbstractEntity> implements Dao<T> {
     abstract T getClone(T t) throws CloneNotSupportedException;
 
     abstract void setId(T t, long id);
+
+    abstract EntityManager getEntityManager();
+
+    abstract Class<T> getClassObject();
 }

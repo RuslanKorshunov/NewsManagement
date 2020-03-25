@@ -1,6 +1,6 @@
 package com.epam.lab.newsmanagement.service;
 
-import com.epam.lab.newsmanagement.dao.NewsDao;
+import com.epam.lab.newsmanagement.dao.NewsDaoInterface;
 import com.epam.lab.newsmanagement.dto.AuthorDto;
 import com.epam.lab.newsmanagement.dto.NewsDto;
 import com.epam.lab.newsmanagement.dto.SearchCriteriaDto;
@@ -19,7 +19,6 @@ import com.epam.lab.newsmanagement.mapper.TagMapper;
 import com.epam.lab.newsmanagement.validator.NewsValidator;
 import com.epam.lab.newsmanagement.validator.SearchCriteriaValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,12 +28,11 @@ import java.util.List;
 
 import static com.epam.lab.newsmanagement.dao.NewsDao.SortCriteria;
 
-@Service
-@Qualifier("newsService")
+@Service("newsService")
 public class NewsService implements IntService<News, NewsDto> {
     private AuthorService authorService;
     private TagService tagService;
-    private NewsDao dao;
+    private NewsDaoInterface dao;
     private NewsValidator newsValidator;
     private SearchCriteriaValidator searchCriteriaValidator;
     private NewsMapper newsMapper;
@@ -44,7 +42,7 @@ public class NewsService implements IntService<News, NewsDto> {
     @Autowired
     public NewsService(AuthorService authorService,
                        TagService tagService,
-                       NewsDao dao,
+                       NewsDaoInterface dao,
                        NewsValidator newsValidator,
                        SearchCriteriaValidator searchCriteriaValidator,
                        NewsMapper newsMapper,
