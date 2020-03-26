@@ -14,6 +14,16 @@ import com.epam.lab.newsmanagement.validator.Validator;
 import java.util.List;
 
 public abstract class AbstractService<N extends AbstractEntity, T extends AbstractDto> implements IntService<N, T> {
+    private Dao<N> dao;
+    private Validator<N> validator;
+    private AbstractMapper<N, T> mapper;
+
+    public AbstractService(Dao dao, Validator validator, AbstractMapper mapper) {
+        this.dao = dao;
+        this.validator = validator;
+        this.mapper = mapper;
+    }
+
     @Override
     public T create(T t) throws ServiceException {
         N n = getMapper().toEntity(t);
@@ -80,9 +90,15 @@ public abstract class AbstractService<N extends AbstractEntity, T extends Abstra
         return t;
     }
 
-    abstract Validator<N> getValidator();
+    final Validator<N> getValidator() {
+        return validator;
+    }
 
-    abstract Dao<N> getDao();
+    final Dao<N> getDao() {
+        return dao;
+    }
 
-    abstract AbstractMapper<N, T> getMapper();
+    final AbstractMapper<N, T> getMapper() {
+        return mapper;
+    }
 }

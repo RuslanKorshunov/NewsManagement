@@ -3,21 +3,21 @@ package com.epam.lab.newsmanagement.dao;
 import com.epam.lab.newsmanagement.entity.AbstractEntity;
 import com.epam.lab.newsmanagement.entity.SearchCriteria;
 import com.epam.lab.newsmanagement.exception.DaoException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.function.Supplier;
 
 public abstract class AbstractDao<T extends AbstractEntity> implements Dao<T> {
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @Override
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public T create(T t) throws DaoException {
         Supplier<T> supplier = getSupplier(t);
         T t2 = supplier.get();
@@ -25,7 +25,7 @@ public abstract class AbstractDao<T extends AbstractEntity> implements Dao<T> {
             try {
                 t2 = getClone(t);
                 KeyHolder keyHolder = new GeneratedKeyHolder();
-                getJdbcTemplate().update(getCreatorForCreateQuery(t), keyHolder);
+                jdbcTemplate.update(getCreatorForCreateQuery(t), keyHolder);
                 long id = keyHolder.getKey().longValue();
                 setId(t2, id);
             } catch (DataAccessException | CloneNotSupportedException e) {
@@ -36,7 +36,6 @@ public abstract class AbstractDao<T extends AbstractEntity> implements Dao<T> {
     }
 
     @Override
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<T> create(List<T> t) throws DaoException {
         throw new DaoException("Operation isn't supported by dao.");
     }
@@ -58,10 +57,9 @@ public abstract class AbstractDao<T extends AbstractEntity> implements Dao<T> {
     }
 
     @Override
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public T update(T t) throws DaoException {
         try {
-            getJdbcTemplate().update(getUpdateQuery(), getParametersForUpdate(t));
+            jdbcTemplate.update(getUpdateQuery(), getParametersForUpdate(t));
         } catch (DataAccessException e) {
             throw new DaoException(e);
         }
@@ -69,11 +67,10 @@ public abstract class AbstractDao<T extends AbstractEntity> implements Dao<T> {
     }
 
     @Override
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public T delete(long id) throws DaoException {
         T t = read(id);
         try {
-            getJdbcTemplate().update(getDeleteQuery(), id);
+            jdbcTemplate.update(getDeleteQuery(), id);
         } catch (DataAccessException e) {
             throw new DaoException(e);
         }
@@ -92,7 +89,9 @@ public abstract class AbstractDao<T extends AbstractEntity> implements Dao<T> {
         };
     }
 
-    abstract JdbcTemplate getJdbcTemplate();
+    final JdbcTemplate getJdbcTemplate() {
+        return jdbcTemplate;
+    }
 
     abstract T readEntity(String query, Object... objects) throws DataAccessException;
 

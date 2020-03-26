@@ -3,7 +3,6 @@ package com.epam.lab.newsmanagement.controller;
 import com.epam.lab.newsmanagement.dto.AuthorDto;
 import com.epam.lab.newsmanagement.entity.Author;
 import com.epam.lab.newsmanagement.service.AuthorService;
-import com.epam.lab.newsmanagement.service.IntService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +11,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/author/")
 public class AuthorController extends AbstractController<Author, AuthorDto> {
     @Autowired
-    private AuthorService service;
+    public AuthorController(AuthorService service) {
+        super(service);
+    }
 
     @Override
     @PostMapping(value = "/",
@@ -44,11 +45,6 @@ public class AuthorController extends AbstractController<Author, AuthorDto> {
             consumes = CONSUMES)
     public ResponseEntity<AuthorDto> delete(@PathVariable("id") long id) {
         return super.delete(id);
-    }
-
-    @Override
-    IntService getService() {
-        return service;
     }
 
     @Override

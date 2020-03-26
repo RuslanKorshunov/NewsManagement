@@ -2,10 +2,7 @@ package com.epam.lab.newsmanagement.dao;
 
 import com.epam.lab.newsmanagement.entity.Tag;
 import com.epam.lab.newsmanagement.exception.DaoException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.stereotype.Repository;
 
@@ -14,8 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-@Repository
-@Qualifier("tagDao")
+@Repository("tagDao")
 public class TagDao extends AbstractDao<Tag> {
     private static final String INSERT_QUERY;
     private static final String SELECT_BY_NAME_QUERY;
@@ -31,8 +27,8 @@ public class TagDao extends AbstractDao<Tag> {
         DELETE_QUERY = "DELETE FROM \"tag\" WHERE \"id\"=?";
     }
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+/*    @Autowired
+    private JdbcTemplate jdbcTemplate;*/
 
     @Override
     public Tag create(Tag tag) throws DaoException {
@@ -66,11 +62,6 @@ public class TagDao extends AbstractDao<Tag> {
     @Override
     Supplier<Tag> getSupplier(Tag tag) {
         return super.getSupplier(tag);
-    }
-
-    @Override
-    JdbcTemplate getJdbcTemplate() {
-        return jdbcTemplate;
     }
 
     @Override

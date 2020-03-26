@@ -7,7 +7,6 @@ import com.epam.lab.newsmanagement.entity.Tag;
 import com.epam.lab.newsmanagement.exception.DaoException;
 import com.epam.lab.newsmanagement.validator.NumberValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -15,8 +14,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -25,8 +22,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-@Repository
-@Qualifier("newsDao")
+@Repository("newsDao")
 public class NewsDao implements Dao<News> {
     private static final String INSERT_INTO_NEWS_QUERY;
     private static final String INSERT_INTO_NEWS_AUTHOR_QUERY;
@@ -88,7 +84,6 @@ public class NewsDao implements Dao<News> {
     }
 
     @Override
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public News create(News news) throws DaoException {
         String title = news.getTitle();
         String shortText = news.getShortText();
@@ -126,7 +121,6 @@ public class NewsDao implements Dao<News> {
     }
 
     @Override
-    @Transactional(isolation = Isolation.SERIALIZABLE)
     public News read(long id) throws DaoException {
         News news;
         try {
@@ -139,7 +133,6 @@ public class NewsDao implements Dao<News> {
     }
 
     @Override
-    @Transactional(isolation = Isolation.SERIALIZABLE)
     public List<News> read(SearchCriteria sc) throws DaoException {
         Author author = sc.getAuthor();
         List<Tag> tags = sc.getTags();
@@ -183,7 +176,6 @@ public class NewsDao implements Dao<News> {
         return news;
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
     public List<News> read(SortCriteria sc) throws DaoException {
         List<News> news;
         String query = BEGIN_SELECT_NEWS_QUERY + " " + END_SELECT_BY_CRITERIA_QUERY;
@@ -204,7 +196,6 @@ public class NewsDao implements Dao<News> {
     }
 
     @Override
-    @Transactional(isolation = Isolation.SERIALIZABLE)
     public News update(News news) throws DaoException {
         long idNews = news.getId();
         String title = news.getTitle();
@@ -225,7 +216,6 @@ public class NewsDao implements Dao<News> {
     }
 
     @Override
-    @Transactional(isolation = Isolation.SERIALIZABLE)
     public News delete(long id) throws DaoException {
         News news = read(id);
         try {

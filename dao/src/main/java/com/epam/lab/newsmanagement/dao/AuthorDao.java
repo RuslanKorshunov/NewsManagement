@@ -2,10 +2,7 @@ package com.epam.lab.newsmanagement.dao;
 
 import com.epam.lab.newsmanagement.entity.Author;
 import com.epam.lab.newsmanagement.exception.DaoException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.stereotype.Repository;
 
@@ -13,8 +10,7 @@ import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.function.Supplier;
 
-@Repository
-@Qualifier("authorDao")
+@Repository("authorDao")
 public class AuthorDao extends AbstractDao<Author> {
     private static final String INSERT_QUERY;
     private static final String SELECT_BY_ID_QUERY;
@@ -29,9 +25,6 @@ public class AuthorDao extends AbstractDao<Author> {
         UPDATE_QUERY = "UPDATE \"author\" SET \"name\"=?, \"surname\"=? WHERE \"id\"=?";
         DELETE_QUERY = "DELETE FROM \"author\" WHERE \"id\"=?";
     }
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
 
     @Override
     public Author create(Author author) throws DaoException {
@@ -129,10 +122,5 @@ public class AuthorDao extends AbstractDao<Author> {
     @Override
     void setId(Author author, long id) {
         author.setId(id);
-    }
-
-    @Override
-    JdbcTemplate getJdbcTemplate() {
-        return jdbcTemplate;
     }
 }

@@ -4,7 +4,6 @@ import com.epam.lab.newsmanagement.dto.NewsDto;
 import com.epam.lab.newsmanagement.dto.SearchCriteriaDto;
 import com.epam.lab.newsmanagement.entity.News;
 import com.epam.lab.newsmanagement.exception.ServiceException;
-import com.epam.lab.newsmanagement.service.IntService;
 import com.epam.lab.newsmanagement.service.NewsService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,11 +20,9 @@ import static com.epam.lab.newsmanagement.dao.NewsDao.SortCriteria;
 @RestController
 @RequestMapping(value = "/news/")
 public class NewsController extends AbstractController<News, NewsDto> {
-    private NewsService service;
-
     @Autowired
     public NewsController(NewsService service) {
-        this.service = service;
+        super(service);
     }
 
     @Override
@@ -68,7 +65,7 @@ public class NewsController extends AbstractController<News, NewsDto> {
         HttpStatus status = HttpStatus.OK;
         List<NewsDto> news;
         try {
-            news = service.read(scd);
+            news = getService().read(scd);
         } catch (ServiceException e) {
             Logger logger = LogManager.getLogger(NewsController.class);
             logger.error(e);
@@ -86,18 +83,13 @@ public class NewsController extends AbstractController<News, NewsDto> {
         HttpStatus status = HttpStatus.OK;
         List<NewsDto> news;
         try {
-            news = service.read(sc);
+            news = getService().read(sc);
         } catch (ServiceException e) {
             getLogger().error(e);
             status = HttpStatus.NOT_FOUND;
             news = new ArrayList<>();
         }
         return new ResponseEntity<>(news, status);
-    }
-
-    @Override
-    IntService getService() {
-        return service;
     }
 
     @Override

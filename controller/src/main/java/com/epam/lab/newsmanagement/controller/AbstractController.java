@@ -17,6 +17,12 @@ import static com.epam.lab.newsmanagement.dao.NewsDao.SortCriteria;
 public abstract class AbstractController<N extends AbstractEntity, T extends AbstractDto> implements Controller<T> {
     private static Logger logger = LogManager.getLogger();
 
+    private IntService<N, T> service;
+
+    public AbstractController(IntService service) {
+        this.service = service;
+    }
+
     @Override
     public ResponseEntity<T> create(T t) {
         HttpStatus status = HttpStatus.CREATED;
@@ -84,11 +90,13 @@ public abstract class AbstractController<N extends AbstractEntity, T extends Abs
         return new ResponseEntity<>(t, status);
     }
 
-    Logger getLogger() {
+    final Logger getLogger() {
         return logger;
     }
 
-    abstract IntService<N, T> getService();
+    final IntService<N, T> getService() {
+        return service;
+    }
 
     abstract T createEntity(long id);
 

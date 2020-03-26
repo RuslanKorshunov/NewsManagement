@@ -1,35 +1,24 @@
 package com.epam.lab.newsmanagement.service;
 
-import com.epam.lab.newsmanagement.dao.Dao;
 import com.epam.lab.newsmanagement.dao.TagDao;
 import com.epam.lab.newsmanagement.dto.TagDto;
 import com.epam.lab.newsmanagement.entity.Tag;
 import com.epam.lab.newsmanagement.exception.DaoException;
 import com.epam.lab.newsmanagement.exception.IncorrectDataException;
 import com.epam.lab.newsmanagement.exception.ServiceException;
-import com.epam.lab.newsmanagement.mapper.AbstractMapper;
 import com.epam.lab.newsmanagement.mapper.TagMapper;
 import com.epam.lab.newsmanagement.validator.TagValidator;
-import com.epam.lab.newsmanagement.validator.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
-@Qualifier("tagService")
+@Service("tagService")
 public class TagService extends AbstractService<Tag, TagDto> {
-    private TagDao dao;
-    private TagValidator validator;
-    private TagMapper mapper;
-
     @Autowired
     public TagService(TagDao dao, TagValidator validator, TagMapper mapper) {
-        this.dao = dao;
-        this.validator = validator;
-        this.mapper = mapper;
+        super(dao, validator, mapper);
     }
 
     @Override
@@ -96,21 +85,6 @@ public class TagService extends AbstractService<Tag, TagDto> {
     @Override
     public TagDto delete(long id) throws ServiceException {
         return super.delete(id);
-    }
-
-    @Override
-    Dao<Tag> getDao() {
-        return dao;
-    }
-
-    @Override
-    Validator<Tag> getValidator() {
-        return validator;
-    }
-
-    @Override
-    AbstractMapper<Tag, TagDto> getMapper() {
-        return mapper;
     }
 
     private void toLoverCase(Tag tag) {
