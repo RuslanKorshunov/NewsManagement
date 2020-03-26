@@ -1,26 +1,18 @@
 package com.epam.lab.newsmanagement.dao;
 
-import com.epam.lab.newsmanagement.entity.Author;
 import com.epam.lab.newsmanagement.entity.News;
 import com.epam.lab.newsmanagement.entity.SearchCriteria;
-import com.epam.lab.newsmanagement.entity.Tag;
 import com.epam.lab.newsmanagement.exception.DaoException;
 import com.epam.lab.newsmanagement.validator.NumberValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Repository("newsDao")
-public class NewsDao implements NewsDaoInterface {
+public class NewsDao extends AbstractDao<News> implements NewsDaoInterface {
     private static final String INSERT_INTO_NEWS_QUERY;
     private static final String INSERT_INTO_NEWS_AUTHOR_QUERY;
     private static final String INSERT_INTO_NEWS_TAG_QUERY;
@@ -76,13 +68,13 @@ public class NewsDao implements NewsDaoInterface {
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public News create(News news) throws DaoException {
-        return null;
+        return super.create(news);
     }
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public News read(long id) throws DaoException {
-        return null;
+        return super.read(id);
     }
 
     @Override
@@ -99,55 +91,17 @@ public class NewsDao implements NewsDaoInterface {
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public News update(News news) throws DaoException {
-        return null;
+        return super.update(news);
     }
 
     @Override
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public News delete(long id) throws DaoException {
-        return null;
+        return super.delete(id);
     }
 
-    private BatchPreparedStatementSetter getBatchPreparedStatementSetter(List<Tag> tags, long id) {
-        return new BatchPreparedStatementSetter() {
-            @Override
-            public void setValues(PreparedStatement ps, int i) throws SQLException {
-                Tag tag = tags.get(i);
-                long idTag = tag.getId();
-                ps.setLong(1, id);
-                ps.setLong(2, idTag);
-            }
-
-            @Override
-            public int getBatchSize() {
-                return tags.size();
-            }
-        };
-    }
-
-    private RowMapper<News> getRowMapper() {
-        return (rs, rowNum) -> {
-            long idNews = rs.getLong("id");
-            String title = rs.getString("title");
-            String short_text = rs.getString("short_text");
-            String full_text = rs.getString("full_text");
-            LocalDate creationDate = rs.getDate("creation_date").toLocalDate();
-            LocalDate modificationDate = rs.getDate("modification_date").toLocalDate();
-            String tagsString = rs.getString("tags");
-            List<Tag> tags = new ArrayList<>();
-            for (String tagString : tagsString.split(",")) {
-                String[] tagInfo = tagString.split("-");
-                if (validator.validate(tagInfo[0])) {
-                    long idTag = Long.parseLong(tagInfo[0]);
-                    Tag tag = new Tag(idTag, tagInfo[1]);
-                    tags.add(tag);
-                }
-            }
-            long idAuthor = rs.getLong("author_id");
-            String name = rs.getString("name");
-            String surname = rs.getString("surname");
-            Author author = new Author(idAuthor, name, surname);
-            return new News(idNews, title, short_text, full_text, author, tags, creationDate, modificationDate);
-        };
+    @Override
+    Class<News> getClassObject() {
+        return News.class;
     }
 }
