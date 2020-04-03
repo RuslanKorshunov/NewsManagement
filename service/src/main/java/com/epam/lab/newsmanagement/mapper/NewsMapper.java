@@ -49,7 +49,7 @@ public class NewsMapper extends AbstractMapper<News, NewsDto> {
     @Override
     public NewsDto toDto(News news) {
         NewsDto newsDto = getDto(news);
-/*        if (newsDto != null) {
+        if (newsDto != null) {
             Author author = news.getAuthor();
             AuthorDto authorDto = authorMapper.toDto(author);
             if (authorDto != null) {
@@ -66,7 +66,7 @@ public class NewsMapper extends AbstractMapper<News, NewsDto> {
                 });
             }
             newsDto.setTagDtoList(tagDtos);
-        }*/
+        }
         return newsDto;
     }
 

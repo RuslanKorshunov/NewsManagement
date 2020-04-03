@@ -2,13 +2,12 @@ package com.epam.lab.newsmanagement.dao;
 
 import com.epam.lab.newsmanagement.entity.AbstractEntity;
 import com.epam.lab.newsmanagement.exception.DaoException;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TransactionRequiredException;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
@@ -56,15 +55,23 @@ public abstract class AbstractDao<T extends AbstractEntity> implements DaoInterf
     }
 
     @Override
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public T update(T t) throws DaoException {
         return null;
     }
 
     @Override
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public T delete(long id) throws DaoException {
-        return null;
+        T t = read(id);
+        try {
+            CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+            CriteriaDelete<T> delete = builder.createCriteriaDelete(getClassObject());
+            Root<T> root = delete.from(getClassObject());
+            delete.where(builder.equal(root.get(ID), id));
+            entityManager.createQuery(delete).executeUpdate();
+        } catch (Exception e) {
+            throw new DaoException(e);
+        }
+        return t;
     }
 
     abstract Class<T> getClassObject();

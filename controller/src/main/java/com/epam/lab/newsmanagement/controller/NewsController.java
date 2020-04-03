@@ -4,8 +4,8 @@ import com.epam.lab.newsmanagement.dto.NewsDto;
 import com.epam.lab.newsmanagement.dto.SearchCriteriaDto;
 import com.epam.lab.newsmanagement.entity.News;
 import com.epam.lab.newsmanagement.exception.ServiceException;
-import com.epam.lab.newsmanagement.service.IntService;
-import com.epam.lab.newsmanagement.service.NewsService;
+import com.epam.lab.newsmanagement.service.NewsServiceInterface;
+import com.epam.lab.newsmanagement.service.ServiceInterface;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +20,11 @@ import static com.epam.lab.newsmanagement.dao.NewsDao.SortCriteria;
 
 @RestController
 @RequestMapping(value = "/news/")
-public class NewsController extends AbstractController<News, NewsDto> {
-    private NewsService service;
+public class NewsController extends AbstractController<News, NewsDto> implements NewsControllerInterface {
+    private NewsServiceInterface service;
 
     @Autowired
-    public NewsController(NewsService service) {
+    public NewsController(NewsServiceInterface service) {
         this.service = service;
     }
 
@@ -96,7 +96,7 @@ public class NewsController extends AbstractController<News, NewsDto> {
     }
 
     @Override
-    IntService getService() {
+    ServiceInterface getService() {
         return service;
     }
 

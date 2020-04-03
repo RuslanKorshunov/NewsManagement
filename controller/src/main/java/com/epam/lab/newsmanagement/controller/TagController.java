@@ -2,8 +2,8 @@ package com.epam.lab.newsmanagement.controller;
 
 import com.epam.lab.newsmanagement.dto.TagDto;
 import com.epam.lab.newsmanagement.entity.Tag;
-import com.epam.lab.newsmanagement.service.IntService;
-import com.epam.lab.newsmanagement.service.TagService;
+import com.epam.lab.newsmanagement.service.ServiceInterface;
+import com.epam.lab.newsmanagement.service.TagServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(value = "/tag/")
 public class TagController extends AbstractController<Tag, TagDto> {
-    private TagService service;
+    private TagServiceInterface service;
 
     @Autowired
-    public TagController(TagService service) {
+    public TagController(TagServiceInterface service) {
         this.service = service;
     }
 
@@ -51,7 +51,7 @@ public class TagController extends AbstractController<Tag, TagDto> {
     }
 
     @Override
-    IntService getService() {
+    ServiceInterface getService() {
         return service;
     }
 

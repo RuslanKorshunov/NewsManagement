@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service("tagService")
-public class TagService extends AbstractService<Tag, TagDto> {
+public class TagService extends AbstractService<Tag, TagDto> implements TagServiceInterface {
     private TagDaoInterface dao;
     private TagValidator validator;
     private TagMapper mapper;

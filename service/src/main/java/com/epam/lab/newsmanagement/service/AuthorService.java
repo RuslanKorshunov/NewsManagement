@@ -12,10 +12,8 @@ import com.epam.lab.newsmanagement.validator.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service("authorService")
-public class AuthorService extends AbstractService<Author, AuthorDto> {
+public class AuthorService extends AbstractService<Author, AuthorDto> implements AuthorServiceInterface {
     private AuthorDaoInterface dao;
     private AuthorValidator validator;
     private AuthorMapper mapper;
@@ -30,11 +28,6 @@ public class AuthorService extends AbstractService<Author, AuthorDto> {
     @Override
     public AuthorDto create(AuthorDto authorDto) throws ServiceException {
         return super.create(authorDto);
-    }
-
-    @Override
-    public List<AuthorDto> create(List<AuthorDto> t) throws ServiceException {
-        return super.create(t);
     }
 
     @Override

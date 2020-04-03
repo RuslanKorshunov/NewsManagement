@@ -29,9 +29,9 @@ import java.util.List;
 import static com.epam.lab.newsmanagement.dao.NewsDao.SortCriteria;
 
 @Service("newsService")
-public class NewsService implements IntService<News, NewsDto> {
-    private AuthorService authorService;
-    private TagService tagService;
+public class NewsService implements NewsServiceInterface {
+    private AuthorServiceInterface authorService;
+    private TagServiceInterface tagService;
     private NewsDaoInterface dao;
     private NewsValidator newsValidator;
     private SearchCriteriaValidator searchCriteriaValidator;
@@ -40,8 +40,8 @@ public class NewsService implements IntService<News, NewsDto> {
     private TagMapper tagMapper;
 
     @Autowired
-    public NewsService(AuthorService authorService,
-                       TagService tagService,
+    public NewsService(AuthorServiceInterface authorService,
+                       TagServiceInterface tagService,
                        NewsDaoInterface dao,
                        NewsValidator newsValidator,
                        SearchCriteriaValidator searchCriteriaValidator,
@@ -69,11 +69,6 @@ public class NewsService implements IntService<News, NewsDto> {
             throw new ServiceException(e);
         }
         return newsDto;
-    }
-
-    @Override
-    public List<NewsDto> create(List<NewsDto> newsDtos) throws ServiceException {
-        throw new ServiceException("Operation isn't supported by newsService.");
     }
 
     @Override

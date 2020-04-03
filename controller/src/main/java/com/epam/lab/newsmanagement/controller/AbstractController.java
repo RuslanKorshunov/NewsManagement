@@ -1,20 +1,15 @@
 package com.epam.lab.newsmanagement.controller;
 
 import com.epam.lab.newsmanagement.dto.AbstractDto;
-import com.epam.lab.newsmanagement.dto.SearchCriteriaDto;
 import com.epam.lab.newsmanagement.entity.AbstractEntity;
 import com.epam.lab.newsmanagement.exception.ServiceException;
-import com.epam.lab.newsmanagement.service.IntService;
+import com.epam.lab.newsmanagement.service.ServiceInterface;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.List;
-
-import static com.epam.lab.newsmanagement.dao.NewsDao.SortCriteria;
-
-public abstract class AbstractController<N extends AbstractEntity, T extends AbstractDto> implements Controller<T> {
+public abstract class AbstractController<N extends AbstractEntity, T extends AbstractDto> implements ControllerInterface<T> {
     private static Logger logger = LogManager.getLogger();
 
     @Override
@@ -43,7 +38,7 @@ public abstract class AbstractController<N extends AbstractEntity, T extends Abs
         return new ResponseEntity<>(t, status);
     }
 
-    @Override
+/*    @Override
     public ResponseEntity<List<T>> read(SearchCriteriaDto scd) {
         return new ResponseEntity<>(null, HttpStatus.NOT_IMPLEMENTED);
     }
@@ -51,7 +46,7 @@ public abstract class AbstractController<N extends AbstractEntity, T extends Abs
     @Override
     public ResponseEntity<List<T>> read(SortCriteria sc) {
         return new ResponseEntity<>(null, HttpStatus.NOT_IMPLEMENTED);
-    }
+    }*/
 
     @Override
     public ResponseEntity<T> update(long id, T t) {
@@ -88,7 +83,7 @@ public abstract class AbstractController<N extends AbstractEntity, T extends Abs
         return logger;
     }
 
-    abstract IntService<N, T> getService();
+    abstract ServiceInterface<N, T> getService();
 
     abstract T createEntity(long id);
 

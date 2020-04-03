@@ -16,12 +16,12 @@ public class News extends AbstractEntity implements Cloneable {
     private String shortText;
     @Column(name = "full_text")
     private String fullText;
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinTable(name = "news_author",
             joinColumns = {@JoinColumn(name = "news_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "author_id", referencedColumnName = "id")})
     private Author author;
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "news_tag",
             joinColumns = {@JoinColumn(name = "news_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "tag_id", referencedColumnName = "id")})
