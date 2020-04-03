@@ -12,20 +12,11 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
 public abstract class AbstractDao<T extends AbstractEntity> implements DaoInterface<T> {
-    private static final String ID;
-
-    static {
-        ID = "id";
-    }
-
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
     public T create(T t) throws DaoException {
-        if (entityManager == null) {
-            throw new DaoException("EntityManager is null.");
-        }
         try {
             entityManager.persist(t);
         } catch (IllegalArgumentException | TransactionRequiredException e) {
@@ -36,9 +27,6 @@ public abstract class AbstractDao<T extends AbstractEntity> implements DaoInterf
 
     @Override
     public T read(long id) throws DaoException {
-        if (entityManager == null) {
-            throw new DaoException("EntityManager is null");
-        }
         T t;
         try {
             CriteriaBuilder builder =
@@ -46,7 +34,7 @@ public abstract class AbstractDao<T extends AbstractEntity> implements DaoInterf
             CriteriaQuery<T> query = builder.createQuery(getClassObject());
             Root<T> root = query.from(getClassObject());
             query.select(root);
-            query.where(builder.equal(root.get(ID), id));
+            query.where(builder.equal(root.get(Constants.ID), id));
             t = entityManager.createQuery(query).getSingleResult();
         } catch (Exception e) {
             throw new DaoException(e);
@@ -55,9 +43,7 @@ public abstract class AbstractDao<T extends AbstractEntity> implements DaoInterf
     }
 
     @Override
-    public T update(T t) throws DaoException {
-        return null;
-    }
+    public abstract T update(T t) throws DaoException;
 
     @Override
     public T delete(long id) throws DaoException {
@@ -66,12 +52,16 @@ public abstract class AbstractDao<T extends AbstractEntity> implements DaoInterf
             CriteriaBuilder builder = entityManager.getCriteriaBuilder();
             CriteriaDelete<T> delete = builder.createCriteriaDelete(getClassObject());
             Root<T> root = delete.from(getClassObject());
-            delete.where(builder.equal(root.get(ID), id));
+            delete.where(builder.equal(root.get(Constants.ID), id));
             entityManager.createQuery(delete).executeUpdate();
         } catch (Exception e) {
             throw new DaoException(e);
         }
         return t;
+    }
+
+    EntityManager getEntityManager() {
+        return entityManager;
     }
 
     abstract Class<T> getClassObject();

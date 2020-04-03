@@ -43,7 +43,7 @@ public class NewsDao extends AbstractDao<News> implements NewsDaoInterface {
     @Override
     @Modifying
     public News update(News news) throws DaoException {
-        return super.update(news);
+        return null;
     }
 
     @Override

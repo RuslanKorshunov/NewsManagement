@@ -7,6 +7,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaUpdate;
+import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,20 +17,6 @@ import java.util.List;
 @Transactional(isolation = Isolation.READ_COMMITTED,
         rollbackFor = DaoException.class)
 public class TagDao extends AbstractDao<Tag> implements TagDaoInterface {
-    private static final String INSERT_QUERY;
-    private static final String SELECT_BY_NAME_QUERY;
-    private static final String SELECT_BY_ID_QUERY;
-    private static final String UPDATE_QUERY;
-    private static final String DELETE_QUERY;
-
-    static {
-        INSERT_QUERY = "INSERT INTO \"tag\"(\"name\") VALUES (?)";
-        SELECT_BY_NAME_QUERY = "SELECT * FROM \"tag\" WHERE \"name\"=?";
-        SELECT_BY_ID_QUERY = "SELECT * FROM \"tag\" WHERE \"id\"=?";
-        UPDATE_QUERY = "UPDATE \"tag\" SET \"name\"=? WHERE \"id\"=?";
-        DELETE_QUERY = "DELETE FROM \"tag\" WHERE \"id\"=?";
-    }
-
     @Override
     @Modifying
     public Tag create(Tag tag) throws DaoException {
@@ -52,7 +41,18 @@ public class TagDao extends AbstractDao<Tag> implements TagDaoInterface {
     @Override
     @Modifying
     public Tag update(Tag tag) throws DaoException {
-        return super.update(tag);
+        Tag old = read(tag.getId());
+        try {
+            CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+            CriteriaUpdate<Tag> update = builder.createCriteriaUpdate(Tag.class);
+            Root<Tag> root = update.from(Tag.class);
+            update.set(Constants.NAME, tag.getName());
+            update.where(builder.equal(root.get(Constants.ID), tag.getId()));
+            getEntityManager().createQuery(update).executeUpdate();
+        } catch (Exception e) {
+            throw new DaoException(e);
+        }
+        return old;
     }
 
     @Override

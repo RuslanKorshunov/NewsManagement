@@ -1,15 +1,13 @@
 package com.epam.lab.newsmanagement.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
 @Table(name = "author")
 public class Author extends AbstractEntity implements Cloneable {
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
     @Column(name = "name")
     private String name;

@@ -7,24 +7,14 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaUpdate;
+import javax.persistence.criteria.Root;
+
 @Repository("authorDao")
 @Transactional(isolation = Isolation.READ_COMMITTED,
         rollbackFor = DaoException.class)
 public class AuthorDao extends AbstractDao<Author> implements AuthorDaoInterface {
-    private static final String INSERT_QUERY;
-    private static final String SELECT_BY_ID_QUERY;
-    private static final String UPDATE_QUERY;
-    private static final String DELETE_QUERY;
-    private static final String SELECT_BY_NAME_AND_SURNAME_QUERY;
-
-    static {
-        INSERT_QUERY = "INSERT INTO \"author\" (\"name\", \"surname\") VALUES (?, ?)";
-        SELECT_BY_ID_QUERY = "SELECT * FROM \"author\" WHERE \"id\"=?";
-        SELECT_BY_NAME_AND_SURNAME_QUERY = "SELECT * FROM \"author\" WHERE \"name\"=? AND \"surname\"=?";
-        UPDATE_QUERY = "UPDATE \"author\" SET \"name\"=?, \"surname\"=? WHERE \"id\"=?";
-        DELETE_QUERY = "DELETE FROM \"author\" WHERE \"id\"=?";
-    }
-
     @Override
     @Modifying
     public Author create(Author author) throws DaoException {
@@ -39,7 +29,19 @@ public class AuthorDao extends AbstractDao<Author> implements AuthorDaoInterface
     @Override
     @Modifying
     public Author update(Author author) throws DaoException {
-        return super.update(author);
+        Author old = read(author.getId());
+        try {
+            CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
+            CriteriaUpdate<Author> update = builder.createCriteriaUpdate(Author.class);
+            Root<Author> root = update.from(Author.class);
+            update.set(Constants.NAME, author.getName());
+            update.set(Constants.SURNAME, author.getSurname());
+            update.where(builder.equal(root.get(Constants.ID), author.getId()));
+            getEntityManager().createQuery(update).executeUpdate();
+        } catch (Exception e) {
+            throw new DaoException(e);
+        }
+        return old;
     }
 
     @Override

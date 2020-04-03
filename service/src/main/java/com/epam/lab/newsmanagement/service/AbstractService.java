@@ -40,13 +40,15 @@ public abstract class AbstractService<N extends AbstractEntity, T extends Abstra
     public T update(T t) throws ServiceException {
         N n = getMapper().toEntity(t);
         Validator<N> validator = getValidator();
+        T result;
         try {
             validator.validate(n);
-            getDao().update(n);
+            N entity = getDao().update(n);
+            result = getMapper().toDto(entity);
         } catch (DaoException | IncorrectDataException e) {
             throw new ServiceException(e);
         }
-        return t;
+        return result;
     }
 
     @Override
