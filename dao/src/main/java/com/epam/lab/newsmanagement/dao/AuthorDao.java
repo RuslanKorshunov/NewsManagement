@@ -7,7 +7,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Root;
 
@@ -18,7 +20,11 @@ public class AuthorDao extends AbstractDao<Author> implements AuthorDaoInterface
     @Override
     @Modifying
     public Author create(Author author) throws DaoException {
-        return super.create(author);
+        Author result = read(author);
+        if (result == null) {
+            result = super.create(author);
+        }
+        return result;
     }
 
     @Override
@@ -53,5 +59,25 @@ public class AuthorDao extends AbstractDao<Author> implements AuthorDaoInterface
     @Override
     Class<Author> getClassObject() {
         return Author.class;
+    }
+
+    private Author read(Author author) throws DaoException {
+        Author result;
+        try {
+            CriteriaBuilder builder =
+                    getEntityManager().getCriteriaBuilder();
+            CriteriaQuery<Author> query = builder.createQuery(getClassObject());
+            Root<Author> root = query.from(getClassObject());
+            query.select(root);
+            query.where(
+                    builder.equal(root.get(Constants.NAME), author.getName()),
+                    builder.equal(root.get(Constants.SURNAME), author.getSurname()));
+            result = getEntityManager().createQuery(query).getSingleResult();
+        } catch (NoResultException e) {
+            result = null;
+        } catch (Exception e) {
+            throw new DaoException(e);
+        }
+        return result;
     }
 }

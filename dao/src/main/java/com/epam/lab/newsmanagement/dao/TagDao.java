@@ -7,7 +7,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
@@ -20,17 +22,25 @@ public class TagDao extends AbstractDao<Tag> implements TagDaoInterface {
     @Override
     @Modifying
     public Tag create(Tag tag) throws DaoException {
-        return super.create(tag);
+        Tag result = read(tag);
+        if (result == null) {
+            result = super.create(tag);
+        }
+        return result;
     }
 
     @Override
     @Modifying
     public List<Tag> create(List<Tag> tags) throws DaoException {
-        List<Tag> innerTags = new ArrayList<>();
+        List<Tag> result = new ArrayList<>();
         for (Tag tag : tags) {
-            innerTags.add(create(tag));
+            Tag resultTag = read(tag);
+            if (resultTag == null) {
+                resultTag = super.create(tag);
+            }
+            result.add(resultTag);
         }
-        return innerTags;
+        return result;
     }
 
     @Override
@@ -64,5 +74,23 @@ public class TagDao extends AbstractDao<Tag> implements TagDaoInterface {
     @Override
     Class<Tag> getClassObject() {
         return Tag.class;
+    }
+
+    private Tag read(Tag tag) throws DaoException {
+        Tag result;
+        try {
+            CriteriaBuilder builder =
+                    getEntityManager().getCriteriaBuilder();
+            CriteriaQuery<Tag> query = builder.createQuery(getClassObject());
+            Root<Tag> root = query.from(getClassObject());
+            query.select(root);
+            query.where(builder.equal(root.get(Constants.NAME), tag.getName()));
+            result = getEntityManager().createQuery(query).getSingleResult();
+        } catch (NoResultException e) {
+            result = null;
+        } catch (Exception e) {
+            throw new DaoException(e);
+        }
+        return result;
     }
 }

@@ -9,7 +9,7 @@ import java.util.List;
 @Table(name = "news")
 public class News extends AbstractEntity implements Cloneable {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @Column(name = "title")
     private String title;

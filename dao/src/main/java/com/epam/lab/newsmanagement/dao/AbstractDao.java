@@ -5,7 +5,6 @@ import com.epam.lab.newsmanagement.exception.DaoException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TransactionRequiredException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
@@ -19,7 +18,8 @@ public abstract class AbstractDao<T extends AbstractEntity> implements DaoInterf
     public T create(T t) throws DaoException {
         try {
             entityManager.persist(t);
-        } catch (IllegalArgumentException | TransactionRequiredException e) {
+            entityManager.flush();
+        } catch (Exception e) {
             throw new DaoException(e);
         }
         return t;

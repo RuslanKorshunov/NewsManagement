@@ -7,7 +7,7 @@ import java.util.Objects;
 @Table(name = "author")
 public class Author extends AbstractEntity implements Cloneable {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @Column(name = "name")
     private String name;
