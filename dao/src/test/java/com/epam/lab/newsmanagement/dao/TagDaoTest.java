@@ -106,7 +106,7 @@ public class TagDaoTest {
             Tag updatingTag = dao.read(id);
             boolean result = tag.getName().equals(updatingTag.getName());
             Assert.assertTrue(result);
-        } catch (CloneNotSupportedException | DaoException e) {
+        } catch (DaoException e) {
             Assert.fail("updateExistingTagTest was failed.");
         }
     }

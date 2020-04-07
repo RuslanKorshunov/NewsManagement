@@ -41,8 +41,16 @@ public class Tag extends AbstractEntity implements Cloneable {
     }
 
     @Override
-    public Tag clone() throws CloneNotSupportedException {
-        return (Tag) super.clone();
+    public Tag clone() {
+        Tag tag;
+        try {
+            tag = (Tag) super.clone();
+        } catch (CloneNotSupportedException e) {
+            tag = new Tag();
+            tag.id = this.id;
+            tag.name = this.name;
+        }
+        return tag;
     }
 
     @Override

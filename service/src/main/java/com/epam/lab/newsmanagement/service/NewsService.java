@@ -8,7 +8,6 @@ import com.epam.lab.newsmanagement.dto.TagDto;
 import com.epam.lab.newsmanagement.entity.Author;
 import com.epam.lab.newsmanagement.entity.News;
 import com.epam.lab.newsmanagement.entity.SearchCriteria;
-import com.epam.lab.newsmanagement.entity.Tag;
 import com.epam.lab.newsmanagement.exception.DaoException;
 import com.epam.lab.newsmanagement.exception.IncorrectDataException;
 import com.epam.lab.newsmanagement.exception.ServiceException;
@@ -18,6 +17,7 @@ import com.epam.lab.newsmanagement.mapper.NewsMapper;
 import com.epam.lab.newsmanagement.mapper.TagMapper;
 import com.epam.lab.newsmanagement.validator.NewsValidator;
 import com.epam.lab.newsmanagement.validator.SearchCriteriaValidator;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -118,6 +118,7 @@ public class NewsService implements NewsServiceInterface {
     public NewsDto update(NewsDto newsDto) throws ServiceException {
         try {
             News news = checkNews(newsDto);
+            LogManager.getLogger().info(news);
             news = dao.update(news);
             newsDto = newsMapper.toDto(news);
         } catch (DaoException | IncorrectDataException e) {
@@ -158,17 +159,6 @@ public class NewsService implements NewsServiceInterface {
                     if (author != null) {
                         searchCriteria.setAuthor(author);
                     }
-                    List<TagDto> tagDtoList = dto.getTagDtoList();
-                    List<Tag> tags = new ArrayList<>();
-                    if (tagDtoList != null) {
-                        tagDtoList.forEach(tagDto -> {
-                            Tag tag = tagMapper.toEntity(tagDto);
-                            if (tag != null) {
-                                tags.add(tag);
-                            }
-                        });
-                    }
-                    searchCriteria.setTags(tags);
                 }
                 return searchCriteria;
             }

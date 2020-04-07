@@ -131,7 +131,6 @@ public class NewsDaoTest {
             List<Tag> tags = new ArrayList<>();
             tags.add(tagOne);
             tags.add(tagTwo);
-            sc.setTags(tags);
             List<News> news = dao.read(sc);
             boolean result = news.size() > 0;
             Assert.assertTrue(result);

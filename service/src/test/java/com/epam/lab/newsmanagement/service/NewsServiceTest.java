@@ -125,12 +125,9 @@ public class NewsServiceTest {
 
         searchCriteriaDto = new SearchCriteriaDto();
         searchCriteriaDto.setAuthorDto(authorDto);
-        searchCriteriaDto.setTagDtoList(tagDtos);
 
         searchCriteria = new SearchCriteria();
         searchCriteria.setAuthor(author);
-        searchCriteria.setTags(tags);
-
         newsWithIdList = new ArrayList<>();
         newsWithIdList.add(newsWithId);
 

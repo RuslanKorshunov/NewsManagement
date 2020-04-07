@@ -53,8 +53,17 @@ public class Author extends AbstractEntity implements Cloneable {
     }
 
     @Override
-    public Author clone() throws CloneNotSupportedException {
-        return (Author) super.clone();
+    public Author clone() {
+        Author author;
+        try {
+            author = (Author) super.clone();
+        } catch (CloneNotSupportedException e) {
+            author = new Author();
+            author.id = this.id;
+            author.name = this.name;
+            author.surname = this.surname;
+        }
+        return author;
     }
 
     @Override

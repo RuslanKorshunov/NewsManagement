@@ -111,15 +111,21 @@ public class News extends AbstractEntity implements Cloneable {
     }
 
     @Override
-    public News clone() throws CloneNotSupportedException {
-        News news = (News) super.clone();
-        Author author = this.author.clone();
-        news.setAuthor(author);
-        List<Tag> tags = new ArrayList<>();
-        for (Tag tag : this.tags) {
-            tags.add(tag.clone());
+    public News clone() {
+        News news;
+        try {
+            news = (News) super.clone();
+            Author author = this.author.clone();
+            news.setAuthor(author);
+            List<Tag> tags = new ArrayList<>();
+            for (Tag tag : this.tags) {
+                tags.add(tag.clone());
+            }
+            news.setTags(tags);
+        } catch (CloneNotSupportedException e) {
+            news = new News();
+            //TODO добавить что-нибудь
         }
-        news.setTags(tags);
         return news;
     }
 

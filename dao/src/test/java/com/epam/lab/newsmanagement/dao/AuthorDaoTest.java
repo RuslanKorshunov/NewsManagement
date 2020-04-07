@@ -90,7 +90,7 @@ public class AuthorDaoTest {
             Author updatingAuthor = dao.read(id);
             boolean result = author.getName().equals(updatingAuthor.getName());
             Assert.assertTrue(result);
-        } catch (CloneNotSupportedException | DaoException e) {
+        } catch (DaoException e) {
             Assert.fail("updateExistingAuthorTest was failed.");
         }
     }
